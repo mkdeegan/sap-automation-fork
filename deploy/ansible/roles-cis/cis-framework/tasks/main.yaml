@@ -1,0 +1,461 @@
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |                              CIS Framework                                 |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
+# Description:  
+#
+#
+# Objects:
+#   External:
+#             phase:                    pre, peri, post                         # pre = before, peri = during, post = after
+#   Internal:
+#
+#   Created:
+#
+# -------------------------------------+---------------------------------------8
+# Files:
+#   CIS_Microsoft_Azure_Foundations_Benchmark_v1.5.0.pdf
+#   CIS_Oracle_Linux_8_Benchmark_v2.0.0.pdf                     745pp
+#   CIS_Oracle_Linux_9_Benchmark_v1.0.0.pdf                     803pp
+#   CIS_Red_Hat_Enterprise_Linux_7_Benchmark_v3.1.1.pdf         634pp
+#   CIS_Red_Hat_Enterprise_Linux_8_Benchmark_v2.0.0.pdf         711pp
+#   CIS_Red_Hat_Enterprise_Linux_9_Benchmark_v1.0.0.pdf         795pp
+#   CIS_SUSE_Linux_Enterprise_12_Benchmark_v3.1.0.pdf           513pp
+#   CIS_SUSE_Linux_Enterprise_15_Benchmark_v1.1.1.pdf           573pp
+#   CIS_Ubuntu_Linux_18.04_LTS_Benchmark_v2.1.0.pdf             525pp
+#   CIS_Ubuntu_Linux_20.04_LTS_Benchmark_v1.1.0.pdf             532pp
+#   CIS_Ubuntu_Linux_22.04_LTS_Benchmark_v1.0.0.pdf             865pp
+#
+# CIS Critical Security Controls Implementation Groups
+#   IG1 - essential cyber hygiene
+#   IG2 - IG1 + IG2
+#   IG3 - IG2 + IG3
+#
+#
+# IG = Implementation Group, L = Level, sw = Server/Workstation, I = Implemented (Y, N, R = Remediated)
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                               | SLES 12  | SLES 15  | RHEL 7   | RHEL 8   | RHEL 9   | OLNX 8   | OLNX 9   | Ubuntu 18.04 | Ubuntu 20.04 | Ubuntu 22.04 |
+#                                                                               |IG |Lsw |I|IG |Lsw |I|IG |Lsw |I|IG |Lsw |I|IG |Lsw |I|IG |Lsw |I|IG |Lsw |I|IG |Lsw |I    |IG |Lsw |I    |IG |Lsw |I    |
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Recommendations                                                               |   |    | |
+# 1 Initial Setup                                                               |   |    | |
+# 1.1 Filesystem Configuration                                                  |   |    | |
+# 1.1.1 Disable unused filesystems                                              |   |    | |
+# 1.1.1.1 Ensure mounting of squashfs filesystems is disabled (Automated)       |1  |2sw | |
+# 1.1.1.2 Ensure mounting of udf filesystems is disabled (Automated)            |1  |1sw | |
+# 1.1.1.3 Ensure mounting of FAT filesystems is limited (Automated)             |1  |2sw | |
+# 1.1.2 Ensure /tmp is configured (Automated)                                   |1  |1sw | |
+# 1.1.3 Ensure noexec option set on /tmp partition (Automated)                  |1  |1sw | |
+# 1.1.4 Ensure nodev option set on /tmp partition (Automated)                   |1  |1sw | |
+# 1.1.5 Ensure nosuid option set on /tmp partition (Automated)                  |1  |1sw | |
+# 1.1.6 Ensure /dev/shm is configured (Automated)                               |1  |1sw | |
+# 1.1.7 Ensure noexec option set on /dev/shm partition (Automated)              |1  |1sw | |
+# 1.1.8 Ensure nodev option set on /dev/shm partition (Automated)               |1  |1sw | |
+# 1.1.9 Ensure nosuid option set on /dev/shm partition (Automated)              |1  |1sw | |
+# 1.1.10 Ensure separate partition exists for /var (Automated)                  |1  |2sw | |
+# 1.1.11 Ensure separate partition exists for /var/tmp (Automated)              |1  |2sw | |
+# 1.1.12 Ensure noexec option set on /var/tmp partition (Automated)             |1  |1sw | |
+# 1.1.13 Ensure nodev option set on /var/tmp partition (Automated)              |1  |1sw | |
+# 1.1.14 Ensure nosuid option set on /var/tmp partition (Automated)             |1  |1sw | |
+# 1.1.15 Ensure separate partition exists for /var/log (Automated)              |1/2|2sw | |
+# 1.1.16 Ensure separate partition exists for /var/log/audit (Automated)        |1/2|2sw | |
+# 1.1.17 Ensure separate partition exists for /home (Automated)                 |1  |2sw | |
+# 1.1.18 Ensure nodev option set on /home partition (Automated)                 |1  |1sw | |
+# 1.1.19 Ensure noexec option set on removable media partitions (Manual)        |1  |1sw | |
+# 1.1.20 Ensure nodev option set on removable media partitions (Manual)         |1  |1sw | |
+# 1.1.21 Ensure nosuid option set on removable media partitions (Manual)        |1  |1sw | |
+# 1.1.22 Ensure sticky bit is set on all world-writable directories (Automated) |1  |1sw | |
+# 1.1.23 Disable Automounting (Automated)                                       |1  |1sw | |
+#                                                                               |   |    | |
+# 1.2 Configure Software Updates                                                |   |    | |
+# 1.2.1 Ensure GPG keys are configured (Manual)                                 |1  |1sw | |
+# 1.2.2 Ensure package manager repositories are configured (Manual)             |1  |1sw | |
+# 1.2.3 Ensure gpgcheck is globally activated (Automated)                       |1  |1sw | |
+#                                                                               |   |    | |
+# 1.3 Configure sudo                                                            |   |    | |
+# 1.3.1 Ensure sudo is installed (Automated)                                    |1  |1sw | |
+# 1.3.2 Ensure sudo commands use pty (Automated)                                |1  |1sw | |
+# 1.3.3 Ensure sudo log file exists (Automated)                                 |1  |2sw | |
+#                                                                               |   |    | |
+# 1.4 Filesystem Integrity Checking                                             |   |    | |
+# 1.4.1 Ensure AIDE is installed (Automated)                                    |3  |1sw | |
+# 1.4.2 Ensure filesystem integrity is regularly checked (Automated)            |3  |1sw | |
+#                                                                               |   |    | |
+# 1.5 Secure Boot Settings                                                      |   |    | |
+# 1.5.1 Ensure bootloader password is set (Automated)                           |1  |1sw | |
+# 1.5.2 Ensure permissions on bootloader config are configured (Automated)      |1  |1sw | |
+# 1.5.3 Ensure authentication required for single user mode (Automated)         |1  |1sw | |
+#                                                                               |   |    | |
+# 1.6 Additional Process Hardening                                              |   |    | |
+# 1.6.1 Ensure core dumps are restricted (Automated)                            |1  |1sw | |
+# 1.6.2 Ensure XD/NX support is enabled (Automated)                             |2  |1sw | |
+# 1.6.3 Ensure address space layout randomization (ASLR) is enabled (Automated) |2  |1sw | |
+# 1.6.4 Ensure prelink is disabled (Automated)                                  |1/3|1sw | |
+#                                                                               |   |    | |
+# 1.7 Mandatory Access Control                                                  |   |    | |
+# 1.7.1 Configure AppArmor                                                      |   |    | |
+# 1.7.1.1 Ensure AppArmor is installed (Automated)                              |1  |1sw | |
+# 1.7.1.2 Ensure AppArmor is enabled in the bootloader configuration            |   |    | |
+#           (Automated)                                                         |1  |1sw | |
+# 1.7.1.3 Ensure all AppArmor Profiles are in enforce or complain mode          |   |    | |
+#           (Automated)                                                         |1  |1sw | |
+# 1.7.1.4 Ensure all AppArmor Profiles are enforcing (Automated)                |1  |2sw | |
+#                                                                               |   |    | |
+# 1.8 Warning Banners                                                           |   |    | |
+# 1.8.1 Command Line Warning Banners                                            |   |    | |
+# 1.8.1.1 Ensure message of the day is configured properly (Automated)          |1  |1sw |Y|
+# 1.8.1.2 Ensure local login warning banner is configured properly (Automated)  |1  |1sw |Y|
+# 1.8.1.3 Ensure remote login warning banner is configured properly (Automated) |1  |1sw |Y|
+# 1.8.1.4 Ensure permissions on /etc/motd are configured (Automated)            |1  |1sw |Y|
+# 1.8.1.5 Ensure permissions on /etc/issue are configured (Automated)           |1  |1sw |Y|
+# 1.8.1.6 Ensure permissions on /etc/issue.net are configured (Automated)       |1  |1sw |Y|
+#                                                                               |   |    | |
+# 1.9 Ensure updates, patches, and additional security software are installed   |   |    | |
+#       (Manual)                                                                |1  |1sw | |
+#                                                                               |   |    | |
+# 1.10 Ensure GDM is removed or login is configured (Automated)                 |1/2|1sw | |
+#                                                                               |   |    | |
+# 2 Services                                                                    |   |    | |
+# 2.1 inetd Services                                                            |   |    | |
+# 2.1.1 Ensure xinetd is not installed (Automated)                              |1/2|1sw | |
+#                                                                               |   |    | |
+# 2.2 Special Purpose Services                                                  |   |    | |
+# 2.2.1 Time Synchronization                                                    |   |    | |
+# 2.2.1.1 Ensure time synchronization is in use (Automated)                     |2  |1sw | |
+# 2.2.1.2 Ensure systemd-timesyncd is configured (Manual)                       |2  |1sw | |
+# 2.2.1.3 Ensure chrony is configured (Automated)                               |2  |1sw | |
+# 2.2.1.4 Ensure ntp is configured (Automated)                                  |2  |1sw | |
+#                                                                               |   |    | |
+# 2.2.2 Ensure X11 Server components are not installed (Automated)              |1/2|1s  | |
+# 2.2.3 Ensure Avahi Server is not installed (Automated)                        |2  |1sw | |
+# 2.2.4 Ensure CUPS is not installed (Automated)                                |2  |1s  | |
+# 2.2.5 Ensure DHCP Server is not installed (Automated)                         |2  |1sw | |
+# 2.2.6 Ensure LDAP server is not installed (Automated)                         |2  |1sw | |
+# 2.2.7 Ensure nfs-utils is not installed or the nfs-server service is masked   |   |    | |
+#         (Automated)                                                           |2  |1sw | |
+# 2.2.8 Ensure rpcbind is not installed or the rpcbind services are masked      |   |    | |
+#         (Automated)                                                           |2  |1sw | |
+# 2.2.9 Ensure DNS Server is not installed (Automated)                          |2  |1sw | |
+# 2.2.10 Ensure FTP Server is not installed (Automated)                         |2  |1sw | |
+# 2.2.11 Ensure HTTP server is not installed (Automated)                        |2  |1sw | |
+# 2.2.12 Ensure IMAP and POP3 server is not installed (Automated)               |2  |1sw | |
+# 2.2.13 Ensure Samba is not installed (Automated)                              |2  |1sw | |
+# 2.2.14 Ensure HTTP Proxy Server is not installed (Automated)                  |2  |1sw | |
+# 2.2.15 Ensure net-snmp is not installed (Automated)                           |1/2|1sw | |
+# 2.2.16 Ensure mail transfer agent is configured for local-only mode           |   |    | |
+#         (Automated)                                                           |2  |1sw | |
+# 2.2.17 Ensure rsync is not installed or the rsyncd service is masked          |   |    | |
+#          (Automated)                                                          |2  |1sw | |
+# 2.2.18 Ensure NIS server is not installed (Automated)                         |1/2|1sw | |
+# 2.2.19 Ensure telnet-server is not installed (Automated)                      |1/2|1sw | |
+#                                                                               |   |    | |
+# 2.3 Service Clients                                                           |   |    | |
+# 2.3.1 Ensure NIS Client is not installed (Automated)                          |1/2|1sw | |
+# 2.3.2 Ensure rsh client is not installed (Automated)                          |1/2|1sw | |
+# 2.3.3 Ensure talk client is not installed (Automated)                         |1/2|1sw | |
+# 2.3.4 Ensure telnet client is not installed (Automated)                       |1/2|1sw | |
+# 2.3.5 Ensure LDAP client is not installed (Automated)                         |1/2|1sw | |
+#                                                                               |   |    | |
+# 2.4 Ensure nonessential services are removed or masked (Manual)               |2  |1sw | |
+#                                                                               |   |    | |
+# 3 Network Configuration                                                       |   |    | |
+# 3.1 Disable unused network protocols and devices                              |   |    | |
+# 3.1.1 Disable IPv6 (Automated)                                                |1/2|2sw | |
+# 3.1.2 Ensure wireless interfaces are disabled (Manual)                        |2/3|1sw | |
+#                                                                               |   |    | |
+# 3.2 Network Parameters (Host Only)                                            |   |    | |
+# 3.2.1 Ensure IP forwarding is disabled (Automated)                            |1  |1sw | |
+# 3.2.2 Ensure packet redirect sending is disabled (Automated)                  |1  |1sw | |
+#                                                                               |   |    | |
+# 3.3 Network Parameters (Host and Router)                                      |   |    | |
+# 3.3.1 Ensure source routed packets are not accepted (Automated)               |1  |1sw | |
+# 3.3.2 Ensure ICMP redirects are not accepted (Automated)                      |1  |1sw | |
+# 3.3.3 Ensure secure ICMP redirects are not accepted (Automated)               |1  |1sw | |
+# 3.3.4 Ensure suspicious packets are logged (Automated)                        |1/2|1sw | |
+# 3.3.5 Ensure broadcast ICMP requests are ignored (Automated)                  |1  |1sw | |
+# 3.3.6 Ensure bogus ICMP responses are ignored (Automated)                     |1  |1sw | |
+# 3.3.7 Ensure Reverse Path Filtering is enabled (Automated)                    |1  |1sw | |
+# 3.3.8 Ensure TCP SYN Cookies is enabled (Automated)                           |1  |1sw | |
+# 3.3.9 Ensure IPv6 router advertisements are not accepted (Automated)          |1  |1sw | |
+#                                                                               |   |    | |
+# 3.4 Uncommon Network Protocols                                                |   |    | |
+# 3.4.1 Ensure DCCP is disabled (Automated)                                     |2  |2sw | |
+# 3.4.2 Ensure SCTP is disabled (Automated)                                     |2  |2sw | |
+#                                                                               |   |    | |
+# 3.5 Firewall Configuration                                                    |   |    | |
+# 3.5.1 Install iptables package                                                |   |    | |
+# 3.5.1.1 Ensure iptables package is installed (Automated)                      |1  |1sw | |
+# 3.5.2 Configure IPv4 iptables                                                 |   |1sw | |
+# 3.5.2.1 Ensure loopback traffic is configured (Automated)                     |1  |1sw | |
+# 3.5.2.2 Ensure outbound and established connections are configured (Manual)   |1  |1sw | |
+# 3.5.2.3 Ensure firewall rules exist for all open ports (Automated)            |1/2|1sw | |
+# 3.5.2.4 Ensure default deny firewall policy (Automated)                       |1  |1sw | |
+# 3.5.3 Configure IPv6 ip6tables                                                |   |1sw | |
+# 3.5.3.1 Ensure IPv6 loopback traffic is configured (Automated)                |1  |1sw | |
+# 3.5.3.2 Ensure IPv6 outbound and established connections are configured       |   |    | |
+#           (Manual)                                                            |1  |1sw | |
+# 3.5.3.3 Ensure IPv6 firewall rules exist for all open ports (Automated)       |1  |1sw | |
+# 3.5.3.4 Ensure IPv6 default deny firewall policy (Automated)                  |1  |1sw | |
+#                                                                               |   |    | |
+# 4 Logging and Auditing                                                        |   |    | |
+# 4.1 Configure System Accounting (auditd)                                      |   |    | |
+# 4.1.1 Ensure auditing is enabled                                              |   |    | |
+# 4.1.1.1 Ensure auditd is installed (Automated)                                |1/2|2sw | |
+# 4.1.1.2 Ensure auditd service is enabled and running (Automated)              |1/2|2sw | |
+# 4.1.1.3 Ensure auditing for processes that start prior to auditd is enabled   |   |    | |
+#           (Automated)                                                         |1/2|2sw | |
+#                                                                               |   |    | |
+# 4.1.2 Configure Data Retention                                                |   |    | |
+# 4.1.2.1 Ensure audit log storage size is configured (Automated)               |2  |2sw | |
+# 4.1.2.2 Ensure audit logs are not automatically deleted (Automated)           |1/2|2sw | |
+# 4.1.2.3 Ensure system is disabled when audit logs are full (Automated)        |1/2|2sw | |
+# 4.1.2.4 Ensure audit_backlog_limit is sufficient (Automated)                  |1/2|2sw | |
+# 4.1.3 Ensure events that modify date and time information are collected       |   |    | |
+#         (Automated)                                                           |2  |2sw | |
+# 4.1.4 Ensure events that modify user/group information are collected          |   |    | |
+#         (Automated)                                                           |2  |2sw | |
+# 4.1.5 Ensure events that modify the system's network environment are          |   |    | |
+#         collected (Automated)                                                 |1/2|2sw | |
+# 4.1.6 Ensure events that modify the system's Mandatory Access Controls are    |   |    | |
+#         collected (Automated)                                                 |2  |2sw | |
+# 4.1.7 Ensure login and logout events are collected (Automated)                |1/2|2sw | |
+# 4.1.8 Ensure session initiation information is collected (Automated)          |1/2|2sw | |
+# 4.1.9 Ensure discretionary access control permission modification events are  |   |    | |
+#         collected (Automated)                                                 |2  |2sw | |
+# 4.1.10 Ensure unsuccessful unauthorized file access attempts are collected    |   |    | |
+#           (Automated)                                                         |2/3|2sw | |
+# 4.1.11 Ensure use of privileged commands is collected (Automated)             |1/2|2sw | |
+# 4.1.12 Ensure successful file system mounts are collected (Automated)         |1/2|2sw | |
+# 4.1.13 Ensure file deletion events by users are collected (Automated)         |1/2|2sw | |
+# 4.1.14 Ensure changes to system administration scope (sudoers) is collected   |   |    | |
+#           (Automated)                                                         |2  |2sw | |
+# 4.1.15 Ensure system administrator actions (sudolog) are collected (Automated)|2  |2sw | |
+# 4.1.16 Ensure kernel module loading and unloading is collected (Automated)    |1/2|2sw | |
+# 4.1.17 Ensure the audit configuration is immutable (Automated)                |1/2|2sw | |
+#                                                                               |   |    | |
+# 4.2 Configure Logging                                                         |   |    | |
+# 4.2.1 Configure rsyslog                                                       |   |    | |
+# 4.2.1.1 Ensure rsyslog is installed (Automated)                               |1/2|1sw | |
+# 4.2.1.2 Ensure rsyslog Service is enabled and running (Automated)             |1/2|1sw | |
+# 4.2.1.3 Ensure rsyslog default file permissions configured (Automated)        |1  |1sw | |
+# 4.2.1.4 Ensure logging is configured (Manual)                                 |1/2|1sw | |
+# 4.2.1.5 Ensure rsyslog is configured to send logs to a remote log host        |   |    | |
+#           (Automated)                                                         |2/3|1sw | |
+# 4.2.1.6 Ensure remote rsyslog messages are only accepted on designated log    |   |    | |
+#           hosts. (Manual)                                                     |1/2|1sw | |
+#                                                                               |   |    | |
+# 4.2.2 Configure journald                                                      |   |    | |
+# 4.2.2.1 Ensure journald is configured to send logs to rsyslog (Automated)     |2  |1sw | |
+# 4.2.2.2 Ensure journald is configured to compress large log files (Automated) |2  |1sw | |
+# 4.2.2.3 Ensure journald is configured to write logfiles to persistent disk    |   |    | |
+#          (Automated)                                                          |1/2|1sw | |
+# 4.2.3 Ensure permissions on all logfiles are configured (Automated)           |1  |1sw | |
+# 4.2.4 Ensure logrotate is configured (Manual)                                 |2  |1sw | |
+#                                                                               |   |    | |
+# 5 Access, Authentication and Authorization                                    |   |    | |
+# 5.1 Configure time-based job schedulers                                       |   |    | |
+# 5.1.1 Ensure cron daemon is enabled and running (Automated)                   |1  |1sw | |
+# 5.1.2 Ensure permissions on /etc/crontab are configured (Automated)           |1  |1sw | |
+# 5.1.3 Ensure permissions on /etc/cron.hourly are configured (Automated)       |1  |1sw | |
+# 5.1.4 Ensure permissions on /etc/cron.daily are configured (Automated)        |1  |1sw | |
+# 5.1.5 Ensure permissions on /etc/cron.weekly are configured (Automated)       |1  |1sw | |
+# 5.1.6 Ensure permissions on /etc/cron.monthly are configured (Automated)      |1  |1sw | |
+# 5.1.7 Ensure permissions on /etc/cron.d are configured (Automated)            |1  |1sw | |
+# 5.1.8 Ensure cron is restricted to authorized users (Automated)               |1  |1sw | |
+# 5.1.9 Ensure at is restricted to authorized users (Automated)                 |1  |1sw | |
+#                                                                               |   |    | |
+# 5.2 Configure SSH Server                                                      |   |    | |
+# 5.2.1 Ensure permissions on /etc/ssh/sshd_config are configured (Automated)   |1  |1sw | |
+# 5.2.2 Ensure permissions on SSH private host key files are configured         |   |    | |
+#         (Automated)                                                           |1  |1sw | |
+# 5.2.3 Ensure permissions on SSH public host key files are configured          |   |    | |
+#         (Automated)                                                           |1  |1sw | |
+# 5.2.4 Ensure SSH access is limited (Automated)                                |1  |1sw | |
+# 5.2.5 Ensure SSH LogLevel is appropriate (Automated)                          |1/2|1sw | |
+# 5.2.6 Ensure SSH X11 forwarding is disabled (Automated)                       |2  |2s1w| |
+# 5.2.7 Ensure SSH MaxAuthTries is set to 4 or less (Automated)                 |2/3|1sw | |
+# 5.2.8 Ensure SSH IgnoreRhosts is enabled (Automated)                          |1/2|1sw | |
+# 5.2.9 Ensure SSH HostbasedAuthentication is disabled (Automated)              |1/2|1sw | |
+# 5.2.10 Ensure SSH root login is disabled (Automated)                          |1  |1sw | |
+# 5.2.11 Ensure SSH PermitEmptyPasswords is disabled (Automated)                |1/2|1sw | |
+# 5.2.12 Ensure SSH PermitUserEnvironment is disabled (Automated)               |1  |1sw | |
+# 5.2.13 Ensure only strong Ciphers are used (Automated)                        |2  |1sw | |
+# 5.2.14 Ensure only strong MAC algorithms are used (Automated)                 |1/2|1sw | |
+# 5.2.15 Ensure only strong Key Exchange algorithms are used (Automated)        |1/2|1sw | |
+# 5.2.16 Ensure SSH Idle Timeout Interval is configured (Automated)             |1  |1sw | |
+# 5.2.17 Ensure SSH LoginGraceTime is set to one minute or less (Automated)     |1  |1sw | |
+# 5.2.18 Ensure SSH warning banner is configured (Automated)                    |1  |1sw |Y|
+# 5.2.19 Ensure SSH PAM is enabled (Automated)                                  |1  |1sw | |
+# 5.2.20 Ensure SSH AllowTcpForwarding is disabled (Automated)                  |1/2|2sw | |
+# 5.2.21 Ensure SSH MaxStartups is configured (Automated)                       |1  |1sw | |
+# 5.2.22 Ensure SSH MaxSessions is limited (Automated)                          |1  |1sw | |
+#                                                                               |   |    | |
+# 5.3 Configure PAM                                                             |   |    | |
+# 5.3.1 Ensure password creation requirements are configured (Automated)        |1/2|1sw | |
+# 5.3.2 Ensure lockout for failed password attempts is configured (Automated)   |1/2|1sw | |
+# 5.3.3 Ensure password reuse is limited (Automated)                            |1  |1sw | |
+#                                                                               |   |    | |
+# 5.4 User Accounts and Environment                                             |   |    | |
+# 5.4.1 Set Shadow Password Suite Parameters                                    |   |    | |
+# 5.4.1.1 Ensure password hashing algorithm is SHA-512 (Automated)              |2  |1sw | |
+# 5.4.1.2 Ensure password expiration is 365 days or less (Automated)            |1/2|1sw | |
+# 5.4.1.3 Ensure minimum days between password changes is configured (Automated)|1/2|1sw | |
+# 5.4.1.4 Ensure password expiration warning days is 7 or more (Automated)      |1/2|1sw | |
+# 5.4.1.5 Ensure inactive password lock is 30 days or less (Automated)          |1  |1sw | |
+# 5.4.1.6 Ensure all users last password change date is in the past (Automated) |1/2|1sw | |
+# 5.4.2 Ensure system accounts are secured (Automated)                          |1  |1sw | |
+# 5.4.3 Ensure default group for the root account is GID 0 (Automated)          |1  |1sw | |
+# 5.4.4 Ensure default user shell timeout is configured (Automated)             |1  |1sw | |
+# 5.4.5 Ensure default user umask is configured (Automated)                     |1  |1sw | |
+# 5.5 Ensure root login is restricted to system console (Manual)                |1  |1sw | |
+# 5.6 Ensure access to the su command is restricted (Automated)                 |1  |1sw | |
+#                                                                               |   |    | |
+# 6 System Maintenance                                                          |   |    | |
+# 6.1 System File Permissions                                                   |   |    | |
+# 6.1.1 Audit system file permissions (Manual)                                  |1  |2sw | |
+# 6.1.2 Ensure permissions on /etc/passwd are configured (Automated)            |1  |1sw | |
+# 6.1.3 Ensure permissions on /etc/shadow are configured (Automated)            |1  |1sw | |
+# 6.1.4 Ensure permissions on /etc/group are configured (Automated)             |1  |1sw | |
+# 6.1.5 Ensure permissions on /etc/passwd- are configured (Automated)           |1  |1sw | |
+# 6.1.6 Ensure permissions on /etc/shadow- are configured (Automated)           |1  |1sw | |
+# 6.1.7 Ensure permissions on /etc/group- are configured (Automated)            |1  |1sw | |
+# 6.1.8 Ensure no world writable files exist (Automated)                        |1  |1sw | |
+# 6.1.9 Ensure no unowned files or directories exist (Automated)                |1  |1sw | |
+# 6.1.10 Ensure no ungrouped files or directories exist (Automated)             |1  |1sw | |
+# 6.1.11 Audit SUID executables (Manual)                                        |1  |1sw | |
+# 6.1.12 Audit SGID executables (Manual)                                        |1  |1sw | |
+#                                                                               |   |    | |
+# 6.2 User and Group Settings                                                   |   |    | |
+# 6.2.1 Ensure accounts in /etc/passwd use shadowed passwords (Automated)       |2  |1sw | |
+# 6.2.2 Ensure /etc/shadow password fields are not empty (Automated)            |1/2|1sw | |
+# 6.2.3 Ensure root is the only UID 0 account (Automated)                       |1  |1sw | |
+# 6.2.4 Ensure root PATH Integrity (Automated)                                  |1  |1sw | |
+# 6.2.5 Ensure all users' home directories exist (Automated)                    |1  |1sw | |
+# 6.2.6 Ensure users' home directories permissions are 750 or more restrictive  |   |    | |
+#         (Automated)                                                           |1  |1sw | |
+# 6.2.7 Ensure users own their home directories (Automated)                     |1  |1sw | |
+# 6.2.8 Ensure users' dot files are not group or world writable (Automated)     |1  |1sw | |
+# 6.2.9 Ensure no users have .forward files (Automated)                         |1  |1sw | |
+# 6.2.10 Ensure no users have .netrc files (Automated)                          |1/2|1sw | |
+# 6.2.11 Ensure users' .netrc Files are not group or world accessible           |   |    | |
+#          (Automated)                                                          |1  |1sw | |
+# 6.2.12 Ensure no users have .rhosts files (Automated)                         |1/2|1sw | |
+# 6.2.13 Ensure all groups in /etc/passwd exist in /etc/group (Automated)       |1  |1sw | |
+# 6.2.14 Ensure no duplicate UIDs exist (Automated)                             |1  |1sw | |
+# 6.2.15 Ensure no duplicate GIDs exist (Automated)                             |1  |1sw | |
+# 6.2.16 Ensure no duplicate user names exist (Automated)                       |1  |1sw | |
+# 6.2.17 Ensure no duplicate group names exist (Automated)                      |1  |1sw | |
+# 6.2.18 Ensure shadow group is empty (Automated)                               |1  |1sw | |
+#
+#
+#
+# -------------------------------------+---------------------------------------8
+# Reviews:
+#
+#
+# -------------------------------------+---------------------------------------8
+---
+# -------------------------------------+---------------------------------------8
+# Step: 01
+# Description:  Informational - OS Distribution ID
+#
+- name:                                 "Informational: OS Distribution ID"
+  ansible.builtin.assert:
+    that:
+      - distribution_id in distribution_id_known
+    success_msg: |-
+                                        Host:             {{ inventory_hostname }}
+                                        Distribution ID:  {{ distribution_id }}
+    fail_msg: |-
+                                        Host:             {{ inventory_hostname }}
+                                        Distribution ID:  {{ distribution_id }}
+
+                                        This Distribution ID is not accounted for.
+  ignore_errors:                        true
+# Step: 03 - END
+# -------------------------------------+---------------------------------------8
+
+
+- fail:
+
+# distribution_id_known:
+#   - sles12                                                                      # publisher=suse    offer=sles-12-sp5         sku=gen2
+#   - sles_sap12                                                                  # publisher=suse    offer=sles-sap-12-sp5     sku=gen2
+#   - sles15                                                                      # publisher=suse    offer=sles-15-sp3-basic   sku=gen2
+#   - sles_sap15                                                                  # publisher=suse    offer=sles-sap-15-sp3     sku=gen2
+#   - redhat7                                                                     # publisher=RedHat  offer=RHEL                sku=77-gen2 
+#   - redhat7                                                                     # publisher=RedHat  offer=RHEL-SAP-HA         sku=77sapha-gen2 
+#   - redhat8                                                                     # publisher=RedHat  offer=RHEL                sku=86-gen2 
+#   - redhat8                                                                     # publisher=RedHat  offer=RHEL-SAP-HA         sku=86sapha-gen2 
+#   - redhat9                                                                     # publisher=RedHat  offer=RHEL                sku=91-gen2 
+#   - oraclelinux7                                                                # publisher=Oracle  offer=Oracle-Linux        sku=ol79-lvm-gen2 
+#   - oraclelinux8                                                                # publisher=Oracle  offer=Oracle-Linux        sku=ol86-lvm-gen2 
+#   - oraclelinux9                                                                # publisher=Oracle  offer=Oracle-Linux        sku=ol9-lvm-gen2 
+
+
+# -------------------------------------+---------------------------------------8
+# Task:
+#   Ensure permissions on /etc/motd are configured
+#
+# Guides:
+#   - SLES 12 v3.1.0
+# 1.8 Warning Banners                                                           |   |    | |
+# 1.8.1 Command Line Warning Banners                                            |   |    | |
+# 1.8.1.1 Ensure message of the day is configured properly (Automated)          |1  |1sw |Y|
+# 1.8.1.2 Ensure local login warning banner is configured properly (Automated)  |1  |1sw |Y|
+# 1.8.1.3 Ensure remote login warning banner is configured properly (Automated) |1  |1sw |Y|
+# 1.8.1.4 Ensure permissions on /etc/motd are configured (Automated)            |1  |1sw |Y|
+# 1.8.1.5 Ensure permissions on /etc/issue are configured (Automated)           |1  |1sw |Y|
+# 1.8.1.6 Ensure permissions on /etc/issue.net are configured (Automated)       |1  |1sw |Y|
+#
+#   - SLES 15 v1.1.1
+# 1.8 Warning Banners                                                           |   |    | |
+# 1.8.1 Command Line Warning Banners                                            |   |    | |
+# 1.8.1.1 Ensure message of the day is configured properly (Automated)          |1  |1sw |Y|
+# 1.8.1.2 Ensure local login warning banner is configured properly (Automated)  |1  |1sw |Y|
+# 1.8.1.3 Ensure remote login warning banner is configured properly (Automated) |1  |1sw |Y|
+# 1.8.1.4 Ensure permissions on /etc/motd are configured (Automated)            |1  |1sw |Y|
+# 1.8.1.5 Ensure permissions on /etc/issue are configured (Automated)           |1  |1sw |Y|
+# 1.8.1.6 Ensure permissions on /etc/issue.net are configured (Automated)       |1  |1sw |Y|
+
+
+- name:                                     "Warning Banners"
+  ansible.builtin.include_role:
+    name:                                   roles-cis/warning-banners
+  when:
+    - distribution_id in                    ['sles12', sles_sap12', 'sles15', 'sles_sap15']
+    - cis_phase|default("peri") ==          "pre"
+# -------------------------------------+---------------------------------------8
+
+
+
+# -------------------------------------+---------------------------------------8
+# Task:
+#   Configure SSH Server
+#
+# Guides:
+#   - SLES 12 v3.1.0  
+# 5.2 Configure SSH Server                                                      |   |    | |
+# 5.2.18 Ensure SSH warning banner is configured (Automated)                    |1  |1sw |Y|
+#
+#   - SLES 15 v1.1.1  
+# 5.2 Configure SSH Server                                                      |   |    | |
+# 5.2.18 Ensure SSH warning banner is configured (Automated)                    |1  |1sw |Y|
+
+- name:                                     "Configure SSH Server"
+  ansible.builtin.include_role:
+    name:                                   roles-cis/configure-ssh-server
+  when:
+    - distribution_id in                    ['sles12', sles_sap12', 'sles15', 'sles_sap15']
+    - cis_phase|default("peri") ==          "pre"
+
+# -------------------------------------+---------------------------------------8
+
+
+
+
+...
+# /*---------------------------------------------------------------------------8
+# |                                   END                                      |
+# +------------------------------------4--------------------------------------*/

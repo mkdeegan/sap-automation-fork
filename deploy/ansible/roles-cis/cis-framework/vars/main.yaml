@@ -1,0 +1,59 @@
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |                              CIS Framework                                 |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
+# Description:  
+#
+#
+---
+# ansible_distribution                = Ubuntu
+# ansible_distribution_version        = 18.04
+# ansible_distribution_major_version  = 18
+
+#  when:                                distribution_id in ['suse15', 'redhat8', 'sles_sap15']
+# distro_name:                           "{{ ansible_distribution | upper }}-{{ ansible_distribution_major_version }}"
+
+distribution_id:                       "{{ ansible_distribution | lower ~ ansible_distribution_major_version }}"
+distribution_id_known:
+  - sles12                                                                      # publisher=suse    offer=sles-12-sp5         sku=gen2
+  - sles_sap12                                                                  # publisher=suse    offer=sles-sap-12-sp5     sku=gen2
+  - sles15                                                                      # publisher=suse    offer=sles-15-sp3-basic   sku=gen2
+  - sles_sap15                                                                  # publisher=suse    offer=sles-sap-15-sp3     sku=gen2
+  - redhat7                                                                     # publisher=RedHat  offer=RHEL                sku=77-gen2 
+  - redhat7                                                                     # publisher=RedHat  offer=RHEL-SAP-HA         sku=77sapha-gen2 
+  - redhat8                                                                     # publisher=RedHat  offer=RHEL                sku=86-gen2 
+  - redhat8                                                                     # publisher=RedHat  offer=RHEL-SAP-HA         sku=86sapha-gen2 
+  - redhat9                                                                     # publisher=RedHat  offer=RHEL                sku=91-gen2 
+  - oraclelinux7                                                                # publisher=Oracle  offer=Oracle-Linux        sku=ol79-lvm-gen2 
+  - oraclelinux8                                                                # publisher=Oracle  offer=Oracle-Linux        sku=ol86-lvm-gen2 
+  - oraclelinux9                                                                # publisher=Oracle  offer=Oracle-Linux        sku=ol9-lvm-gen2 
+
+os:
+  sles:
+    sles12:
+      - sles12
+      - sles_sap12
+    sles15:
+      - sles15
+      - sles_sap15
+  rhel:
+    rhel7:
+      - redhat7
+    rhel8:
+      - redhat8
+    rhel9:
+      - redhat9
+  oraclelinux:
+    oel7:
+      - oraclelinux7
+    oel8:
+      - oraclelinux8
+    oel9:
+      - oraclelinux9
+
+
+...
+# /*---------------------------------------------------------------------------8
+# |                                   END                                      |
+# +------------------------------------4--------------------------------------*/

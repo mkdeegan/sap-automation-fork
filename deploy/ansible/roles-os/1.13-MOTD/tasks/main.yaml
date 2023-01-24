@@ -40,34 +40,42 @@
 # Update banners - Overwrite existing ones
 #
 # -------------------------------------+---------------------------------------8
-- name:                                "1.13 MOTD: - Update motd banners"
-  ansible.builtin.copy:
-    src:                               files/motd
-    dest:                              /etc/motd
-    owner:                             root
-    group:                             root
-    mode:                              0644
-  become:                              true
+# 20230120 MKD - BEGIN
+# Moved functionality to CIS
+# - name:                                "1.13 MOTD: - Update motd banners"
+#   ansible.builtin.copy:
+#     src:                               files/motd
+#     dest:                              /etc/motd
+#     owner:                             root
+#     group:                             root
+#     mode:                              0644
+#   become:                              true
 
-- name:                                "1.13 MOTD: - Update issue banners"
-  ansible.builtin.copy:
-    src:                               files/issue
-    dest:                              /etc/issue
-    owner:                             root
-    group:                             root
-    mode:                              0644
-  become:                              true
+# - name:                                "1.13 MOTD: - Update issue banners"
+#   ansible.builtin.copy:
+#     src:                               files/issue
+#     dest:                              /etc/issue
+#     owner:                             root
+#     group:                             root
+#     mode:                              0644
+#   become:                              true
 
-- name:                                "1.13 MOTD: - Update issue.net banners"
-  ansible.builtin.copy:
-    src:                               files/issue
-    dest:                              /etc/issue.net
-    owner:                             root
-    group:                             root
-    mode:                              0644
-  become:                              true
+# - name:                                "1.13 MOTD: - Update issue.net banners"
+#   ansible.builtin.copy:
+#     src:                               files/issue
+#     dest:                              /etc/issue.net
+#     owner:                             root
+#     group:                             root
+#     mode:                              0644
+#   become:                              true
+# 20230120 MKD - END
 
 # -------------------------------------+---------------------------------------8
+#
+# PrintMotd:  The option PrintMotd specifies whether the ssh daemon should print
+#             the contents of the /etc/motd file when a user logs in
+#             interactively. The /etc/motd file is also known as the message of
+#             the day.
 #
 # ssh configuration changes required for this
 # Update printmotd if commented. We do not change it is explicitly set to no
@@ -83,14 +91,17 @@
   notify:
     - restart sshd service
 
-- name:                                "1.13 MOTD: - Update default Banner path"
-  ansible.builtin.lineinfile:
-    state:                             present
-    dest:                              /etc/ssh/sshd_config
-    regexp:                            '#Banner'
-    line:                              'Banner /etc/issue.net'
-  become:                              true
-  notify:
-    - restart sshd service
+# 20230120 MKD - BEGIN
+# Moved functionality to CIS
+# - name:                                "1.13 MOTD: - Update default Banner path"
+#   ansible.builtin.lineinfile:
+#     state:                             present
+#     dest:                              /etc/ssh/sshd_config
+#     regexp:                            '#Banner'
+#     line:                              'Banner /etc/issue.net'
+#   become:                              true
+#   notify:
+#     - restart sshd service
+# 20230120 MKD - END
 
 ...
