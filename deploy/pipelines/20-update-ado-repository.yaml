@@ -95,7 +95,6 @@ stages:
               #>>>> START OF INSERTION <<<<
               debug=$(v_debug)
               [ "$debug" = True ] && set -x                                                   # Debugging On
-              echo "debug = $debug"
               #>>>> END OF INSERTION <<<<<<
               #--------------------------------------------------------------------
 
