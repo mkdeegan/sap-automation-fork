@@ -154,5 +154,5 @@ stages:
             displayName:               Update ADO repository
             env:
               SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
-            failOnStderr:              false
+            failOnStderr:              true
 ...
