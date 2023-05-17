@@ -28,6 +28,21 @@ parameters:
     type:                              boolean
     default:                           false
 
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230516 MKD
+  #
+  # Notes:
+  #   Establish debug framework.
+  #--------------------------------------------------------------------
+  #>>>> START OF INSERTION <<<<
+  - name:                              debug
+    displayName:                       Debug Mode
+    type:                              boolean
+    default:                           false
+  #>>>> END OF INSERTION <<<<<<
+  #--------------------------------------------------------------------
+
 trigger:                               none
 
 pool:
@@ -44,6 +59,18 @@ variables:
     value:                             ${{ parameters.force }}
   - name:                              log
     value:                             logfile_$(Build.BuildId)
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230516 MKD
+  #
+  # Notes:
+  #   Establish debug framework.
+  #--------------------------------------------------------------------
+  #>>>> START OF INSERTION <<<<
+  - name:                              debug
+    value:                             ${{ parameters.debug }}
+  #>>>> END OF INSERTION <<<<<<
+  #--------------------------------------------------------------------
 
 stages:
   - stage:                             Update_ADO_repository
@@ -65,7 +92,7 @@ stages:
               #   Establish debug framework.
               #--------------------------------------------------------------------
               #>>>> START OF INSERTION <<<<
-              debug=true
+              debug=$(debug)
               [ debug ] && set -x                                                                     # Debugging On
               #>>>> END OF INSERTION <<<<<<
               #--------------------------------------------------------------------
