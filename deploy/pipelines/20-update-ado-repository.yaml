@@ -93,7 +93,7 @@ stages:
               #--------------------------------------------------------------------
               #>>>> START OF INSERTION <<<<
               debug=$(v_debug)
-              [ debug ] && set -x                                                                     # Debugging On
+              [[ debug ]] && set -x                                                           # Debugging On
               echo "debug = $debug"
               #>>>> END OF INSERTION <<<<<<
               #--------------------------------------------------------------------
