@@ -75,6 +75,18 @@ stages:
               git config --global pull.ff false
               git config --global pull.rebase false
 
+              #--------------------------------------------------------------------
+              # Change:                                                        
+              #   20230516 MKD
+              #--------------------------------------------------------------------
+              # Notes:
+              #   
+              #--------------------------------------------------------------------
+              #>>>> START OF INSERTION <<<<
+              git checkout $(branch)
+              #>>>> END OF INSERTION <<<<<<
+              #--------------------------------------------------------------------
+
               git pull -q
 
               git remote add remote-repo $(repository) >> /tmp/$(log) 2>&1
