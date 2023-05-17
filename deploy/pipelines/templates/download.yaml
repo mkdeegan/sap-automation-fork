@@ -2,18 +2,37 @@ parameters:
   includeAnsibleData: false
   getLatestFromBranch: false
 steps:
-  - checkout: sap-automation
-    path: s/sap-automation
-  - checkout: self
-    path: s/config
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230424 MKD
+  #
+  # Notes:
+  #   
+  #--------------------------------------------------------------------
+  #>>>> START OF DELETION <<<<
+  # - checkout: sap-automation
+  #   path: s/sap-automation
+  # - checkout: self
+  #   path: s/config
+  #   persistCredentials: true
+  #   fetchDepth: 0
+  #>>>> END   OF DELETION <<<<
+  #>>>> START OF INSERTION <<<<
+  - checkout:           git://sap-automation
+    path:               s/sap-automation
+  - checkout:           git://configuration
+    path:               s/config
+    fetchDepth:         0
     persistCredentials: true
-    fetchDepth: 0
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
   - ${{ if eq(parameters.includeAnsibleData, true) }}:
       - download: current
         artifact: ansible_data
         displayName: "Download ansible_data"
   - ${{ if eq(parameters.getLatestFromBranch, true) }}:
       - script: |
+          #--------------------------------------4---------------------------------------8
           #!/bin/bash
           # This script will get the latest commit from the selected branch and pulls all latest commits of that branch.
           # This is needed because some  jobs are dependent on commits of previous jobs.
@@ -27,7 +46,21 @@ steps:
           export currentFolder=$(pwd)
 
           cd $(Build.SourcesDirectory)/config
-          git checkout -q $(Build.SourceBranchName)
+          #--------------------------------------------------------------------
+          # Change:                                                        
+          #   20230424 MKD
+          #
+          # Notes:
+          #   Configuration should persist independent of branch changes of the 
+          #   code repository.
+          #--------------------------------------------------------------------
+          #>>>> START OF DELETION <<<<
+          # git checkout -q $(Build.SourceBranchName)
+          #>>>> END   OF DELETION <<<<
+          #>>>> START OF INSERTION <<<<
+          git checkout -q main
+          #>>>> END   OF INSERTION <<<<
+          #--------------------------------------------------------------------
           git pull
 
           git config --global user.email "$(Build.RequestedForEmail)"

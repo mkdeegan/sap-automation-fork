@@ -1,8 +1,22 @@
+---
 # /*---------------------------------------------------------------------------8
 # |                                                                            |
 # |               This pipeline deploys the SAP Infrastructure                 |
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
+
+#--------------------------------------------------------------------
+# Change:                                                        
+#   20230424 MKD
+#
+# Notes:
+#   Disable automatic triggering of pipeline when code is changed.
+#--------------------------------------------------------------------
+#>>>> START OF INSERTION <<<<
+name:                                   Deploy SAP System Infrastructure
+trigger:                                none
+#>>>> END   OF INSERTION <<<<
+#--------------------------------------------------------------------
 
 parameters:
   - name:                              sap_system
@@ -415,3 +429,5 @@ stages:
               LOGON_USING_SPN:          $(Logon_Using_SPN)
 
             failOnStderr:               false
+
+...

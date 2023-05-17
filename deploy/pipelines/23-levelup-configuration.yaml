@@ -5,7 +5,8 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
-name: Update the sample configuration
+name:                                   Update the sample configuration
+trigger:                                none
 
 parameters:
   - name:                              storage_account_name
@@ -22,8 +23,6 @@ parameters:
     displayName:                       Deployer Environment name (MGMT, DEV, QA, PRD, ...)
     type:                              string
     default:                           MGMT
-
-trigger:                               none
 
 pool:
   name:                                $[coalesce(variables['POOL'], variables['Agent'])]
@@ -73,4 +72,5 @@ stages:
               Deployer_Key_Vault:      $(Deployer_Key_Vault)
               DEPLOYMENT_REPO_PATH:    $(Build.Repository.LocalPath)
             failOnStderr:              false
+
 ...

@@ -5,6 +5,18 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
+#--------------------------------------------------------------------
+# Change:                                                        
+#   20230424 MKD
+#
+# Notes:
+#   Disable automatic triggering of pipeline when code is changed.
+#--------------------------------------------------------------------
+#>>>> START OF INSERTION <<<<
+trigger:                                none
+#>>>> END   OF INSERTION <<<<
+#--------------------------------------------------------------------
+
 parameters:
   - name:                              deployer
     displayName:                       "Deployer configuration name, use this format: ENV-LOCA-VNET-INFRASTRUCTURE"
@@ -677,3 +689,5 @@ stages:
               TF_IN_AUTOMATION:         true
               TF_LOG:                   $(TF_LOG)
             failOnStderr:               false
+
+...

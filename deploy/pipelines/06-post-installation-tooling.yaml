@@ -8,6 +8,7 @@
 # +------------------------------------4--------------------------------------*/
 
 name:                                  Post installation tooling
+trigger:                               none
 
 parameters:
   - name:                              sap_system_configuration_name
@@ -37,8 +38,6 @@ parameters:
     displayName:                       HANA Cloud Measurement Tool
     type:                              boolean
     default:                           false
-
-trigger:                               none
 
 variables:
   - group:                             "SDAF-General"

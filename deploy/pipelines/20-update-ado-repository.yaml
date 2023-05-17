@@ -6,6 +6,7 @@
 # +------------------------------------4--------------------------------------*/
 
 name:                                  Update Azure DevOps repository from GitHub $(branch) branch
+trigger:                               none
 
 parameters:
   - name:                              repository
@@ -40,10 +41,8 @@ parameters:
     displayName:                       Debug Mode
     type:                              boolean
     default:                           false
-  #>>>> END OF INSERTION <<<<<<
+  #>>>> END   OF INSERTION <<<<
   #--------------------------------------------------------------------
-
-trigger:                               none
 
 pool:
   vmImage:                             ubuntu-latest
@@ -69,7 +68,7 @@ variables:
   #>>>> START OF INSERTION <<<<
   - name:                              v_debug
     value:                             ${{ parameters.p_debug }}
-  #>>>> END OF INSERTION <<<<<<
+  #>>>> END   OF INSERTION <<<<
   #--------------------------------------------------------------------
 
 stages:
@@ -95,7 +94,7 @@ stages:
               #>>>> START OF INSERTION <<<<
               debug=$(v_debug)
               [ "$debug" = True ] && set -x                                                   # Debugging On
-              #>>>> END OF INSERTION <<<<<<
+              #>>>> END   OF INSERTION <<<<
               #--------------------------------------------------------------------
 
               git config --global user.email "$(Build.RequestedForEmail)"
@@ -112,7 +111,7 @@ stages:
               #--------------------------------------------------------------------
               #>>>> START OF INSERTION <<<<
               git checkout $(branch)
-              #>>>> END OF INSERTION <<<<<<
+              #>>>> END   OF INSERTION <<<<
               #--------------------------------------------------------------------
 
               git pull -q
@@ -164,10 +163,10 @@ stages:
             #--------------------------------------------------------------------
             #>>>> START OF DELETION <<<<
             # failOnStderr:              true
-            #>>>> END OF DELETION <<<<<<
+            #>>>> END   OF DELETION <<<<
             #>>>> START OF INSERTION <<<<
             failOnStderr:              false
-            #>>>> END OF INSERTION <<<<<<
+            #>>>> END   OF INSERTION <<<<
             #--------------------------------------------------------------------
 
 ...

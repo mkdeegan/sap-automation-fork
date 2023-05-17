@@ -5,6 +5,19 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
+#--------------------------------------------------------------------
+# Change:                                                        
+#   20230424 MKD
+#
+# Notes:
+#   Disable automatic triggering of pipeline when code is changed.
+#--------------------------------------------------------------------
+#>>>> START OF INSERTION <<<<
+name:                                   Deploy Control Plane
+trigger:                                none
+#>>>> END   OF INSERTION <<<<
+#--------------------------------------------------------------------
+
 parameters:
   - name:                              deployer
     displayName:                       "Deployer configuration name, use the following syntax: ENV-LOCA-VNET-INFRASTRUCTURE"
@@ -51,6 +64,7 @@ parameters:
   - name:                              force_reset
     displayName:                       Force a re-install - may require multiple re-runs
     type:                              boolean
+
 stages:
     - stage: Prepare_Deployer
       condition: and(not(failed()), not(canceled()))
@@ -913,3 +927,4 @@ stages:
                       WEBAPP_ID:               $(WEBAPP_ID)
                       WEBAPP_IDENTITY:         $(WEBAPP_IDENTITY)
 
+...

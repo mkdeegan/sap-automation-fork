@@ -6,6 +6,18 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
+#--------------------------------------------------------------------
+# Change:                                                        
+#   20230424 MKD
+#
+# Notes:
+#   Disable automatic triggering of pipeline when code is changed.
+#--------------------------------------------------------------------
+#>>>> START OF INSERTION <<<<
+trigger:                                none
+#>>>> END   OF INSERTION <<<<
+#--------------------------------------------------------------------
+
 parameters:
   - name:                              cleanup_sap
     displayName:                       Remove the SAP system
@@ -693,3 +705,5 @@ stages:
               CONFIG_REPO_PATH:         ${{ parameters.config_repo_path }}/$(Deployment_Configuration_Path)
 
             failOnStderr:               false
+
+...

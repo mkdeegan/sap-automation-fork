@@ -5,6 +5,19 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
+#--------------------------------------------------------------------
+# Change:                                                        
+#   20230424 MKD
+#
+# Notes:
+#   Disable automatic triggering of pipeline when code is changed.
+#--------------------------------------------------------------------
+#>>>> START OF INSERTION <<<<
+name:                                   Deploy Workload Zone
+trigger:                                none
+#>>>> END   OF INSERTION <<<<
+#--------------------------------------------------------------------
+
 parameters:
   - name:                              workload_zone
     displayName:                       "Workload zone configuration name, use the following syntax: ENV-LOCA-VNET-INFRASTRUCTURE"
@@ -659,3 +672,5 @@ stages:
               CONFIG_REPO_PATH:        ${{ parameters.config_repo_path }}/$(Deployment_Configuration_Path)
               LOGON_USING_SPN:         $(Logon_Using_SPN)
             failOnStderr: false
+
+...

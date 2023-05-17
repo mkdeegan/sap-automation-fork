@@ -4,6 +4,20 @@
 # |               This pipeline downloads the SAP software                     |
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
+
+#--------------------------------------------------------------------
+# Change:                                                        
+#   20230424 MKD
+#
+# Notes:
+#   Disable automatic triggering of pipeline when code is changed.
+#--------------------------------------------------------------------
+#>>>> START OF INSERTION <<<<
+name:                                   Download BOM from SAP
+trigger:                                none
+#>>>> END   OF INSERTION <<<<
+#--------------------------------------------------------------------
+
 parameters:
   - name:                              bom_base_name
     displayName:                       Name of Bill of Materials (BoM)
@@ -240,3 +254,4 @@ stages:
               ExtraParams:                   ${{ parameters.ExtraParams }}
             failOnStderr:                    false
 
+...

@@ -1,7 +1,12 @@
-# This pipeline publishes and deploys the control plane UI
+---
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |         This pipeline publishes and deploys the control plane UI           |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
 
-trigger:
-- none
+name:                                   Deploy Web App
+trigger:                                none
 
 pool:
   name:                                $[coalesce(variables['POOL'], variables['Agent'])]
@@ -161,3 +166,5 @@ stages:
 
               echo "##vso[task.uploadsummary]$(Build.Repository.LocalPath)/Web Application Configuration.md"
             displayName:                         'Documentation'
+
+...

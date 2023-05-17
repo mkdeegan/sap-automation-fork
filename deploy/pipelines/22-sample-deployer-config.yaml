@@ -1,5 +1,11 @@
-name:                                  Create Deployer Configuration
+---
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |               This pipeline updates the sample configuration               |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
 
+name:                                  Create Deployer Configuration
 trigger:                               none
 
 parameters:
@@ -266,3 +272,5 @@ stages:
               failOnStderr:            false
               showWarnings:            true
               pwsh:                    true
+
+...
