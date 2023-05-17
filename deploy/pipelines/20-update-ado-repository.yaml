@@ -82,6 +82,7 @@ stages:
           - checkout:                  self
             persistCredentials:        true
           - bash: |
+              #--------------------------------------4---------------------------------------8
               #!/bin/bash
               green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
               #--------------------------------------------------------------------
@@ -93,7 +94,7 @@ stages:
               #--------------------------------------------------------------------
               #>>>> START OF INSERTION <<<<
               debug=$(v_debug)
-              [[ debug ]] && set -x                                                           # Debugging On
+              [ "debug" = true ] && set -x                                                    # Debugging On
               echo "debug = $debug"
               #>>>> END OF INSERTION <<<<<<
               #--------------------------------------------------------------------
