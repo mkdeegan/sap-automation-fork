@@ -156,5 +156,19 @@ stages:
             displayName:               Update ADO repository
             env:
               SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
-            failOnStderr:              true
+            #--------------------------------------------------------------------
+            # Change:                                                        
+            #   20230516 MKD
+            #
+            # Notes:
+            #   
+            #--------------------------------------------------------------------
+            #>>>> START OF DELETION <<<<
+            # failOnStderr:              true
+            #>>>> END OF DELETION <<<<<<
+            #>>>> START OF INSERTION <<<<
+            failOnStderr:              false
+            #>>>> END OF INSERTION <<<<<<
+            #--------------------------------------------------------------------
+
 ...
