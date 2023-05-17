@@ -74,6 +74,18 @@ stages:
                 - task:                PostBuildCleanup@3
                 - bash: |
                       #!/bin/bash
+                      #--------------------------------------------------------------------
+                      # Change:                                                        
+                      #   20230516 MKD
+                      #--------------------------------------------------------------------
+                      # Notes:
+                      #   Establish debug framework.
+                      #--------------------------------------------------------------------
+                      #>>>> START OF INSERTION <<<<
+                      debug=true
+                      [ debug ] && set -x                                                                     # Debugging On
+                      #>>>> END OF INSERTION <<<<<<
+                      #--------------------------------------------------------------------
 
                         echo "##vso[build.updatebuildnumber]Deploying the control plane defined in $(deployerfolder) $(libraryfolder)"
                             green="\e[1;32m"
