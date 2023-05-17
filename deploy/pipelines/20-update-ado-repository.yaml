@@ -36,7 +36,7 @@ parameters:
   #   Establish debug framework.
   #--------------------------------------------------------------------
   #>>>> START OF INSERTION <<<<
-  - name:                              debug
+  - name:                              p_debug
     displayName:                       Debug Mode
     type:                              boolean
     default:                           false
@@ -67,8 +67,8 @@ variables:
   #   Establish debug framework.
   #--------------------------------------------------------------------
   #>>>> START OF INSERTION <<<<
-  - name:                              debug
-    value:                             ${{ parameters.debug }}
+  - name:                              v_debug
+    value:                             ${{ parameters.p_debug }}
   #>>>> END OF INSERTION <<<<<<
   #--------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ stages:
               #   Establish debug framework.
               #--------------------------------------------------------------------
               #>>>> START OF INSERTION <<<<
-              debug=$(debug)
+              debug=$(v_debug)
               [ debug ] && set -x                                                                     # Debugging On
               #>>>> END OF INSERTION <<<<<<
               #--------------------------------------------------------------------
