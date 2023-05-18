@@ -49,13 +49,35 @@ parameters:
     type:                              boolean
     default:                           false
 
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230419 MKD
+  #
+  # Notes:
+  #   - Fix typo
+  #   - Add default value
+  #--------------------------------------------------------------------
+  #>>>> START OF DELETION <<<<
+  # - name:                              sap_automation_repo_path
+  #   displayName:                       The local path on the agent where the sap_automation repo can be found
+  #   type:                              string
+
+  # - name:                              config_repo_path
+  #   displayName:                       The local path on the agent where the config repo can be found
+  #   type:                              string
+  #>>>> END   OF DELETION <<<<
+  #>>>> START OF INSERTION <<<<
   - name:                              sap_automation_repo_path
-    displayName:                       The local path on the agent where the sap_automation repo can be found
+    displayName:                       The local path on the agent where the sap-automation repo can be found
     type:                              string
+    default:                           sap-automation
 
   - name:                              config_repo_path
     displayName:                       The local path on the agent where the config repo can be found
     type:                              string
+    default:                           config
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
 
   - name:                              connection_name
     displayName:                       Service Connection Name
