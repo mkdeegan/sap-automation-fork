@@ -197,9 +197,9 @@ stages:
               #   git checkout -q $(Build.SourceBranchName)
               #>>>> END   OF DELETION <<<<
               #>>>> START OF INSERTION <<<<
-              echo "##[section]--- Checkout $v_config_branch branch in configuration repository ---"
+              echo "##[section]--- Checkout $(v_config_branch) branch in configuration repository ---"
                 cd $CONFIG_REPO_PATH
-                git checkout -q $v_config_branch
+                git checkout -q $(v_config_branch)
               #>>>> END   OF INSERTION <<<<
               #--------------------------------------------------------------------
 
@@ -432,7 +432,7 @@ stages:
                     # git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(Build.SourceBranchName)
                     #>>>> END   OF DELETION <<<<
                     #>>>> START OF INSERTION <<<<
-                    git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $v_config_branch
+                    git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(v_config_branch)
                     #>>>> END   OF INSERTION <<<<
                     #--------------------------------------------------------------------
                   fi
@@ -565,9 +565,9 @@ stages:
               #   git checkout -q $(Build.SourceBranchName)
               #>>>> END   OF DELETION <<<<
               #>>>> START OF INSERTION <<<<
-              echo "##[section]--- Checkout $v_config_branch branch in configuration repository ---"
+              echo "##[section]--- Checkout $(v_config_branch) branch in configuration repository ---"
                 cd $CONFIG_REPO_PATH
-                git checkout -q $v_config_branch
+                git checkout -q $(v_config_branch)
               #>>>> END   OF INSERTION <<<<
               #--------------------------------------------------------------------
 
@@ -928,7 +928,7 @@ stages:
                   # git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(Build.SourceBranchName)
                   #>>>> END   OF DELETION <<<<
                   #>>>> START OF INSERTION <<<<
-                  git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $v_config_branch
+                  git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(v_config_branch)
                   #>>>> END   OF INSERTION <<<<
                   #--------------------------------------------------------------------
                 fi
