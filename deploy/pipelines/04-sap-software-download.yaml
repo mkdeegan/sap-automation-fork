@@ -232,9 +232,24 @@ stages:
               #!/bin/bash
               green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
 
-              cd $CONFIG_REPO_PATH
+              #--------------------------------------------------------------------
+              # Change:                                                        
+              #   20230419 MKD
+              #
+              # Notes:
+              #   - Define Repository paths.
+              #--------------------------------------------------------------------
+              #>>>> START OF DELETION <<<<
+              # sample_path=$SAMPLE_REPO_PATH/SAP
+              #>>>> END   OF DELETION <<<<
+              #>>>> START OF INSERTION <<<<
+              CONFIG_REPO_PATH=$BUILD_REPOSITORY_LOCALPATH/$CONFIG_REPO_PATH                 ; echo "CONFIG_REPO_PATH = $CONFIG_REPO_PATH"
+              SAP_AUTOMATION_REPO_PATH=$BUILD_REPOSITORY_LOCALPATH/$SAP_AUTOMATION_REPO_PATH ; echo "SAP_AUTOMATION_REPO_PATH = $SAP_AUTOMATION_REPO_PATH"
+              sample_path=$BUILD_REPOSITORY_LOCALPATH/$SAMPLE_REPO_PATH/SAP                  ; echo "sample_path = $sample_path"
+              #>>>> END   OF INSERTION <<<<
+              #--------------------------------------------------------------------
 
-              sample_path=$SAMPLE_REPO_PATH/SAP
+              cd $CONFIG_REPO_PATH
 
               echo -e "$green--- az login ---$reset"
                 if [ ! -n $ARM_SUBSCRIPTION_ID ]; then
@@ -272,12 +287,14 @@ stages:
                 # Notes:
                 #   - 
                 #--------------------------------------------------------------------
+                #>>>> START OF DELETION <<<<
+                command="ansible-playbook '-e "download_directory=$(Agent.TempDirectory)" -e "BOM_directory=${sample_path}" -e "bom_base_name=$(BOM_NAME)" -e "deployer_kv_name=$(KV_NAME)" -e "check_storage_account=$(check_storage_account)" ' $ExtraParams ${{ parameters.sap_automation_repo_path }}/deploy/ansible/playbook_bom_downloader.yaml"
+                #>>>> END   OF DELETION <<<<
                 #>>>> START OF INSERTION <<<<
-                [ "$ExtraParams" = "Empty" ] && ExtraParams=""                                                   # Debugging On
+                [ "$ExtraParams" = "Empty" ] && ExtraParams=""
+                command="ansible-playbook '-e "download_directory=$(Agent.TempDirectory)" -e "BOM_directory=${sample_path}" -e "bom_base_name=$(BOM_NAME)" -e "deployer_kv_name=$(KV_NAME)" -e "check_storage_account=$(check_storage_account)" ' $ExtraParams $SAP_AUTOMATION_REPO_PATH/deploy/ansible/playbook_bom_downloader.yaml"
                 #>>>> END   OF INSERTION <<<<
                 #--------------------------------------------------------------------
-                
-                command="ansible-playbook '-e "download_directory=$(Agent.TempDirectory)" -e "BOM_directory=${sample_path}" -e "bom_base_name=$(BOM_NAME)" -e "deployer_kv_name=$(KV_NAME)" -e "check_storage_account=$(check_storage_account)" ' $ExtraParams ${{ parameters.sap_automation_repo_path }}/deploy/ansible/playbook_bom_downloader.yaml"
 
                 echo "##[section]Executing [$command]..."
                 echo "##[group]- output"
