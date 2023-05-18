@@ -19,23 +19,23 @@ trigger:                                none
 #--------------------------------------------------------------------
 
 parameters:
-  - name:                              bom_base_name
-    displayName:                       Name of Bill of Materials (BoM)
-    type:                              string
+  - name:                               bom_base_name
+    displayName:                        Name of Bill of Materials (BoM)
+    type:                               string
 
-  - name:                              environment
-    displayName:                       Control Plane Environment
-    default:                           MGMT
+  - name:                               environment
+    displayName:                        Control Plane Environment
+    default:                            MGMT
 
-  - name:                              region
-    displayName:                       Control Plane (SAP Library) location code
-    type:                              string
-    default:                           WEEU
+  - name:                               region
+    displayName:                        Control Plane (SAP Library) location code
+    type:                               string
+    default:                            WEEU
 
-  - name:                              re_download
-    displayName:                       Re-download software from SAP
-    type:                              boolean
-    default:                           false
+  - name:                               re_download
+    displayName:                        Re-download software from SAP
+    type:                               boolean
+    default:                            false
 
   #--------------------------------------------------------------------
   # Change:                                                        
@@ -46,42 +46,42 @@ parameters:
   #   - Add default value
   #--------------------------------------------------------------------
   #>>>> START OF DELETION <<<<
-  # - name:                              sap_automation_repo_path
-  #   displayName:                       The local path on the agent where the sap_automation repo can be found
-  #   type:                              string
+  # - name:                               sap_automation_repo_path
+  #   displayName:                        The local path on the agent where the sap_automation repo can be found
+  #   type:                               string
 
-  # - name:                              config_repo_path
-  #   displayName:                       The local path on the agent where the config repo can be found
-  #   type:                              string
+  # - name:                               config_repo_path
+  #   displayName:                        The local path on the agent where the config repo can be found
+  #   type:                               string
 
-  # - name:                              sample_repo_path
-  #   displayName:                       The local path on the agent where the config repo can be found
-  #   type:                              string
+  # - name:                               sample_repo_path
+  #   displayName:                        The local path on the agent where the config repo can be found
+  #   type:                               string
 
-  # - name:                              ExtraParams
-  #   displayName:                       Extra parameters to pass to Ansible
-  #   type:                              string
+  # - name:                               ExtraParams
+  #   displayName:                        Extra parameters to pass to Ansible
+  #   type:                               string
   #>>>> END   OF DELETION <<<<
   #>>>> START OF INSERTION <<<<
-  - name:                              sap_automation_repo_path
-    displayName:                       The local path on the agent where the sap-automation repo can be found
-    type:                              string
-    default:                           sap-automation
+  - name:                               sap_automation_repo_path
+    displayName:                        The local path on the agent where the sap-automation repo can be found
+    type:                               string
+    default:                            sap-automation
 
-  - name:                              config_repo_path
-    displayName:                       The local path on the agent where the config repo can be found
-    type:                              string
-    default:                           config
+  - name:                               config_repo_path
+    displayName:                        The local path on the agent where the config repo can be found
+    type:                               string
+    default:                            config
 
-  - name:                              sample_repo_path
-    displayName:                       The local path on the agent where the config repo can be found
-    type:                              string
-    default:                           sap-automation-samples
+  - name:                               sample_repo_path
+    displayName:                        The local path on the agent where the config repo can be found
+    type:                               string
+    default:                            sap-automation-samples
 
-  - name:                              ExtraParams
-    displayName:                       Extra parameters to pass to Ansible
-    type:                              string
-    default:
+  - name:                               ExtraParams
+    displayName:                        Extra parameters to pass to Ansible
+    type:                               string
+    default:                            Empty
   #>>>> END   OF INSERTION <<<<
   #--------------------------------------------------------------------
 
