@@ -386,7 +386,9 @@ stages:
                 az config set extension.use_dynamic_install=yes_without_prompt --output none
 
                 az devops configure --defaults organization=$(System.CollectionUri) project='$(System.TeamProject)' --output none
-
+                set -x
+                az pipelines variable-group list
+                set +x
                 export PARENT_VARIABLE_GROUP_ID=$(az pipelines variable-group list --query "[?name=='$(parent_variable_group)'].id | [0]")
                 echo '$(parent_variable_group) id: ' $PARENT_VARIABLE_GROUP_ID
                 if [ -z ${PARENT_VARIABLE_GROUP_ID} ]; then
