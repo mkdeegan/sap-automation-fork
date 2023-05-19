@@ -198,13 +198,42 @@ stages:
                   exit 2
                 fi
 
+              #--------------------------------------------------------------------
+              # Change:                                                        
+              #   20230424 MKD
+              #
+              # Notes:
+              #   - 
+              #--------------------------------------------------------------------
+              #>>>> START OF DELETION <<<<
+              # # Check if running on deployer
+              # if [[ ! -f /etc/profile.d/deploy_server.sh ]]; then
+              #   echo -e "$green --- Install dos2unix ---$reset"
+              #     sudo apt-get -qq install dos2unix
+
+              #   echo -e "$green --- Install terraform ---$reset"
+
+              #     wget -q $(tf_url)
+              #     return_code=$?
+              #     if [ 0 != $return_code ]; then
+              #       echo "##vso[task.logissue type=error]Unable to download Terraform version $(tf_version)."
+              #       exit 2
+              #     fi
+              #     unzip -qq terraform_$(tf_version)_linux_amd64.zip ; sudo mv terraform /bin/
+              #     rm -f terraform_$(tf_version)_linux_amd64.zip
+              # else
+              #   source /etc/profile.d/deploy_server.sh
+              #   export AZURE_DEVOPS_EXT_PAT=$PAT
+
+              # fi
+              #>>>> END   OF DELETION <<<<
+              #>>>> START OF INSERTION <<<<
               # Check if running on deployer
               if [[ ! -f /etc/profile.d/deploy_server.sh ]]; then
                 echo -e "$green --- Install dos2unix ---$reset"
                   sudo apt-get -qq install dos2unix
-
+                  export AZURE_DEVOPS_EXT_PAT=$PAT
                 echo -e "$green --- Install terraform ---$reset"
-
                   wget -q $(tf_url)
                   return_code=$?
                   if [ 0 != $return_code ]; then
@@ -216,8 +245,10 @@ stages:
               else
                 source /etc/profile.d/deploy_server.sh
                 export AZURE_DEVOPS_EXT_PAT=$PAT
-
               fi
+              #>>>> END   OF INSERTION <<<<
+              #--------------------------------------------------------------------
+
 
               echo -e "$green--- Convert config file to UX format ---$reset"
                 dos2unix -q $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration)
@@ -528,21 +559,20 @@ stages:
 
               exit $return_code
 
-            displayName:               Deploy_SAP_infrastructure
+            displayName:                Deploy_SAP_infrastructure
             env:
+              SYSTEM_ACCESSTOKEN:       $(System.AccessToken)
               WL_ARM_SUBSCRIPTION_ID:   $(ARM_SUBSCRIPTION_ID)
+              WL_ARM_TENANT_ID:         $(ARM_TENANT_ID)
               WL_ARM_CLIENT_ID:         $(ARM_CLIENT_ID)
               WL_ARM_CLIENT_SECRET:     $(ARM_CLIENT_SECRET)
-              WL_ARM_TENANT_ID:         $(ARM_TENANT_ID)
-              SYSTEM_ACCESSTOKEN:       $(System.AccessToken)
-              SAP_AUTOMATION_REPO_PATH: ${{ parameters.sap_automation_repo_path }}
-              CONFIG_REPO_PATH:         ${{ parameters.config_repo_path }}
-              PAT:                      $(WZ_PAT)
               TEST_ONLY:                ${{ parameters.test }}
+              PAT:                      $(WZ_PAT)
               TF_LOG:                   $(TF_LOG)
               TF_IN_AUTOMATION:         true
+              SAP_AUTOMATION_REPO_PATH: ${{ parameters.sap_automation_repo_path }}
+              CONFIG_REPO_PATH:         ${{ parameters.config_repo_path }}
               LOGON_USING_SPN:          $(Logon_Using_SPN)
-
             failOnStderr:               false
 
 ...

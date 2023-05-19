@@ -217,8 +217,8 @@ stages:
               # Check if running on deployer
               if [ ! -f /etc/profile.d/deploy_server.sh ]; then
                 echo -e "$green --- Install dos2unix ---$reset"
-                sudo apt-get -qq install dos2unix
-                export AZURE_DEVOPS_EXT_PAT=$PAT
+                  sudo apt-get -qq install dos2unix
+                  export AZURE_DEVOPS_EXT_PAT=$PAT
               else
                 source /etc/profile.d/deploy_server.sh
                 export AZURE_DEVOPS_EXT_PAT=$PAT
@@ -763,28 +763,28 @@ stages:
 
               exit $return_code
 
-            displayName:               Deploy SAP Workload Zone
+            displayName:                Deploy SAP Workload Zone
             env:
-              SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
-              WL_ARM_SUBSCRIPTION_ID:  $(ARM_SUBSCRIPTION_ID)
-              WL_ARM_TENANT_ID:        $(ARM_TENANT_ID)
-              WL_ARM_CLIENT_ID:        $(ARM_CLIENT_ID)
-              WL_ARM_CLIENT_SECRET:    $(ARM_CLIENT_SECRET)
-              WL_ARM_OBJECT_ID:        $(ARM_OBJECT_ID)
-              CP_ARM_SUBSCRIPTION_ID:  $(CP_ARM_SUBSCRIPTION_ID)
-              CP_ARM_CLIENT_ID:        $(CP_ARM_CLIENT_ID)
-              CP_ARM_CLIENT_SECRET:    $(CP_ARM_CLIENT_SECRET)
-              CP_ARM_TENANT_ID:        $(CP_ARM_TENANT_ID)
-              CP_ARM_OBJECT_ID:        $(CP_ARM_OBJECT_ID)
-              FENCING_SPN_PWD:         $(FENCING_SPN_PWD)
-              SAPBITS:                 $(INSTALLATION_MEDIA_ACCOUNT)
-              TEST_ONLY:               ${{ parameters.test }}
-              PAT:                     $(WZ_PAT)
-              TF_LOG:                  $(TF_LOG)
-              TF_IN_AUTOMATION:        true
+              SYSTEM_ACCESSTOKEN:       $(System.AccessToken)
+              WL_ARM_SUBSCRIPTION_ID:   $(ARM_SUBSCRIPTION_ID)
+              WL_ARM_TENANT_ID:         $(ARM_TENANT_ID)
+              WL_ARM_CLIENT_ID:         $(ARM_CLIENT_ID)
+              WL_ARM_CLIENT_SECRET:     $(ARM_CLIENT_SECRET)
+              WL_ARM_OBJECT_ID:         $(ARM_OBJECT_ID)
+              CP_ARM_SUBSCRIPTION_ID:   $(CP_ARM_SUBSCRIPTION_ID)
+              CP_ARM_CLIENT_ID:         $(CP_ARM_CLIENT_ID)
+              CP_ARM_CLIENT_SECRET:     $(CP_ARM_CLIENT_SECRET)
+              CP_ARM_TENANT_ID:         $(CP_ARM_TENANT_ID)
+              CP_ARM_OBJECT_ID:         $(CP_ARM_OBJECT_ID)
+              FENCING_SPN_PWD:          $(FENCING_SPN_PWD)
+              SAPBITS:                  $(INSTALLATION_MEDIA_ACCOUNT)
+              TEST_ONLY:                ${{ parameters.test }}
+              PAT:                      $(WZ_PAT)
+              TF_LOG:                   $(TF_LOG)
+              TF_IN_AUTOMATION:         true
               SAP_AUTOMATION_REPO_PATH: ${{ parameters.sap_automation_repo_path }}
-              CONFIG_REPO_PATH:        ${{ parameters.config_repo_path }}/$(Deployment_Configuration_Path)
-              LOGON_USING_SPN:         $(Logon_Using_SPN)
-            failOnStderr: false
+              CONFIG_REPO_PATH:         ${{ parameters.config_repo_path }}/$(Deployment_Configuration_Path)
+              LOGON_USING_SPN:          $(Logon_Using_SPN)
+            failOnStderr:               false
 
 ...
