@@ -224,12 +224,6 @@ stages:
                 export AZURE_DEVOPS_EXT_PAT=$PAT
               fi
 
-              if [ ! -f $CONFIG_REPO_PATH/LANDSCAPE/$(workload_zone_folder)/$(workload_zone_configuration_file) ]; then
-                echo -e "$boldred--- $(workload_zone_configuration_file) was not found ---$reset"
-                echo "##vso[task.logissue type=error]File $(workload_zone_configuration_file) was not found."
-                exit 2
-              fi
-
               #--------------------------------------------------------------------
               # Change:                                                        
               #   20230424 MKD
@@ -253,6 +247,12 @@ stages:
               #--------------------------------------------------------------------
 
               echo -e "$green--- Validations ---$reset"
+
+              if [ ! -f $CONFIG_REPO_PATH/LANDSCAPE/$(workload_zone_folder)/$(workload_zone_configuration_file) ]; then
+                echo -e "$boldred--- $(workload_zone_configuration_file) was not found ---$reset"
+                echo "##vso[task.logissue type=error]File $(workload_zone_configuration_file) was not found."
+                exit 2
+              fi
 
                 if [ -z $WL_ARM_SUBSCRIPTION_ID ]; then
                   echo "##vso[task.logissue type=error]Variable ARM_SUBSCRIPTION_ID was not defined in the $(variable_group) variable group."
