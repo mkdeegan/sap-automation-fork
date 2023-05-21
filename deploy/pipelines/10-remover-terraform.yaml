@@ -59,23 +59,95 @@ parameters:
     type:                              string
     default:                           DEV
 
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230419 MKD
+  #
+  # Notes:
+  #   - Fix typo
+  #--------------------------------------------------------------------
+  #>>>> START OF DELETION <<<<
+  # - name:                              deployer_environment
+  #   displayName:                       Environment (MGMT)
+  #   type:                              string
+  #   default:                           MMGMT
+  #>>>> END   OF DELETION <<<<
+  #>>>> START OF INSERTION <<<<
   - name:                              deployer_environment
     displayName:                       Environment (MGMT)
     type:                              string
-    default:                           MMGMT
+    default:                           MGMT
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
 
   - name:                              use_deployer
     displayName:                       Run removal on self hosted agent
     type:                              boolean
     default:                           true
 
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230419 MKD
+  #
+  # Notes:
+  #   - Fix typo
+  #   - Add default value
+  #--------------------------------------------------------------------
+  #>>>> START OF DELETION <<<<
+  # - name:                              sap_automation_repo_path
+  #   displayName:                       The local path on the agent where the sap_automation repo can be found
+  #   type:                              string
+
+  # - name:                              config_repo_path
+  #   displayName:                       The local path on the agent where the config repo can be found
+  #   type:                              string
+  #>>>> END   OF DELETION <<<<
+  #>>>> START OF INSERTION <<<<
   - name:                              sap_automation_repo_path
-    displayName:                       The local path on the agent where the sap_automation repo can be found
+    displayName:                       The local path on the agent where the sap-automation repo can be found
     type:                              string
+    default:                           sap-automation
 
   - name:                              config_repo_path
     displayName:                       The local path on the agent where the config repo can be found
     type:                              string
+    default:                           config
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
+
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230516 MKD
+  #
+  # Notes:
+  #   - Establish debug framework.
+  #--------------------------------------------------------------------
+  #>>>> START OF INSERTION <<<<
+  - name:                              p_debug
+    displayName:                       Debug Mode
+    type:                              boolean
+    default:                           false
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
+
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230516 MKD
+  #
+  # Notes:
+  #   - Establish debug framework.
+  #   - Configuration should persist independent of branch changes of the 
+  #     code repository.
+  #--------------------------------------------------------------------
+  #>>>> START OF INSERTION <<<<
+variables:
+  - name:                              v_debug
+    value:                             ${{ parameters.p_debug }}
+
+  - name:                              v_config_branch
+    value:                             main
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
 
 stages:
   - stage: Remove_SAP_systems
@@ -98,11 +170,39 @@ stages:
         steps:
           - template:                  templates\download.yaml
           - bash: |
+              #--------------------------------------4---------------------------------------8
               #!/bin/bash
-                green="\e[1;32m" ; reset="\e[0m"
+
+              #--------------------------------------------------------------------
+              # Change:                                                        
+              #   20230516 MKD
+              #
+              # Notes:
+              #   - Establish debug framework.
+              #--------------------------------------------------------------------
+              #>>>> START OF INSERTION <<<<
+              green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+              debug=$(v_debug)
+              [ "$debug" = True ] && set -x                                                   # Debugging On
+              #>>>> END   OF INSERTION <<<<
+              #--------------------------------------------------------------------
+
               echo -e "$green--- Checkout $(Build.SourceBranchName) ---$reset"
 
               echo "##vso[build.updatebuildnumber]Removing the SAP System defined in $(sap_system_folder)"
+
+              #--------------------------------------------------------------------
+              # Change:                                                        
+              #   20230419 MKD
+              #
+              # Notes:
+              #   - Define Repository paths.
+              #--------------------------------------------------------------------
+              #>>>> START OF INSERTION <<<<
+              CONFIG_REPO_PATH=$BUILD_REPOSITORY_LOCALPATH/$CONFIG_REPO_PATH                 ; echo "CONFIG_REPO_PATH = $CONFIG_REPO_PATH"
+              SAP_AUTOMATION_REPO_PATH=$BUILD_REPOSITORY_LOCALPATH/$SAP_AUTOMATION_REPO_PATH ; echo "SAP_AUTOMATION_REPO_PATH = $SAP_AUTOMATION_REPO_PATH"
+              #>>>> END   OF INSERTION <<<<
+              #--------------------------------------------------------------------
 
               echo -e "$green--- Validations ---$reset"
                 HOME_CONFIG=${CONFIG_REPO_PATH}
@@ -139,7 +239,6 @@ stages:
                   sudo apt-get -qq install dos2unix
 
                 echo -e "$green --- Install terraform ---$reset"
-
                   wget -q $(tf_url)
                   return_code=$?
                   if [ 0 != $return_code ]; then
@@ -151,10 +250,9 @@ stages:
               else
                 source /etc/profile.d/deploy_server.sh
               fi
+
               echo -e "$green--- Configure devops CLI extension ---$reset"
-
                 az config set extension.use_dynamic_install=yes_without_prompt --output none
-
                 az devops configure --defaults organization=$(System.CollectionUri) project='$(System.TeamProject)' --output none
 
                 export VARIABLE_GROUP_ID=$(az pipelines variable-group list --query "[?name=='$(variable_group)'].id | [0]")
@@ -171,12 +269,12 @@ stages:
 
               echo -e "$green--- Convert config file to UX format ---$reset"
                 dos2unix -q $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration)
-              echo -e "$green--- Read parameters ---$reset"
 
-                ENVIRONMENT=$(grep "^environment" $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs)
-                   LOCATION=$(grep "^location" $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs | tr 'A-Z' 'a-z')
-                    NETWORK=$(grep "^network_logical_name" $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs)
-                        SID=$(grep "^sid" $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs)
+              echo -e "$green--- Read parameters ---$reset"
+                ENVIRONMENT=$(grep "^environment"          $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs)
+                LOCATION=$(grep    "^location"             $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs | tr 'A-Z' 'a-z')
+                NETWORK=$(grep     "^network_logical_name" $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs)
+                SID=$(grep         "^sid"                  $HOME_CONFIG/SYSTEM/$(sap_system_folder)/$(sap_system_configuration) | awk -F'=' '{print $2}' | xargs)
 
                 echo "Environment: $ENVIRONMENT"
                 echo "Location:    $LOCATION"
