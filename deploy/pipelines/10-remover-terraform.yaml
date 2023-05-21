@@ -368,10 +368,10 @@ stages:
 
                 #--------------------------------------------------------------------
                 # Change:                                                        
-                #   20230419 MKD
+                #   20230521 MKD
                 #
                 # Notes:
-                #   - Define Repository paths.
+                #   - Correct syntax
                 #--------------------------------------------------------------------
                 #>>>> START OF DELETION <<<<
                 # az login --service-principal --username $(WL_ARM_CLIENT_ID) --password=$WL_ARM_CLIENT_SECRET --tenant $WL_ARM_TENANT_ID  --output none
