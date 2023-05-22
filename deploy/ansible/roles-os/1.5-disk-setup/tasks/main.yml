@@ -118,10 +118,14 @@
 # MKD
 - name:                                "1.5 Disk setup - show logical_volumes"
   ansible.builtin.debug:
-    var:                               logical_volumes
+    var:                               item
     verbosity:                         2
+  loop:                                "{{ logical_volumes }}"
   when:
     - tier == "sapos"
+    - item.node_tier | intersect([ 'all', supported_tiers ] | flatten(levels=1)) or
+      item.node_tier in [ 'all', supported_tiers ] | flatten(levels=1)
+    - item.vg in vgcreatedlist
 # MKD
 - name:                                "1.5 Disk setup - Logical Volume creation"
   community.general.lvol:
