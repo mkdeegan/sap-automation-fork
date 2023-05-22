@@ -176,6 +176,10 @@ variables:
   #>>>> END   OF INSERTION <<<<
   #--------------------------------------------------------------------
 
+# MKD
+pool:
+  name: MKDEA-POOL
+
 stages:
   - stage: Preparation_for_Ansible
     condition: and(not(failed()), not(canceled()))
