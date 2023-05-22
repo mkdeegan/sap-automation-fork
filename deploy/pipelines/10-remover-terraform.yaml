@@ -421,16 +421,31 @@ stages:
 
               echo -e "$green--- Run the remover script that destroys the SAP system ---$reset"
                 cd $CONFIG_REPO_PATH/SYSTEM/$(sap_system_folder)
+                
                 ${SAP_AUTOMATION_REPO_PATH}/deploy/scripts/remover.sh \
-                  --parameterfile $(sap_system_configuration) \
-                  --type sap_system \
-                  --state_subscription ${STATE_SUBSCRIPTION} \
-                  --storageaccountname "${REMOTE_STATE_SA}" \
+                  --parameterfile $(sap_system_configuration)         \
+                  --type sap_system                                   \
+                  --state_subscription ${STATE_SUBSCRIPTION}          \
+                  --storageaccountname "${REMOTE_STATE_SA}"           \
                   --auto-approve
                 return_code=$?
 
               echo -e "$green--- Pull latest from DevOps Repository ---$reset"
-                git checkout -q $(Build.SourceBranchName)
+                #--------------------------------------------------------------------
+                # Change:                                                        
+                #   20230521 MKD
+                #
+                # Notes:
+                #   - Configuration should persist independent of branch changes of the 
+                #     code repository.
+                #--------------------------------------------------------------------
+                #>>>> START OF DELETION <<<<
+                #   git checkout -q $(Build.SourceBranchName)
+                #>>>> END   OF DELETION <<<<
+                #>>>> START OF INSERTION <<<<
+                git checkout -q $(v_config_branch)
+                #>>>> END   OF INSERTION <<<<
+                #--------------------------------------------------------------------
                 git pull
 
               #stop the pipeline after you have reset the whitelisting on your resources
@@ -445,8 +460,23 @@ stages:
 
                 changed=0
                 # Pull changes
-                git checkout -q $(Build.SourceBranchName)
-                git pull origin $(Build.SourceBranchName)
+                #--------------------------------------------------------------------
+                # Change:                                                        
+                #   20230521 MKD
+                #
+                # Notes:
+                #   - Configuration should persist independent of branch changes of the 
+                #     code repository.
+                #--------------------------------------------------------------------
+                #>>>> START OF DELETION <<<<
+                # git checkout -q $(Build.SourceBranchName)
+                # git pull origin $(Build.SourceBranchName)
+                #>>>> END   OF DELETION <<<<
+                #>>>> START OF INSERTION <<<<
+                git checkout -q $(v_config_branch)
+                git pull origin $(v_config_branch)
+                #>>>> END   OF INSERTION <<<<
+                #--------------------------------------------------------------------
 
                 if [ 0 == $return_code ]; then
 
@@ -479,7 +509,21 @@ stages:
                     git config --global user.email "$(Build.RequestedForEmail)"
                     git config --global user.name "$(Build.RequestedFor)"
                     git commit -m "Infrastructure for ${sap_system_folder} removed. [skip ci]"
-                    git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(Build.SourceBranchName)
+                    #--------------------------------------------------------------------
+                    # Change:                                                        
+                    #   20230419 MKD
+                    #
+                    # Notes:
+                    #   - Configuration should persist independent of branch changes of the 
+                    #     code repository.
+                    #--------------------------------------------------------------------
+                    #>>>> START OF DELETION <<<<
+                    # git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(Build.SourceBranchName)
+                    #>>>> END   OF DELETION <<<<
+                    #>>>> START OF INSERTION <<<<
+                    git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push --set-upstream origin $(v_config_branch)
+                    #>>>> END   OF INSERTION <<<<
+                    #--------------------------------------------------------------------
                   fi
                 fi
 

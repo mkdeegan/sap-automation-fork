@@ -620,11 +620,19 @@ stages:
 
                 fi
 
-                $SAP_AUTOMATION_REPO_PATH/deploy/scripts/install_workloadzone.sh --parameterfile $(workload_zone_configuration_file)       \
-                  --deployer_environment $(deployer_environment) --subscription $(ARM_SUBSCRIPTION_ID)                                 \
-                  --spn_id $WL_ARM_CLIENT_ID --spn_secret $WL_ARM_CLIENT_SECRET --tenant_id $WL_ARM_TENANT_ID                                   \
-                  --deployer_tfstate_key "${deployer_tfstate_key}" --keyvault "${key_vault}" --storageaccountname "${REMOTE_STATE_SA}" \
-                  --state_subscription "${STATE_SUBSCRIPTION}" --auto-approve --ado
+                $SAP_AUTOMATION_REPO_PATH/deploy/scripts/install_workloadzone.sh \
+                  --parameterfile $(workload_zone_configuration_file)            \
+                  --deployer_environment $(deployer_environment)                 \
+                  --subscription $(ARM_SUBSCRIPTION_ID)                          \
+                  --spn_id $WL_ARM_CLIENT_ID                                     \
+                  --spn_secret $WL_ARM_CLIENT_SECRET                             \
+                  --tenant_id $WL_ARM_TENANT_ID                                  \
+                  --deployer_tfstate_key "${deployer_tfstate_key}"               \
+                  --keyvault "${key_vault}"                                      \
+                  --storageaccountname "${REMOTE_STATE_SA}"                      \
+                  --state_subscription "${STATE_SUBSCRIPTION}"                   \
+                  --auto-approve                                                 \
+                  --ado
                 return_code=$?
 
                 echo "Return code: ${return_code}"
