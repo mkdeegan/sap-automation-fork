@@ -482,10 +482,28 @@ Write-Host "Creating the variable group SDAF-General" -ForegroundColor Green
 
 $general_group_id = (az pipelines variable-group list --query "[?name=='SDAF-General'].id | [0]" --only-show-errors)
 if ($general_group_id.Length -eq 0) {
-  az pipelines variable-group create --name SDAF-General --variables ANSIBLE_HOST_KEY_CHECKING=false Deployment_Configuration_Path=WORKSPACES Branch=main tf_version="1.4.1" ansible_core_version="2.13" S-Username=$SUserName S-Password=$SPassword --output yaml --authorize true --output none
-  $general_group_id = (az pipelines variable-group list --query "[?name=='SDAF-General'].id | [0]" --only-show-errors)
-  az pipelines variable-group variable update --group-id $general_group_id --name "S-Password" --value $SPassword --secret true --output none --only-show-errors
+  az pipelines variable-group create            `
+    --name SDAF-General                         `
+    --output yaml                               `
+    --authorize true                            `
+    --output none                               `
+    --variables                                 `
+      ANSIBLE_HOST_KEY_CHECKING=false           `
+      Deployment_Configuration_Path=WORKSPACES  `
+      Branch=main                               `
+      tf_version="1.4.1"                        `
+      ansible_core_version="2.13"               `
+      S-Username=$SUserName                     `
+      S-Password=$SPassword
 
+  $general_group_id = (az pipelines variable-group list --query "[?name=='SDAF-General'].id | [0]" --only-show-errors)
+  az pipelines variable-group variable update `
+    --group-id $general_group_id              `
+    --secret true                             `
+    --output none                             `
+    --only-show-errors                        `
+    --name "S-Password"                       `
+    --value $SPassword
 }
 
 #region Create pipelines
@@ -782,15 +800,44 @@ az role assignment create --assignee $CP_ARM_CLIENT_ID --role "User Access Admin
 $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
 if ($Control_plane_groupID.Length -eq 0) {
   Write-Host "Creating the variable group" $ControlPlanePrefix -ForegroundColor Green
-  az pipelines variable-group create --name $ControlPlanePrefix --variables Agent='Azure Pipelines' APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID CP_ARM_CLIENT_ID=$CP_ARM_CLIENT_ID CP_ARM_OBJECT_ID=$CP_ARM_OBJECT_ID CP_ARM_CLIENT_SECRET='Enter your SPN password here' CP_ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID CP_ARM_TENANT_ID=$CP_ARM_TENANT_ID WEB_APP_CLIENT_SECRET=$WEB_APP_CLIENT_SECRET PAT='Enter your personal access token here' POOL=$Pool_Name AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id SYSTEM_PIPELINE_ID=$system_pipeline_id SDAF_GENERAL_GROUP_ID=$general_group_id SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id TF_LOG=OFF --output none --authorize true
+  az pipelines variable-group create                            `
+    --name $ControlPlanePrefix                                  `
+    --output none                                               `
+    --authorize true                                            `
+    --variables                                                 `
+      Agent='Azure Pipelines'                                   `
+      APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID              `
+      CP_ARM_CLIENT_ID=$CP_ARM_CLIENT_ID                        `
+      CP_ARM_OBJECT_ID=$CP_ARM_OBJECT_ID                        `
+      CP_ARM_CLIENT_SECRET='Enter your SPN password here'       `
+      CP_ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID      `
+      CP_ARM_TENANT_ID=$CP_ARM_TENANT_ID                        `
+      WEB_APP_CLIENT_SECRET=$WEB_APP_CLIENT_SECRET              `
+      PAT='Enter your personal access token here'               `
+      POOL=$Pool_Name                                           `
+      AZURE_CONNECTION_NAME='Control_Plane_Service_Connection'  `
+      WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id                  `
+      SYSTEM_PIPELINE_ID=$system_pipeline_id                    `
+      SDAF_GENERAL_GROUP_ID=$general_group_id                   `
+      SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id         `
+      TF_LOG=OFF
+
   $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
 }
 
 if ($CP_ARM_CLIENT_SECRET -ne "Please update") {
-  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_SECRET" --value $CP_ARM_CLIENT_SECRET --secret true --output none --only-show-errors
-  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_ID" --value $CP_ARM_CLIENT_ID --output none --only-show-errors
-  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_OBJECT_ID" --value $CP_ARM_OBJECT_ID --output none --only-show-errors
-
+  az pipelines variable-group variable update --secret true --output none --only-show-errors  `
+    --group-id $Control_plane_groupID         `
+    --name "CP_ARM_CLIENT_SECRET"             `
+    --value $CP_ARM_CLIENT_SECRET
+  az pipelines variable-group variable update --output none --only-show-errors                `
+    --group-id $Control_plane_groupID         `
+    --name "CP_ARM_CLIENT_ID"                 `
+    --value $CP_ARM_CLIENT_ID
+  az pipelines variable-group variable update --output none --only-show-errors                `
+    --group-id $Control_plane_groupID         `
+    --name "CP_ARM_OBJECT_ID"                 `
+    --value $CP_ARM_OBJECT_ID
 }
 
 Write-Host "Create the Service Endpoint in Azure for the control plane" -ForegroundColor Green
@@ -814,9 +861,10 @@ else {
   az devops service-endpoint update --id $epId --enable-for-all true --output none --only-show-errors
 }
 
-az pipelines variable-group variable update --group-id $Control_plane_groupID --name "WEB_APP_CLIENT_SECRET" --value $WEB_APP_CLIENT_SECRET --secret true --output none --only-show-errors
-
-
+az pipelines variable-group variable update --secret true --output none --only-show-errors  `
+  --group-id $Control_plane_groupID   `
+  --name "WEB_APP_CLIENT_SECRET"      `
+  --value $WEB_APP_CLIENT_SECRET
 
 #endregion
 
@@ -875,14 +923,37 @@ $Service_Connection_Name = $Workload_zone_code + "_WorkloadZone_Service_Connecti
 $GroupID = (az pipelines variable-group list --query "[?name=='$WorkloadZonePrefix'].id | [0]" --only-show-errors )
 if ($GroupID.Length -eq 0) {
   Write-Host "Creating the variable group" $WorkloadZonePrefix -ForegroundColor Green
-  az pipelines variable-group create --name $WorkloadZonePrefix --variables Agent='Azure Pipelines' ARM_CLIENT_ID=$ARM_CLIENT_ID ARM_OBJECT_ID=$ARM_OBJECT_ID ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET ARM_SUBSCRIPTION_ID=$Workload_zone_subscriptionID ARM_TENANT_ID=$ARM_TENANT_ID WZ_PAT='Enter your personal access token here' POOL=$Pool_Name AZURE_CONNECTION_NAME=$Service_Connection_Name TF_LOG=OFF --output none --authorize true
+  az pipelines variable-group create --output none --authorize true `
+    --name $WorkloadZonePrefix                          `
+    --variables                                         `
+      Agent='Azure Pipelines'                           `
+      ARM_CLIENT_ID=$ARM_CLIENT_ID                      `
+      ARM_OBJECT_ID=$ARM_OBJECT_ID                      `
+      ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET              `
+      ARM_SUBSCRIPTION_ID=$Workload_zone_subscriptionID `
+      ARM_TENANT_ID=$ARM_TENANT_ID                      `
+      WZ_PAT='Enter your personal access token here'    `
+      POOL=$Pool_Name                                   `
+      AZURE_CONNECTION_NAME=$Service_Connection_Name    `
+      TF_LOG=OFF
+
   $GroupID = (az pipelines variable-group list --query "[?name=='$WorkloadZonePrefix'].id | [0]" --only-show-errors)
 }
 
 if ($ARM_CLIENT_SECRET -ne "Please update") {
-  az pipelines variable-group variable update --group-id $GroupID --name "ARM_CLIENT_SECRET" --value $ARM_CLIENT_SECRET --secret true --output none --only-show-errors
-  az pipelines variable-group variable update --group-id $GroupID --name "ARM_CLIENT_ID" --value $ARM_CLIENT_ID --output none --only-show-errors
-  az pipelines variable-group variable update --group-id $GroupID --name "ARM_OBJECT_ID" --value $ARM_OBJECT_ID --output none --only-show-errors
+  az pipelines variable-group variable update --secret true --output none --only-show-errors  `
+    --group-id $GroupID           `
+    --name "ARM_CLIENT_SECRET"    `
+    --value $ARM_CLIENT_SECRET
+  az pipelines variable-group variable update --output none --only-show-errors                `
+    --group-id $GroupID           `
+    --name "ARM_CLIENT_ID"        `
+    --value $ARM_CLIENT_ID
+  az pipelines variable-group variable update --output none --only-show-errors                `
+    --group-id $GroupID           `
+    --name "ARM_OBJECT_ID"        `
+    --value $ARM_OBJECT_ID
+    
   $Env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = $ARM_CLIENT_SECRET
 
   $epExists = (az devops service-endpoint list --query "[?name=='$Service_Connection_Name'].name | [0]")
