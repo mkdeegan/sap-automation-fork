@@ -104,8 +104,7 @@ parameters:
 trigger: none
 
 pool:
-  # name: $[coalesce(variables['POOL'], variables['Agent'])]
-  name: MKDEA-POOL
+  name: $[coalesce(variables['POOL'], variables['Agent'])]
 
 extends:
   template: ./resources.yml
