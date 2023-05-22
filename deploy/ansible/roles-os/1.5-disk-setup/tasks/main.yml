@@ -122,9 +122,6 @@
     verbosity:                         2
   when:
     - tier == "sapos"
-    - item.node_tier | intersect([ 'all', supported_tiers ] | flatten(levels=1)) or
-      item.node_tier in [ 'all', supported_tiers ] | flatten(levels=1)
-    - item.vg in vgcreatedlist
 # MKD
 - name:                                "1.5 Disk setup - Logical Volume creation"
   community.general.lvol:
