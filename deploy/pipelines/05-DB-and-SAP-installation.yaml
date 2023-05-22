@@ -177,9 +177,9 @@ variables:
   #--------------------------------------------------------------------
 
 # MKD
-# pool:
-#   # name: MKDEA-POOL
-#   name: $(variables['POOL'])
+pool:
+  # name: MKDEA-POOL
+  name: $[variables.POOL]
 
 stages:
   - stage: Preparation_for_Ansible
