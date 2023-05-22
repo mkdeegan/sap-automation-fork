@@ -297,6 +297,10 @@
     - name:                            "0.0 Validations - Show IMDS results"
       ansible.builtin.debug:
         var:                           ansible_mounts
+
+    - name:                            "0.0 Validations - Show IMDS results"
+      ansible.builtin.debug:
+        var:                           inventory_hostname
 # MKD
 
     - name:                            "0.0 Validations - Deployer disk space requirements"
