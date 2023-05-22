@@ -178,8 +178,9 @@ variables:
 
 # MKD
 pool:
-  name: MKDEA-POOL
-
+  # name: MKDEA-POOL
+  name: $variables['POOL']
+  
 stages:
   - stage: Preparation_for_Ansible
     condition: and(not(failed()), not(canceled()))
