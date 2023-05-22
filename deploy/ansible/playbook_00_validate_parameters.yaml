@@ -293,20 +293,6 @@
       ansible.builtin.debug:
         var:                           mnt_free_diskspace
 
-# MKD
-    - name:                            "0.0 Validations - Show IMDS results"
-      ansible.builtin.debug:
-        var:                           ansible_mounts
-
-    - name:                            "0.0 Validations - Show IMDS results"
-      ansible.builtin.debug:
-        var:                           ansible_facts
-
-    - name:                            "0.0 Validations - Show IMDS results"
-      ansible.builtin.debug:
-        var:                           ansible_hostname
-# MKD
-
     - name:                            "0.0 Validations - Deployer disk space requirements"
       ansible.builtin.set_fact:
         deployer_free_temp_disk_space: 100
