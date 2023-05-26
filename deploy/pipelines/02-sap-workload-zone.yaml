@@ -193,8 +193,15 @@ stages:
               #   - Establish debug framework.
               #--------------------------------------------------------------------
               #>>>> START OF INSERTION <<<<
+              exec 3>&1
+              log ()
+              {
+                echo "$1" 1>&3
+              }
+
               green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
               debug=$(v_debug)
+              log "INFO debug = $debug"
               [ "$debug" = True ] && set -x                                                   # Debugging On
               #>>>> END   OF INSERTION <<<<
               #--------------------------------------------------------------------
