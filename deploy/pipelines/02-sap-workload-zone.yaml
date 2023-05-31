@@ -726,11 +726,24 @@ stages:
                 fi
 
                 if [ -f ${workload_environment_file_name}.md ]; then
+                  #--------------------------------------------------------------------
+                  # Change:                                                        
+                  #   20230525 MKD
+                  #
+                  # Notes:
+                  #   - 
+                  #--------------------------------------------------------------------
+                  #>>>> START OF DELETION <<<<
+                  echo "##vso[task.uploadsummary]${workload_environment_file_name}.md"
+                  #>>>> END   OF DELETION <<<<
+                  #>>>> START OF INSERTION <<<<
                   ls -l ${workload_environment_file_name}.md
                   echo "vso[task.uploadsummary]${workload_environment_file_name}.md"
                   [ "$debug" = True ] && set +x                                                   # Debugging Off
                   echo "##vso[task.uploadsummary]${workload_environment_file_name}.md"
                   [ "$debug" = True ] && set -x                                                   # Debugging On
+                  #>>>> END   OF INSERTION <<<<
+                  #--------------------------------------------------------------------
                 fi
               echo -e "$green--- Adding variables to the variable group" $(variable_group) "---$reset"
                 if [ -n $VARIABLE_GROUP_ID ]; then
