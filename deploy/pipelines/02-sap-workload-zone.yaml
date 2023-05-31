@@ -555,19 +555,19 @@ stages:
                     #   - 
                     #--------------------------------------------------------------------
                     #>>>> START OF DELETION <<<<
-                    # echo -e "$green --- Assign subscription permissions to $perms ---$reset"
-                    # az role assignment create --assignee-object-id $WL_ARM_OBJECT_ID  --assignee-principal-type ServicePrincipal --role "Reader" --scope "/subscriptions/${STATE_SUBSCRIPTION}" --output none
+                    echo -e "$green --- Assign subscription permissions to $perms ---$reset"
+                    az role assignment create --assignee-object-id $WL_ARM_OBJECT_ID  --assignee-principal-type ServicePrincipal --role "Reader" --scope "/subscriptions/${STATE_SUBSCRIPTION}" --output none
                     #>>>> END   OF DELETION <<<<
                     #>>>> START OF INSERTION <<<<
-                    az ad sp show --id $WL_ARM_CLIENT_ID --query id
-                    echo -e "$green --- Assign subscription permissions to $perms ---$reset"
-                    az role assignment create                                             \
-                      --role                      "Reader"                                \
-                      --scope                     "/subscriptions/${STATE_SUBSCRIPTION}"  \
-                      --assignee                  $WL_ARM_CLIENT_ID                       \
-                      # --assignee-object-id      $WL_ARM_OBJECT_ID                       \
-                      # --assignee-principal-type ServicePrincipal                        \
-                      --output                    none
+                    # az ad sp show --id $WL_ARM_CLIENT_ID --query id
+                    # echo -e "$green --- Assign subscription permissions to $perms ---$reset"
+                    # az role assignment create                                             \
+                    #   --role                      "Reader"                                \
+                    #   --scope                     "/subscriptions/${STATE_SUBSCRIPTION}"  \
+                    #   --assignee                  $WL_ARM_CLIENT_ID                       \
+                    #   # --assignee-object-id      $WL_ARM_OBJECT_ID                       \
+                    #   # --assignee-principal-type ServicePrincipal                        \
+                    #   --output                    none
                     #>>>> END   OF INSERTION <<<<
                     #--------------------------------------------------------------------
                   fi
