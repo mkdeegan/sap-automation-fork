@@ -50,10 +50,26 @@ parameters:
     type:                              boolean
     default:                           true
 
+  #--------------------------------------------------------------------
+  # Change:                                                        
+  #   20230530 MKD
+  #
+  # Notes:
+  #   - 
+  #--------------------------------------------------------------------
+  #>>>> START OF DELETION <<<<
+  # - name:                              bom_processing
+  #   displayName: Software Acquisition
+  #   type:                              boolean
+  #   default:                           true
+  #>>>> END   OF DELETION <<<<
+  #>>>> START OF INSERTION <<<<
   - name:                              bom_processing
-    displayName: Software Acquisition
+    displayName: BOM Processing
     type:                              boolean
     default:                           true
+  #>>>> END   OF INSERTION <<<<
+  #--------------------------------------------------------------------
 
   - name:                              database_install
     displayName: Database Installation
