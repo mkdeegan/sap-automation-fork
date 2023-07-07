@@ -64,20 +64,8 @@ Loop through all the hosts that are referenced by the Playbook.
 If we do not sort it, then the order can change randomly.
 
 #}
-# play_hosts
-# {{ play_hosts }}
-#
-# ansible_play_batch
-# {{ ansible_play_batch }}
-#
-# ansible_play_hosts
-# {{ ansible_play_hosts }}
-#
-# ansible_play_hosts_all
-# {{ ansible_play_hosts_all }}
-#
-{%  for host in play_hosts|sort %}
-# {{ host }}
+{# 20230707 MKD - play_hosts was depracated and not providing correct results. Updated to ansible_play_hosts #}
+{%  for host in ansible_play_hosts|sort %}
 {#
 
 Loop through all the network interfaces that are defined on the host.
