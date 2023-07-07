@@ -64,6 +64,7 @@ Loop through all the hosts that are referenced by the Playbook.
 If we do not sort it, then the order can change randomly.
 
 #}
+# {{ play_hosts }}
 {%  for host in play_hosts|sort %}
 # {{ host }}
 {#
