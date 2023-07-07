@@ -64,7 +64,18 @@ Loop through all the hosts that are referenced by the Playbook.
 If we do not sort it, then the order can change randomly.
 
 #}
+# play_hosts
 # {{ play_hosts }}
+#
+# ansible_play_batch
+# {{ ansible_play_batch }}
+#
+# ansible_play_hosts
+# {{ ansible_play_hosts }}
+#
+# ansible_play_hosts_all
+# {{ ansible_play_hosts_all }}
+#
 {%  for host in play_hosts|sort %}
 # {{ host }}
 {#
