@@ -4,6 +4,46 @@
 # |                Retrieve or create the SAP password from keyvault           |
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
+# MKD - BEGIN
+# |  Secret Names:                                                             |
+# |    sap_password_id = <prefix>-<sid>-sap-password                           |
+# |    <prefix>-global-sapadm-password                                                                        |
+# |    <prefix>-<sid>-sapadm-password                                                                        |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
+# MKD -   END
+
+# Flow
+#   Parameter global or sid?
+#   Build secret name to check
+#   Check KV for Secret.
+#     If not found, create
+#   Retrieve Secret
+#   
+#
+# Parameters
+#   sapadm_scope    = [global, sid]
+#   sidadm_scope    = [global, sid]
+#
+# Secrets
+#   <prefix>-<scope>-sapadm-password
+#
+# Replaceables
+#   scope           = global or <SID>
+#
+
+- name:                                 "{{ role_name }}: - Construct secret names"
+  ansible.builtin.set_fact:
+    sapadm_password_key:                "{{ secret_prefix }}-{{ (sapadm_scope == 'global') | ternary('global',sap_sid) }}-sapadm-password"
+    sidadm_password_key:                "{{ secret_prefix }}-{{ (sapadm_scope == 'global') | ternary('global',sap_sid) }}-sap-password"
+      
+
+
+
+
+# +------------------------------------4--------------------------------------*/
+
+#Old functionality Below
 
 - name:                                "0.1 Password: - Construct SAP system password secret name"
   ansible.builtin.set_fact:
