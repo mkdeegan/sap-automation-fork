@@ -65,6 +65,7 @@ If we do not sort it, then the order can change randomly.
 
 #}
 {%  for host in play_hosts|sort %}
+# {{ host }}
 {#
 
 Loop through all the network interfaces that are defined on the host.
