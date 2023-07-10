@@ -64,7 +64,7 @@
   remote_user:                         "{{ orchestration_ansible_user }}"
   gather_facts:                        true                                    # Important to collect hostvars information
   any_errors_fatal:                    true
-#20230710 MKD - Setting "serial" breaks hostfile functionality
+  #20230710 MKD - Do Not enable "serial" setting. "serial" breaks hostfile functionality
   # serial:                              1                                     # Run on 1 host at a time
   vars_files:
     - vars/ansible-input-api.yaml                                              # API Input template with defaults
