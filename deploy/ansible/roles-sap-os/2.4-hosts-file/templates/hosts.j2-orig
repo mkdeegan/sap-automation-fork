@@ -66,8 +66,9 @@ If we do not sort it, then the order can change randomly.
 #}
 {# 20230707 MKD - play_hosts was depracated and not providing correct results. Updated to ansible_play_hosts #}
 # ansible_play_hosts = {{ ansible_play_hosts }}
-{%  for host in ansible_play_hosts|sort %}
+{%  for host in play_hosts|sort %}
 {{ hostvars[host] }}
+
 {#
 
 Loop through all the network interfaces that are defined on the host.
