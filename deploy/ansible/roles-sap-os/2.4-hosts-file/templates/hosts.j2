@@ -71,6 +71,7 @@ If we do not sort it, then the order can change randomly.
 
 {%  for host in ansible_play_hosts|sort %}
 # host = {{ host }}
-{# hostvars[host] #}
-
+{%    for interface in hostvars[host]['ansible_interfaces']|sort if interface not in ['lo', 'br'] %}
+#   interface = {{ interface }}
+{%    endfor %}
 {%  endfor %}
