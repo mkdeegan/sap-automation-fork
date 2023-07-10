@@ -76,7 +76,7 @@ Sort the order so eth0 is first.
 Skip over the 'lo' interface.
 
 #}
-{%    for interface in hostvars[host]['ansible_interfaces']|sort if interface not in ['lo', 'br'] %}
+{#{%    for interface in hostvars[host]['ansible_interfaces']|sort if interface not in ['lo', 'br'] %}
 {#
 
 if ipv4 not found, then that NIC is not configured and is skipped
@@ -112,7 +112,7 @@ Process all assigned secondaries
 {{ '%-19s' | format(ipv4Secondary['address']) }}{{ '%-50s' | format(hostvars[host]['virtual_host'] + '.' + sap_fqdn) }}{{ '%-21s' | format(hostvars[host]['virtual_host']) }}
 {%        endfor %}
 {%      endif %}
-{%    endfor %}
+{%    endfor %}#}
 {%  endfor %}
 {#
 
