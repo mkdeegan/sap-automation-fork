@@ -55,48 +55,21 @@
 - name:                                "1.5 Disk setup - Load the disk configuration settings"
   ansible.builtin.include_vars:        disks_config.yml
 
-#--------------------------------------------------------------------
-# Change:                                                        
-#   20230521 MKD
-#
-# Notes:
-#   - Fix typo; Values were being prepended instead of appended
-#--------------------------------------------------------------------
-#>>>> START OF DELETION <<<<
-# - name:                                "1.5 Disk setup - Append 'sapmnt' if neeeded"
-#   ansible.builtin.set_fact:
-#     logical_volumes:                   "{{ logical_volumes_sapmnt + logical_volumes }}"
-#   when: sap_mnt is not defined
-
-# - name:                                "1.5 Disk setup - Append 'install' if needed"
-#   ansible.builtin.set_fact:
-#     logical_volumes:                   "{{ logical_volumes_install + logical_volumes }}"
-#   when: usr_sap_install_mountpoint is not defined
-
-# - name:                                "1.5 Disk setup - Append 'hanashared' if needed"
-#   ansible.builtin.set_fact:
-#     logical_volumes:                   "{{ logical_volumes_hanashared + logical_volumes }}"
-#   when:
-#     - hana_shared_mountpoint is undefined or hana_shared_mountpoint | length == 0
-#>>>> END   OF DELETION <<<<
-#>>>> START OF INSERTION <<<<
-- name:                                "1.5 Disk setup - Append 'sapmnt' if neeeded"
-  ansible.builtin.set_fact:
-    logical_volumes:                   "{{ logical_volumes + logical_volumes_sapmnt }}"
-  when: sap_mnt is not defined
-
 - name:                                "1.5 Disk setup - Append 'install' if needed"
   ansible.builtin.set_fact:
     logical_volumes:                   "{{ logical_volumes + logical_volumes_install }}"
   when: usr_sap_install_mountpoint is not defined
+
+- name:                                "1.5 Disk setup - Append 'sapmnt' if neeeded"
+  ansible.builtin.set_fact:
+    logical_volumes:                   "{{ logical_volumes + logical_volumes_sapmnt }}"
+  when: sap_mnt is not defined
 
 - name:                                "1.5 Disk setup - Append 'hanashared' if needed"
   ansible.builtin.set_fact:
     logical_volumes:                   "{{ logical_volumes + logical_volumes_hanashared }}"
   when:
     - hana_shared_mountpoint is undefined or hana_shared_mountpoint | length == 0
-#>>>> END   OF INSERTION <<<<
-#--------------------------------------------------------------------
 
 - name:                                "1.5 Disk setup - Show disk info"
   ansible.builtin.debug:

@@ -61,8 +61,7 @@
 - name:                                "1.17 Generic Pacemaker - Ensure HA Cluster password is set to something secure"
   ansible.builtin.user:
     name:                              hacluster
-    password:                          "{{ password_ha_db_cluster | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}"
-
+    password:                          "{{ password_ha_db_cluster | password_hash('sha512', 65534 | random(seed=None) | string) }}"
 - name:                                "1.17 Generic Pacemaker - Ensure cluster configuration contains correct details"
   ansible.builtin.template:
     src:                               corosync.conf.j2
@@ -143,6 +142,9 @@
   #   WARNING: cib-bootstrap-options: unknown attribute 'azure-events_globalPullState'
   #   WARNING: cib-bootstrap-options: unknown attribute 'hostName_ hostname'
   # These warning messages can be ignored.
+    - name:                            "1.17 Generic Pacemaker - Ensure maintenance mode is set"
+      ansible.builtin.command:         crm configure property maintenance-mode=true
+
     - name:                            "1.17 Generic Pacemaker - Ensure Pacemaker resources for the Azure agent is created"
       ansible.builtin.shell:           crm configure primitive rsc_azure-events ocf:heartbeat:azure-events op monitor interval=10s
 

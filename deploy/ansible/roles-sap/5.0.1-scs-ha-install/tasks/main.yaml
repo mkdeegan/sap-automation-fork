@@ -9,12 +9,12 @@
 ---
 - name:                                "SCS HA Install: - Set Python version {{ distribution_id }}"
   ansible.builtin.set_fact:
-    python_version: "python2"
+    python_version: "python3"
 
 - name:                                "SCS HA Install: - Set Python version {{ distribution_id }}"
   ansible.builtin.set_fact:
-    python_version: "python3"
-  when: (ansible_distribution | lower ~ ansible_distribution_major_version) in ['suse15', 'redhat8', 'sles_sap15']
+    python_version: "python2"
+  when: (ansible_distribution | lower ~ ansible_distribution_major_version) in ['sles_sap12']
 
 - name:                                 "SCS HA Install: Set BOM facts"
   ansible.builtin.set_fact:
@@ -177,7 +177,7 @@
       block:
         - name:                        "SCS HA Install: SAPInst"
           ansible.builtin.shell: |
-                                       umask {{ custom_umask | default('022') }};
+                                       umask {{ custom_umask | default('022') }} ;
                                        ./sapinst SAPINST_INPUT_PARAMETERS_URL={{ dir_params }}/{{ sap_inifile }}     \
                                                  SAPINST_EXECUTE_PRODUCT_ID={{ bom.product_ids.scs_ha }}             \
                                                  SAPINST_SKIP_DIALOGS=true                                           \
@@ -249,7 +249,7 @@
 
         - name:                        "RESCUE - SCS HA Install: SAPINST"
           ansible.builtin.shell: |
-                                       umask {{ custom_umask | default('022') }};
+                                       umask {{ custom_umask | default('022') }} ;
                                        ./sapinst SAPINST_INPUT_PARAMETERS_URL={{ dir_params }}/{{ sap_inifile }}     \
                                                  SAPINST_EXECUTE_PRODUCT_ID={{ bom.product_ids.scs_ha }}             \
                                                  SAPINST_SKIP_DIALOGS=true                                           \
