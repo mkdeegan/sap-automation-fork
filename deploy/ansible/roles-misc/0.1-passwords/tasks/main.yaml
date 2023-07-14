@@ -32,10 +32,10 @@
 #   scope           = global or <SID>
 #
 
-- name:                                 "{{ role_name }}: - Construct secret names"
-  ansible.builtin.set_fact:
-    sapadm_password_key:                "{{ secret_prefix }}-{{ (sapadm_scope == 'global') | ternary('global',sap_sid) }}-sapadm-password"
-    sidadm_password_key:                "{{ secret_prefix }}-{{ (sapadm_scope == 'global') | ternary('global',sap_sid) }}-sap-password"
+# - name:                                 "{{ role_name }}: - Construct secret names"
+#   ansible.builtin.set_fact:
+#     sapadm_password_key:                "{{ secret_prefix }}-{{ (sapadm_scope == 'global') | ternary('global',sap_sid) }}-sapadm-password"
+#     sidadm_password_key:                "{{ secret_prefix }}-{{ (sapadm_scope == 'global') | ternary('global',sap_sid) }}-sap-password"
       
 
 
