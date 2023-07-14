@@ -52,26 +52,27 @@
       list | length }}"
   when: hana_shared_mountpoint is not defined
 
-- name:                                "1.5 Disk setup - Load the disk configuration settings"
-  ansible.builtin.include_vars:        disks_config.yml
+# -------------------------------------+---------------------------------------8
+- name:                                 "1.5 Disk setup - Load the disk configuration settings"
+  ansible.builtin.include_vars:         disks_config.yml
 
-- name:                                "1.5 Disk setup - Append 'install' if needed"
+- name:                                 "1.5 Disk setup - Append 'sapmnt' if neeeded"
   ansible.builtin.set_fact:
-    logical_volumes:                   "{{ logical_volumes + logical_volumes_install }}"
-  when: usr_sap_install_mountpoint is not defined
-
-- name:                                "1.5 Disk setup - Append 'sapmnt' if neeeded"
-  ansible.builtin.set_fact:
-    logical_volumes:                   "{{ logical_volumes + logical_volumes_sapmnt }}"
+    logical_volumes:                    "{{ logical_volumes + logical_volumes_sapmnt }}"
   when: sap_mnt is not defined
 
-- name:                                "1.5 Disk setup - Append 'hanashared' if needed"
+- name:                                 "1.5 Disk setup - Append 'hanashared' if needed"
   ansible.builtin.set_fact:
-    logical_volumes:                   "{{ logical_volumes + logical_volumes_hanashared }}"
-  when:
-    - hana_shared_mountpoint is undefined or hana_shared_mountpoint | length == 0
+    logical_volumes:                    "{{ logical_volumes + logical_volumes_hanashared }}"
+  when: hana_shared_mountpoint is undefined or hana_shared_mountpoint | length == 0
 
-- name:                                "1.5 Disk setup - Show disk info"
+# This should be appended last as lv_usrsapinstall consumes 100% of the remaining free space.
+- name:                                 "1.5 Disk setup - Append 'install' if needed"
+  ansible.builtin.set_fact:
+    logical_volumes:                    "{{ logical_volumes + logical_volumes_install }}"
+  when: usr_sap_install_mountpoint is not defined
+
+- name:                                 "1.5 Disk setup - Show disk info"
   ansible.builtin.debug:
     msg:
       - "Unique disks:           {{ disktypes }} "
@@ -79,9 +80,11 @@
       - "Logical volumes:        {{ logical_volumes }} "
       - "sap mount:              {{ sap_mnt is defined }}"
       - "sap trans:              {% if sap_trans is defined %} {{ sap_trans }}{% else %}provided from SCS{% endif %}"
-      - "usr install:            {% if usr_sap_install_mountpoint is defined %} {{ usr_sap_install_mountpoint }}{% else %}provided from SCS{% endif %}"
+      - "usrsap install:         {% if usr_sap_install_mountpoint is defined %} {{ usr_sap_install_mountpoint }}{% else %}provided from SCS{% endif %}"
       - "hana_shared_mountpoint: {% if hana_shared_mountpoint is defined %} {{ hana_shared_mountpoint }}{% else %}provided from SCS{% endif %}"
-    verbosity:                         2
+    verbosity:                          2
+# -------------------------------------+---------------------------------------8
+
 
 # CREATE VOLUME GROUPS BASED ON sap-parameters.yaml
 # -------------------------------------+---------------------------------------8
