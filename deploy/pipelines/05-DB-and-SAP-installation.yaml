@@ -71,13 +71,13 @@ parameters:
   #>>>> END   OF INSERTION <<<<
   #--------------------------------------------------------------------
 
-  - name:                              database_install
-    displayName: Database Installation
+  - name:                              scs_installation
+    displayName: SCS Installation
     type:                              boolean
     default:                           true
 
-  - name:                              scs_installation
-    displayName: SCS Installation
+  - name:                              database_install
+    displayName: Database Installation
     type:                              boolean
     default:                           true
 
@@ -445,7 +445,7 @@ stages:
           - ${{ if eq(parameters.bom_processing, true) }}:
               - template:                    templates\run-ansible.yaml
                 parameters:
-                  displayName:               "Software download"
+                  displayName:               "BOM Processing"
                   ansibleFilePath:           ${{ parameters.sap_automation_repo_path }}/deploy/ansible/playbook_03_bom_processing.yaml
                   secretName:                "$(Preparation.SSH_KEY_NAME)"
                   passwordSecretName:        "$(Preparation.PASSWORD_KEY_NAME)"
