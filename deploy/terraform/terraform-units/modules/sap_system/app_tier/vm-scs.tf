@@ -512,7 +512,9 @@ resource "azurerm_managed_disk" "cluster" {
   #               and upper(var.application_tier.scs_cluster_type) == "ASD"      # ISCSI, ASD (Azure Shared Disk)
   #             )
   #       )
-  count    = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? 1 : 0
+  count     = local.enable_deployment && 
+              upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? 1 : 0
+
   # count     = local.enable_deployment &&
   #             var.application_tier.scs_high_availability &&
   #             (
