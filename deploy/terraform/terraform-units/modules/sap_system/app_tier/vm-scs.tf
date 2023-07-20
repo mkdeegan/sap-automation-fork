@@ -500,7 +500,30 @@ resource "azurerm_virtual_machine_extension" "configure_ansible_scs" {
 
 resource "azurerm_managed_disk" "cluster" {
   provider = azurerm.main
-  count    = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? 1 : 0
+  # count    = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? 1 : 0
+  # if 
+  #       local.enable_deployment                    == true
+  #   and var.application_tier.scs_high_availability == true
+  #   and
+  #       (
+  #             upper(var.application_tier.scs_os.os_type) == "WINDOWS"
+  #         or  ( 
+  #                   upper(var.application_tier.scs_os.os_type)   == "LINUX"
+  #               and upper(var.application_tier.scs_cluster_type) == "ASD"      # ISCSI, ASD (Azure Shared Disk)
+  #             )
+  #       )
+  count     = <<EOF
+                  local.enable_deployment
+              &&  var.application_tier.scs_high_availability
+              &&
+                  ( 
+                    (upper(var.application_tier.scs_os.os_type) == "WINDOWS")
+                    ||
+                    (upper(var.application_tier.scs_os.os_type)   == "LINUX")
+                  )
+              ? 1: 0
+              EOF
+  
   name = format("%s%s%s%s",
     var.naming.resource_prefixes.scs_cluster_disk,
     local.prefix,
@@ -520,12 +543,11 @@ resource "azurerm_managed_disk" "cluster" {
   }
 }
 
-resource "azurerm_virtual_machine_data_disk_attachment" "cluster" {
-  provider           = azurerm.main
-  count              = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? local.scs_server_count : 0
-  managed_disk_id    = azurerm_managed_disk.cluster[0].id
-  virtual_machine_id = azurerm_windows_virtual_machine.scs[count.index].id
-  caching            = "None"
-  lun                = var.scs_shared_disk_lun
-
-}
+# resource "azurerm_virtual_machine_data_disk_attachment" "cluster" {
+#   provider           = azurerm.main
+#   count              = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? local.scs_server_count : 0
+#   managed_disk_id    = azurerm_managed_disk.cluster[0].id
+#   virtual_machine_id = azurerm_windows_virtual_machine.scs[count.index].id
+#   caching            = "None"
+#   lun                = var.scs_shared_disk_lun
+# }
