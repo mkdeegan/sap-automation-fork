@@ -534,6 +534,11 @@ variable "scs_high_availability" {
   default     = false
 }
 
+variable "scs_cluster_type" {
+  description   = "Cluster quorum type; AFA (Azure Fencing Agent), ASD (Azure Shared Disk), ISCSI"
+  default       = "AFA"
+}
+
 variable "scs_server_zones" {
   description = "If provided, the SAP Central Services tier will be deployed in the specified zones"
   default     = []
