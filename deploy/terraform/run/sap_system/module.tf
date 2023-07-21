@@ -37,6 +37,8 @@ module "sap_namegenerator" {
   custom_prefix              = var.custom_prefix
   database_high_availability = local.database.high_availability
   scs_high_availability      = local.application_tier.scs_high_availability
+  scs_cluster_type           = local.application_tier.scs_cluster_type
+  database_cluster_type      = local.application_tier.database_cluster_type
   use_zonal_markers          = var.use_zonal_markers
 }
 
@@ -372,83 +374,83 @@ module "output_files" {
   #  SAP Application information                                                          #
   #########################################################################################
 
-  sap_sid             = local.sap_sid
-  db_sid              = local.db_sid
-  bom_name            = var.bom_name
-  platform            = upper(try(local.database.platform, "HANA"))
-  web_sid             = var.web_sid
-  web_instance_number = var.web_instance_number
+  sap_sid                             = local.sap_sid
+  db_sid                              = local.db_sid
+  bom_name                            = var.bom_name
+  platform                            = upper(try(local.database.platform, "HANA"))
+  web_sid                             = var.web_sid
+  web_instance_number                 = var.web_instance_number
 
-  observer_ips = module.anydb_node.observer_ips
-  observer_vms = module.anydb_node.observer_vms
+  observer_ips                        = module.anydb_node.observer_ips
+  observer_vms                        = module.anydb_node.observer_vms
 
   #########################################################################################
   #  Application tier                                                                     #
   #########################################################################################
 
-  app_tier_os_types    = module.app_tier.app_tier_os_types
-  use_secondary_ips    = var.use_secondary_ips
-  use_msi_for_clusters = var.use_msi_for_clusters
+  app_tier_os_types                   = module.app_tier.app_tier_os_types
+  use_secondary_ips                   = var.use_secondary_ips
+  use_msi_for_clusters                = var.use_msi_for_clusters
 
-  scs_server_ips           = module.app_tier.scs_server_ips
-  scs_server_secondary_ips = module.app_tier.scs_server_secondary_ips
-  nics_scs_admin           = module.app_tier.nics_scs_admin
-  scs_instance_number      = var.scs_instance_number
-  ers_instance_number      = var.ers_instance_number
+  scs_server_ips                      = module.app_tier.scs_server_ips
+  scs_server_secondary_ips            = module.app_tier.scs_server_secondary_ips
+  nics_scs_admin                      = module.app_tier.nics_scs_admin
+  scs_instance_number                 = var.scs_instance_number
+  ers_instance_number                 = var.ers_instance_number
 
-  application_server_ips           = module.app_tier.application_server_ips
-  application_server_secondary_ips = module.app_tier.application_server_secondary_ips
-  nics_app_admin                   = module.app_tier.nics_app_admin
-  pas_instance_number              = var.pas_instance_number
+  application_server_ips              = module.app_tier.application_server_ips
+  application_server_secondary_ips    = module.app_tier.application_server_secondary_ips
+  nics_app_admin                      = module.app_tier.nics_app_admin
+  pas_instance_number                 = var.pas_instance_number
 
-  webdispatcher_server_ips           = module.app_tier.webdispatcher_server_ips
-  webdispatcher_server_secondary_ips = module.app_tier.webdispatcher_server_secondary_ips
-  nics_web_admin                     = module.app_tier.nics_web_admin
+  webdispatcher_server_ips            = module.app_tier.webdispatcher_server_ips
+  webdispatcher_server_secondary_ips  = module.app_tier.webdispatcher_server_secondary_ips
+  nics_web_admin                      = module.app_tier.nics_web_admin
 
-  scs_ha                = module.app_tier.scs_ha
-  scs_lb_ip             = module.app_tier.scs_lb_ip
-  ers_lb_ip             = module.app_tier.ers_lb_ip
-  scs_clst_lb_ip        = module.app_tier.cluster_lb_ip
-  app_subnet_netmask    = module.app_tier.app_subnet_netmask
-  use_local_credentials = module.common_infrastructure.use_local_credentials
+  scs_ha                              = module.app_tier.scs_ha
+  scs_lb_ip                           = module.app_tier.scs_lb_ip
+  ers_lb_ip                           = module.app_tier.ers_lb_ip
+  scs_clst_lb_ip                      = module.app_tier.cluster_lb_ip
+  app_subnet_netmask                  = module.app_tier.app_subnet_netmask
+  use_local_credentials               = module.common_infrastructure.use_local_credentials
 
-  sid_keyvault_user_id = module.common_infrastructure.sid_keyvault_user_id
-  ansible_user         = module.common_infrastructure.sid_username
+  sid_keyvault_user_id                = module.common_infrastructure.sid_keyvault_user_id
+  ansible_user                        = module.common_infrastructure.sid_username
 
   #########################################################################################
   #  Mounting information                                                                 #
   #########################################################################################
 
-  NFS_provider  = var.NFS_provider
-  sap_mnt       = module.common_infrastructure.sapmnt_path
-  sap_transport = try(data.terraform_remote_state.landscape.outputs.saptransport_path, "")
-  install_path  = try(data.terraform_remote_state.landscape.outputs.install_path, "")
+  NFS_provider                        = var.NFS_provider
+  sap_mnt                             = module.common_infrastructure.sapmnt_path
+  sap_transport                       = try(data.terraform_remote_state.landscape.outputs.saptransport_path, "")
+  install_path                        = try(data.terraform_remote_state.landscape.outputs.install_path, "")
 
-  shared_home = var.shared_home
-  hana_data   = [module.hdb_node.hana_data_primary, module.hdb_node.hana_data_secondary]
-  hana_log    = [module.hdb_node.hana_log_primary, module.hdb_node.hana_log_secondary]
-  hana_shared = [module.hdb_node.hana_shared_primary, module.hdb_node.hana_shared_secondary]
-  usr_sap     = module.common_infrastructure.usrsap_path
+  shared_home                         = var.shared_home
+  hana_data                           = [module.hdb_node.hana_data_primary, module.hdb_node.hana_data_secondary]
+  hana_log                            = [module.hdb_node.hana_log_primary, module.hdb_node.hana_log_secondary]
+  hana_shared                         = [module.hdb_node.hana_shared_primary, module.hdb_node.hana_shared_secondary]
+  usr_sap                             = module.common_infrastructure.usrsap_path
 
   #########################################################################################
   #  DNS information                                                                      #
   #########################################################################################
-  dns                               = try(data.terraform_remote_state.landscape.outputs.dns_label, "")
-  use_custom_dns_a_registration     = data.terraform_remote_state.landscape.outputs.use_custom_dns_a_registration
-  management_dns_subscription_id    = try(data.terraform_remote_state.landscape.outputs.management_dns_subscription_id, null)
-  management_dns_resourcegroup_name = coalesce(data.terraform_remote_state.landscape.outputs.management_dns_resourcegroup_name, local.saplib_resource_group_name)
+  dns                                 = try(data.terraform_remote_state.landscape.outputs.dns_label, "")
+  use_custom_dns_a_registration       = data.terraform_remote_state.landscape.outputs.use_custom_dns_a_registration
+  management_dns_subscription_id      = try(data.terraform_remote_state.landscape.outputs.management_dns_subscription_id, null)
+  management_dns_resourcegroup_name   = coalesce(data.terraform_remote_state.landscape.outputs.management_dns_resourcegroup_name, local.saplib_resource_group_name)
 
 
   #########################################################################################
   #  Server counts                                                                        #
   #########################################################################################
 
-  db_server_count  = var.database_server_count
-  app_server_count = try(local.application_tier.application_server_count, 0)
-  web_server_count = try(local.application_tier.webdispatcher_count, 0)
-  scs_server_count = local.application_tier.scs_high_availability ? (
-    2 * local.application_tier.scs_server_count) : (
-    local.application_tier.scs_server_count
-  )
+  db_server_count                     = var.database_server_count
+  app_server_count                    = try(local.application_tier.application_server_count, 0)
+  web_server_count                    = try(local.application_tier.webdispatcher_count, 0)
+  scs_server_count                    = local.application_tier.scs_high_availability ? (
+                                        2 * local.application_tier.scs_server_count) : (
+                                        local.application_tier.scs_server_count
+                                        )
 
 }

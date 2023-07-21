@@ -176,6 +176,13 @@ locals {
       ) : (
       false
     )
+
+    scs_cluster_type = local.enable_app_tier_deployment ? (
+      var.scs_cluster_type || try(var.application_tier.scs_cluster_type, "")
+      ) : (
+      ""
+    )
+
     scs_instance_number = coalesce(var.scs_instance_number, try(var.application_tier.scs_instance_number, "00"))
     ers_instance_number = coalesce(var.ers_instance_number, try(var.application_tier.ers_instance_number, "02"))
 
