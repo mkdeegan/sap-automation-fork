@@ -328,10 +328,10 @@ variable "database_high_availability" {
   default     = false
 }
 
-variable "database_cluster_type" {
-  description   = "Cluster quorum type; AFA (Azure Fencing Agent), ASD (Azure Shared Disk), ISCSI"
-  default       = "AFA"
-}
+# variable "database_cluster_type" {
+#   description   = "Cluster quorum type; AFA (Azure Fencing Agent), ASD (Azure Shared Disk), ISCSI"
+#   default       = "AFA"
+# }
 
 variable "use_observer" {
   description = "If true, an observer virtual machine will be used"
