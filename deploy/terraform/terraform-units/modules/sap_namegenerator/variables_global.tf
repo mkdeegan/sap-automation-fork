@@ -47,7 +47,6 @@ variable "web_sid" {
   default     = ""
 }
 
-
 variable "db_sid" {
   description = "Database SID"
   default     = ""
@@ -123,17 +122,17 @@ variable "database_high_availability" {
   default = false
 }
 
+variable "database_cluster_type" {
+  description   = "Cluster quorum type; AFA (Azure Fencing Agent), ASD (Azure Shared Disk), ISCSI"
+  default       = "AFA"
+}
+
 variable "scs_high_availability" {
   type    = bool
   default = false
 }
 
 variable "scs_cluster_type" {
-  description   = "Cluster quorum type; AFA (Azure Fencing Agent), ASD (Azure Shared Disk), ISCSI"
-  default       = "AFA"
-}
-
-variable "database_cluster_type" {
   description   = "Cluster quorum type; AFA (Azure Fencing Agent), ASD (Azure Shared Disk), ISCSI"
   default       = "AFA"
 }

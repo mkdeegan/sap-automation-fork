@@ -78,7 +78,9 @@ locals {
   db_tags                   = try(coalesce(var.database_tags, try(var.databases[0].tags, {})), {})
 
   databases_temp = {
-    high_availability = var.database_high_availability || try(var.databases[0].high_availability, false)
+    high_availability     = var.database_high_availability || try(var.databases[0].high_availability, false)
+    database_cluster_type = var.database_cluster_type      || try(var.databases[0].database_cluster_type, "")
+
     use_DHCP          = var.database_vm_use_DHCP || try(var.databases[0].use_DHCP, false)
 
     platform        = var.database_platform
