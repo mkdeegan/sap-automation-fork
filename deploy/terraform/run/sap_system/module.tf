@@ -174,6 +174,7 @@ module "hdb_node" {
   scale_set_id                 = try(module.common_infrastructure.scale_set_id, null)
 
   database_use_premium_v2_storage = var.database_use_premium_v2_storage
+  database_shared_disk_size = var.database_shared_disk_size
 
 }
 
@@ -235,7 +236,6 @@ module "app_tier" {
   use_msi_for_clusters = var.use_msi_for_clusters
   scs_shared_disk_lun  = var.scs_shared_disk_lun
   scs_shared_disk_size = var.scs_shared_disk_size
-  database_shared_disk_size = var.database_shared_disk_size
 
   use_scalesets_for_deployment = var.use_scalesets_for_deployment
   scale_set_id                 = try(module.common_infrastructure.scale_set_id, null)
@@ -255,7 +255,7 @@ module "anydb_node" {
     azurerm.dnsmanagement                       = azurerm.dnsmanagement
   }
   depends_on                                    = [module.common_infrastructure]
-  
+
   admin_subnet                                  = try(module.common_infrastructure.admin_subnet, null)
   anchor_vm                                     = module.common_infrastructure.anchor_vm // Workaround to create dependency from anchor to db to app
   cloudinit_growpart_config                     = null # This needs more consideration module.common_infrastructure.cloudinit_growpart_config
@@ -301,6 +301,7 @@ module "anydb_node" {
   use_observer                                  = var.use_observer
   use_scalesets_for_deployment                  = var.use_scalesets_for_deployment
   use_secondary_ips                             = var.use_secondary_ips
+  database_shared_disk_size                     = var.database_shared_disk_size
 }
 
 #########################################################################################
@@ -310,43 +311,44 @@ module "anydb_node" {
 #########################################################################################
 
 module "output_files" {
-  depends_on = [module.anydb_node, module.common_infrastructure, module.app_tier, module.hdb_node]
-  source     = "../../terraform-units/modules/sap_system/output_files"
+  source                                        = "../../terraform-units/modules/sap_system/output_files"
+  depends_on                                    = [module.anydb_node, module.common_infrastructure, module.app_tier, module.hdb_node]
   providers = {
-    azurerm.deployer      = azurerm
-    azurerm.main          = azurerm.system
-    azurerm.dnsmanagement = azurerm.dnsmanagement
+    azurerm.deployer                            = azurerm
+    azurerm.main                                = azurerm.system
+    azurerm.dnsmanagement                       = azurerm.dnsmanagement
   }
-  database            = local.database
-  infrastructure      = local.infrastructure
-  authentication      = local.authentication
-  authentication_type = try(local.application_tier.authentication.type, "key")
-  tfstate_resource_id = var.tfstate_resource_id
-  landscape_tfstate   = data.terraform_remote_state.landscape.outputs
-  naming = length(var.name_override_file) > 0 ? (
-    local.custom_names) : (
-    module.sap_namegenerator.naming
-  )
-  save_naming_information = var.save_naming_information
-  configuration_settings  = var.configuration_settings
-  random_id               = module.common_infrastructure.random_id
+
+  database                                      = local.database
+  infrastructure                                = local.infrastructure
+  authentication                                = local.authentication
+  authentication_type                           = try(local.application_tier.authentication.type, "key")
+  tfstate_resource_id                           = var.tfstate_resource_id
+  landscape_tfstate                             = data.terraform_remote_state.landscape.outputs
+  naming                                        = length(var.name_override_file) > 0 ? (
+                                                    local.custom_names) : (
+                                                    module.sap_namegenerator.naming
+                                                  )
+  save_naming_information                       = var.save_naming_information
+  configuration_settings                        = var.configuration_settings
+  random_id                                     = module.common_infrastructure.random_id
 
   #########################################################################################
   #  Database tier                                                                        #
   #########################################################################################
 
-  nics_anydb_admin   = module.anydb_node.nics_anydb_admin
-  nics_dbnodes_admin = module.hdb_node.nics_dbnodes_admin
-  db_server_ips = upper(try(local.database.platform, "HANA")) == "HANA" ? (module.hdb_node.db_server_ips
-    ) : (module.anydb_node.db_server_ips
-  )
-  db_server_secondary_ips = upper(try(local.database.platform, "HANA")) == "HANA" ? (module.hdb_node.db_server_secondary_ips
-    ) : (module.anydb_node.db_server_secondary_ips
-  )
-  disks = distinct(compact(concat(module.hdb_node.dbtier_disks,
-    module.anydb_node.dbtier_disks,
-    module.app_tier.apptier_disks
-  )))
+  nics_anydb_admin                              = module.anydb_node.nics_anydb_admin
+  nics_dbnodes_admin                            = module.hdb_node.nics_dbnodes_admin
+  db_server_ips                                 = upper(try(local.database.platform, "HANA")) == "HANA" ? (module.hdb_node.db_server_ips
+                                                  ) : (module.anydb_node.db_server_ips
+                                                  )
+  db_server_secondary_ips                       = upper(try(local.database.platform, "HANA")) == "HANA" ? (module.hdb_node.db_server_secondary_ips
+                                                  ) : (module.anydb_node.db_server_secondary_ips
+                                                  )
+  disks                                         = distinct(compact(concat(module.hdb_node.dbtier_disks,
+                                                    module.anydb_node.dbtier_disks,
+                                                    module.app_tier.apptier_disks
+                                                  )))
 
   anydb_loadbalancers = module.anydb_node.anydb_loadbalancers
   loadbalancers       = module.hdb_node.loadbalancers

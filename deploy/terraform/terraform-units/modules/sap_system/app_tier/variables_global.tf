@@ -141,10 +141,6 @@ variable "management_dns_resourcegroup_name" {
   type        = string
 }
 
-variable "database_shared_disk_size" {
-  description = "The size of the shared disk for the Database cluster"
-}
-
 variable "scs_shared_disk_size" {
   description = "The size of the shared disk for the SAP Central Services cluster"
 }
