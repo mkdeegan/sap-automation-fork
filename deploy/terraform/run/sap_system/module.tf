@@ -301,7 +301,7 @@ module "anydb_node" {
   use_observer                                  = var.use_observer
   use_scalesets_for_deployment                  = var.use_scalesets_for_deployment
   use_secondary_ips                             = var.use_secondary_ips
-  database_shared_disk_size                     = var.database_shared_disk_size
+  # database_shared_disk_size                     = var.database_shared_disk_size
 }
 
 #########################################################################################
