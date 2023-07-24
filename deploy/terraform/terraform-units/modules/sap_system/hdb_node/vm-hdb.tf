@@ -408,14 +408,14 @@ resource "azurerm_managed_disk" "cluster" {
   # count      = local.enable_deployment ? var.database_server_count : 0
   count = (
             local.enable_deployment &&
-            var.database.high_availability &&
-            (
-              upper(var.application_tier.db_os.os_type) == "WINDOWS" ||
-              (
-                upper(var.application_tier.db_os.os_type) == "LINUX"
-                # upper(var.application_tier.database_cluster_type) == "ASD"
-              )
-            )
+            var.database.high_availability
+            # (
+            #   upper(var.application_tier.db_os.os_type) == "WINDOWS" ||
+            #   (
+            #     upper(var.application_tier.db_os.os_type) == "LINUX" &&
+            #     upper(var.application_tier.database_cluster_type) == "ASD"
+            #   )
+            # )
           ) ? 1 : 0
   # count = (
   #           local.enable_deployment &&
@@ -442,8 +442,9 @@ resource "azurerm_managed_disk" "cluster" {
   storage_account_type   = "Premium_LRS"
   disk_size_gb           = var.scs_shared_disk_size
   disk_encryption_set_id = try(var.options.disk_encryption_set_id, null)
-  max_shares             = local.scs_server_count
-
+  # max_shares             = local.database_server_count
+  max_shares             = 2
+  
   lifecycle {
     ignore_changes = [tags]
   }
