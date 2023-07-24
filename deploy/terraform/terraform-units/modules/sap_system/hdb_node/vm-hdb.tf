@@ -395,3 +395,65 @@ variable "scale_set_id" {
   description = "Azure resource identifier for scale set"
 }
 
+
+#########################################################################################
+#                                                                                       #
+#  Azure Shared Disk for SBD                                                            #
+#                                                                                       #
+#########################################################################################
+
+resource "azurerm_managed_disk" "cluster" {
+  provider = azurerm.main
+  # count    = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? 1 : 0
+  # count      = local.enable_deployment ? var.database_server_count : 0
+  count = (
+            local.enable_deployment &&
+            var.database.high_availability &&
+            (
+              upper(var.application_tier.db_os.os_type) == "WINDOWS" ||
+              (
+                upper(var.application_tier.db_os.os_type) == "LINUX"
+                # upper(var.application_tier.database_cluster_type) == "ASD"
+              )
+            )
+          ) ? 1 : 0
+  # count = (
+  #           local.enable_deployment &&
+  #           var.database.high_availability &&
+  #           (
+  #             upper(var.application_tier.db_os.os_type) == "WINDOWS" ||
+  #             (
+  #               upper(var.application_tier.db_os.os_type) == "LINUX" &&
+  #               upper(var.application_tier.database_cluster_type) == "ASD"
+  #             )
+  #           )
+  #         ) ? 1 : 0
+
+  
+  name = format("%s%s%s%s",
+    var.naming.resource_prefixes.database_cluster_disk,
+    local.prefix,
+    var.naming.separator,
+    var.naming.resource_suffixes.database_cluster_disk
+  )
+  location               = var.resource_group[0].location
+  resource_group_name    = var.resource_group[0].name
+  create_option          = "Empty"
+  storage_account_type   = "Premium_LRS"
+  disk_size_gb           = var.scs_shared_disk_size
+  disk_encryption_set_id = try(var.options.disk_encryption_set_id, null)
+  max_shares             = local.scs_server_count
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+}
+
+# resource "azurerm_virtual_machine_data_disk_attachment" "cluster" {
+#   provider           = azurerm.main
+#   count              = local.enable_deployment && upper(var.application_tier.scs_os.os_type) == "WINDOWS" && var.application_tier.scs_high_availability ? local.scs_server_count : 0
+#   managed_disk_id    = azurerm_managed_disk.cluster[0].id
+#   virtual_machine_id = azurerm_windows_virtual_machine.scs[count.index].id
+#   caching            = "None"
+#   lun                = var.scs_shared_disk_lun
+# }
