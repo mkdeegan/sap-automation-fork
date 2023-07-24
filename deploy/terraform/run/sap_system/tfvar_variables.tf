@@ -475,7 +475,7 @@ variable "database_use_premium_v2_storage" {
   default     = false
 }
 
-variable "databse_shared_disk_size" {
+variable "database_shared_disk_size" {
   description = "The size of the shared disk for the Database cluster"
   default     = 128
 }
