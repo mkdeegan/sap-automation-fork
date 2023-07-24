@@ -475,6 +475,11 @@ variable "database_use_premium_v2_storage" {
   default     = false
 }
 
+variable "databse_shared_disk_size" {
+  description = "The size of the shared disk for the Database cluster"
+  default     = 128
+}
+
 
 #########################################################################################
 #                                                                                       #
@@ -635,12 +640,12 @@ variable "scs_server_use_ppg" {
 }
 
 variable "scs_shared_disk_size" {
-  description = "The size of the shared disk for the SAP Central Services Windows cluster"
+  description = "The size of the shared disk for the SAP Central Services cluster"
   default     = 128
 }
 
 variable "scs_shared_disk_lun" {
-  description = "The LUN of the shared disk for the SAP Central Services Windows cluster"
+  description = "The LUN of the shared disk for the SAP Central Services cluster"
   default     = 5
 }
 
