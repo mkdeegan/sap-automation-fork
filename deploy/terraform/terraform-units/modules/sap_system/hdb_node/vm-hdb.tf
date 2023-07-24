@@ -440,8 +440,7 @@ resource "azurerm_managed_disk" "cluster" {
   resource_group_name    = var.resource_group[0].name
   create_option          = "Empty"
   storage_account_type   = "Premium_LRS"
-  # disk_size_gb           = var.scs_shared_disk_size
-  disk_size_gb           = 128
+  disk_size_gb           = var.scs_shared_disk_size
   disk_encryption_set_id = try(var.options.disk_encryption_set_id, null)
   # max_shares             = local.database_server_count
   max_shares             = 2
