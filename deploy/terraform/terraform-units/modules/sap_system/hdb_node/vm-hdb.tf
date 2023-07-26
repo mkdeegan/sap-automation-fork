@@ -412,8 +412,8 @@ resource "azurerm_managed_disk" "cluster" {
             (
               upper(var.database.os.os_type) == "WINDOWS" ||
               (
-                upper(var.database.os.os_type) == "LINUX" &&
-                upper(var.database.database_cluster_type) == "ASD"
+                upper(var.database.os.os_type) == "LINUX" 
+                # upper(var.database.database_cluster_type) == "ASD"
               )
             )
           ) ? 1 : 0
