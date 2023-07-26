@@ -408,7 +408,7 @@ resource "azurerm_managed_disk" "cluster" {
   # count      = local.enable_deployment ? var.database_server_count : 0
   count = (
             local.enable_deployment &&
-            var.database.high_availability
+            var.database.high_availability &&
             (
               upper(var.database.os.os_type) == "WINDOWS" || upper(var.database.os.os_type) == "LINUX"
             #   (
