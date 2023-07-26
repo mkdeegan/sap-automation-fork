@@ -409,13 +409,13 @@ resource "azurerm_managed_disk" "cluster" {
   count = (
             local.enable_deployment &&
             var.database.high_availability
-            # (
-            #   upper(var.application_tier.db_os.os_type) == "WINDOWS" ||
-            #   (
-            #     upper(var.application_tier.db_os.os_type) == "LINUX" &&
+            (
+              upper(var.database.os.os_type) == "WINDOWS" ||
+              (
+                upper(var.database.os.os_type) == "LINUX"
             #     upper(var.application_tier.database_cluster_type) == "ASD"
-            #   )
-            # )
+              )
+            )
           ) ? 1 : 0
   # count = (
   #           local.enable_deployment &&
