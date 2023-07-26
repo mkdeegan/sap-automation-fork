@@ -36,7 +36,7 @@ module "sap_namegenerator" {
   resource_offset                               = try(var.resource_offset, 0)
   custom_prefix                                 = var.custom_prefix
   database_high_availability                    = local.database.high_availability
-  # database_cluster_type                         = local.application_tier.database_cluster_type
+  database_cluster_type                         = local.database.database_cluster_type
   scs_high_availability                         = local.application_tier.scs_high_availability
   scs_cluster_type                              = local.application_tier.scs_cluster_type
   use_zonal_markers                             = var.use_zonal_markers
