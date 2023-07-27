@@ -71,49 +71,47 @@ locals {
     type     = try(coalesce(var.database_vm_authentication_type, try(var.databases[0].authentication.type, "")), "")
     username = try(coalesce(var.automation_username, try(var.databases[0].authentication.username, "")), "")
   }
-  db_authentication_defined = (length(local.db_authentication.type) + length(local.db_authentication.username)) > 3
-  avset_arm_ids             = distinct(concat(var.database_vm_avset_arm_ids, try(var.databases[0].avset_arm_ids, [])))
-  db_avset_arm_ids_defined  = length(local.avset_arm_ids) > 0
-  frontend_ips              = try(coalesce(var.database_loadbalancer_ips, try(var.databases[0].loadbalancer.frontend_ip, [])), [])
-  db_tags                   = try(coalesce(var.database_tags, try(var.databases[0].tags, {})), {})
+  db_authentication_defined         = (length(local.db_authentication.type) + length(local.db_authentication.username)) > 3
+  avset_arm_ids                     = distinct(concat(var.database_vm_avset_arm_ids, try(var.databases[0].avset_arm_ids, [])))
+  db_avset_arm_ids_defined          = length(local.avset_arm_ids) > 0
+  frontend_ips                      = try(coalesce(var.database_loadbalancer_ips, try(var.databases[0].loadbalancer.frontend_ip, [])), [])
+  db_tags                           = try(coalesce(var.database_tags, try(var.databases[0].tags, {})), {})
 
   databases_temp = {
-    high_availability               = var.database_high_availability || try(var.databases[0].high_availability, false)
-    # database_cluster_type           = var.database_cluster_type      || try(var.databases[0].database_cluster_type, "")
     database_cluster_type           = coalesce(var.database_cluster_type, try(var.databases[0].database_cluster_type, ""))
-    use_DHCP                        = var.database_vm_use_DHCP || try(var.databases[0].use_DHCP, false)
-    platform                        = var.database_platform
-    db_sizing_key                   = coalesce(var.db_sizing_dictionary_key, var.database_size, try(var.databases[0].size, ""))
     database_vm_sku                 = var.database_vm_sku
-    use_ANF                         = var.database_HANA_use_ANF_scaleout_scenario || try(var.databases[0].use_ANF, false)
+    db_sizing_key                   = coalesce(var.db_sizing_dictionary_key, var.database_size, try(var.databases[0].size, ""))
+    deploy_v1_monitoring_extension  = var.deploy_v1_monitoring_extension
     dual_nics                       = var.database_dual_nics || try(var.databases[0].dual_nics, false)
-    use_ppg                         = var.use_scalesets_for_deployment ? (
-                                        false) : (
-                                        tobool(var.database_no_ppg) == null ? (length(var.proximityplacementgroup_arm_ids) > 0 && !var.database_use_ppg) || var.database_use_ppg : !var.database_no_ppg
-                                      )
+    high_availability               = var.database_high_availability || try(var.databases[0].high_availability, false)
+    platform                        = var.database_platform
+    use_ANF                         = var.database_HANA_use_ANF_scaleout_scenario || try(var.databases[0].use_ANF, false)
     use_avset                       = var.use_scalesets_for_deployment ? (
                                         false) : (
                                         tobool(var.database_no_avset) == null ? var.database_use_avset : !var.database_no_avset
                                       )
-    deploy_v1_monitoring_extension  = var.deploy_v1_monitoring_extension
+    use_DHCP                        = var.database_vm_use_DHCP || try(var.databases[0].use_DHCP, false)
+    use_ppg                         = var.use_scalesets_for_deployment ? (
+                                        false) : (
+                                        tobool(var.database_no_ppg) == null ? (length(var.proximityplacementgroup_arm_ids) > 0 && !var.database_use_ppg) || var.database_use_ppg : !var.database_no_ppg
+                                      )
   }
 
   db_os = {
-    os_type = length(var.database_vm_image.source_image_id) == 0 ? (
-      upper(var.database_vm_image.publisher) == "MICROSOFTWINDOWSSERVER") ? "WINDOWS" : try(var.database_vm_image.os_type, "LINUX)") : (
-      length(var.database_vm_image.os_type) == 0 ? "LINUX" : var.database_vm_image.os_type
-    )
-    source_image_id = try(var.database_vm_image.source_image_id, "")
-    publisher       = try(var.database_vm_image.publisher, "")
-    offer           = try(var.database_vm_image.offer, "")
-    sku             = try(var.database_vm_image.sku, "")
-    version         = try(var.database_vm_image.version, "")
-    type            = try(var.database_vm_image.type, "marketplace")
+    os_type                         = length(var.database_vm_image.source_image_id) == 0 ? (
+                                        upper(var.database_vm_image.publisher) == "MICROSOFTWINDOWSSERVER") ? "WINDOWS" : try(var.database_vm_image.os_type, "LINUX)") : (
+                                        length(var.database_vm_image.os_type) == 0 ? "LINUX" : var.database_vm_image.os_type
+                                      )
+    source_image_id                 = try(var.database_vm_image.source_image_id, "")
+    publisher                       = try(var.database_vm_image.publisher, "")
+    offer                           = try(var.database_vm_image.offer, "")
+    sku                             = try(var.database_vm_image.sku, "")
+    version                         = try(var.database_vm_image.version, "")
+    type                            = try(var.database_vm_image.type, "marketplace")
   }
 
-  db_os_specified = (length(local.db_os.source_image_id) + length(local.db_os.publisher)) > 0
-
-  db_sid_specified = (length(var.database_sid) + length(try(var.databases[0].sid, ""))) > 0
+  db_os_specified                   = (length(local.db_os.source_image_id) + length(local.db_os.publisher)) > 0
+  db_sid_specified                  = (length(var.database_sid) + length(try(var.databases[0].sid, ""))) > 0
 
   instance = {
     sid = upper(try(coalesce(
