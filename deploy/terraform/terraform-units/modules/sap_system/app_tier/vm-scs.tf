@@ -519,7 +519,6 @@ resource "azurerm_managed_disk" "cluster" {
             )
           ) ? 1 : 0
 
-  
   name = format("%s%s%s%s",
     var.naming.resource_prefixes.scs_cluster_disk,
     local.prefix,
