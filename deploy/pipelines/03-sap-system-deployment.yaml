@@ -222,6 +222,7 @@ stages:
 
                 az account show
                 env
+                echo "WZ_PAT = " $WZ_PAT
 
                 export VARIABLE_GROUP_ID=$(az pipelines variable-group list --query "[?name=='$(variable_group)'].id | [0]")
                 echo '$(variable_group) id: ' $VARIABLE_GROUP_ID
