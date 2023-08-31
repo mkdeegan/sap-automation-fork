@@ -791,36 +791,33 @@ az role assignment create --assignee $CP_ARM_CLIENT_ID --role "User Access Admin
 $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
 if ($Control_plane_groupID.Length -eq 0) {
   Write-Host "Creating the variable group" $ControlPlanePrefix -ForegroundColor Green
-  az pipelines variable-group create  --name $ControlPlanePrefix `
-                                      --variables `
-                                        Agent='Azure Pipelines' `
-                                        APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID `
-                                        CP_ARM_CLIENT_ID=$CP_ARM_CLIENT_ID `
-                                        CP_ARM_OBJECT_ID=$CP_ARM_OBJECT_ID `
-                                        CP_ARM_CLIENT_SECRET='Enter your SPN password here' `
-                                        CP_ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID `
-                                        CP_ARM_TENANT_ID=$CP_ARM_TENANT_ID `
-                                        WEB_APP_CLIENT_SECRET=$WEB_APP_CLIENT_SECRET `
-                                        PAT='Enter your personal access token here' `
-                                        POOL=$Pool_Name `
-                                        AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' `
-                                        WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id `
-                                        SYSTEM_PIPELINE_ID=$system_pipeline_id `
-                                        SDAF_GENERAL_GROUP_ID=$general_group_id `
-                                        SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id `
-                                        TF_LOG=OFF `
-                                        --output none `
+  az pipelines variable-group create  --name $ControlPlanePrefix                                  `
+                                      --variables                                                 `
+                                        Agent='Azure Pipelines'                                   `
+                                        APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID              `
+                                        CP_ARM_CLIENT_ID=$CP_ARM_CLIENT_ID                        `
+                                        CP_ARM_OBJECT_ID=$CP_ARM_OBJECT_ID                        `
+                                        CP_ARM_CLIENT_SECRET='Enter your SPN password here'       `
+                                        CP_ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID      `
+                                        CP_ARM_TENANT_ID=$CP_ARM_TENANT_ID                        `
+                                        WEB_APP_CLIENT_SECRET=$WEB_APP_CLIENT_SECRET              `
+                                        PAT='Enter your personal access token here'               `
+                                        POOL=$Pool_Name                                           `
+                                        AZURE_CONNECTION_NAME='Control_Plane_Service_Connection'  `
+                                        WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id                  `
+                                        SYSTEM_PIPELINE_ID=$system_pipeline_id                    `
+                                        SDAF_GENERAL_GROUP_ID=$general_group_id                   `
+                                        SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id         `
+                                        TF_LOG=OFF                                                `
+                                        --output none                                             `
                                         --authorize true
   $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
 }
 
 if ($CP_ARM_CLIENT_SECRET -ne "Please update") {
-  Write-Host "CP_ARM_CLIENT_SECRET: " $CP_ARM_CLIENT_SECRET
   az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_SECRET" --value $CP_ARM_CLIENT_SECRET --secret true --output none --only-show-errors
-  Write-Host "CP_ARM_CLIENT_ID: " $CP_ARM_CLIENT_ID
-  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_ID" --value $CP_ARM_CLIENT_ID --output none --only-show-errors
-  Write-Host "CP_ARM_OBJECT_ID: " $CP_ARM_OBJECT_ID
-  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_OBJECT_ID" --value $CP_ARM_OBJECT_ID --output none --only-show-errors
+  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_ID"     --value $CP_ARM_CLIENT_ID                   --output none --only-show-errors
+  az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_OBJECT_ID"     --value $CP_ARM_OBJECT_ID                   --output none --only-show-errors
 
 }
 
@@ -1012,7 +1009,7 @@ if ($WIKI_NAME_FOUND.Length -gt 0) {
 }
 else {
   az devops wiki create --name SDAF --output none --only-show-errors
-  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path .\start.md --output none --only-show-errors
+  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path start.md --output none --only-show-errors
 }
 
 $page_id = (az devops wiki page show --path 'Next steps' --wiki SDAF --query page.id )
@@ -1021,7 +1018,7 @@ $page_id = (az devops wiki page show --path 'Next steps' --wiki SDAF --query pag
 $wiki_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_wiki/wikis/SDAF/" + $page_id + "/Next-steps"
 Start-Process $wiki_url
 
-if (Test-Path .\start.md) {
+if (Test-Path start.md) {
   Write-Host "Removing start.md"
-  Remove-Item .\start.md
+  Remove-Item start.md
 }
