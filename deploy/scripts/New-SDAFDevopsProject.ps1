@@ -970,14 +970,13 @@ else {
     Write-Host "Creating agent pool" $Pool_Name -ForegroundColor Green
 
     Set-Content -Path pool.json -Value (ConvertTo-Json @{name = $Pool_Name; autoProvision = $true })
-    az devops invoke --area distributedtask --resource pools --http-method POST --api-version "7.1-preview" --in-file .\pool.json --query-parameters authorizePipelines=true --query id --output none --only-show-errors
+    az devops invoke --area distributedtask --resource pools --http-method POST --api-version "7.1-preview" --in-file pool.json --query-parameters authorizePipelines=true --query id --output none --only-show-errors
     $POOL_ID = (az pipelines pool list --query "[?name=='$Pool_Name'].id | [0]" --output tsv).Replace("""", "")
     Write-Host "Agent pool" $Pool_Name "created"
 
   }
 
   if (Test-Path .\pool.json) {
-
     Remove-Item .\pool.json
   }
 
