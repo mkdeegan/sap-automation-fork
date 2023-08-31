@@ -842,7 +842,6 @@ else {
   az devops service-endpoint update --id $epId --enable-for-all true --output none --only-show-errors
 }
 
-Write-Host "WEB_APP_CLIENT_SECRET: " $WEB_APP_CLIENT_SECRET
 az pipelines variable-group variable update --group-id $Control_plane_groupID --name "WEB_APP_CLIENT_SECRET" --value $WEB_APP_CLIENT_SECRET --secret true --output none --only-show-errors
 
 
