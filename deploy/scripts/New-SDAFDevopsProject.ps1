@@ -1002,17 +1002,17 @@ Add-Content -Path $fname -Value ""
 $WIKI_NAME_FOUND = (az devops wiki list --query "[?name=='SDAF'].name | [0]")
 if ($WIKI_NAME_FOUND.Length -gt 0) {
   Write-Host "Wiki SDAF already exists"
-  $eTag = (az devops wiki page show --path 'Next steps' --wiki SDAF --query eTag )
+  $eTag = (az devops wiki page show --path 'Next-steps' --wiki SDAF --query eTag )
   if ($eTag -ne $null) {
-    $page_id = (az devops wiki page update --path 'Next steps' --wiki SDAF --file-path .\start.md --only-show-errors --version $eTag --query page.id)
+    $page_id = (az devops wiki page update --path 'Next-steps' --wiki SDAF --file-path .\start.md --only-show-errors --version $eTag --query page.id)
   }
 }
 else {
   az devops wiki create --name SDAF --output none --only-show-errors
-  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path start.md --output none --only-show-errors
+  az devops wiki page create --path 'Next-steps' --wiki SDAF --file-path start.md --output none --only-show-errors
 }
 
-$page_id = (az devops wiki page show --path 'Next steps' --wiki SDAF --query page.id )
+$page_id = (az devops wiki page show --path 'Next-steps' --wiki SDAF --query page.id )
 
 
 $wiki_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_wiki/wikis/SDAF/" + $page_id + "/Next-steps"
