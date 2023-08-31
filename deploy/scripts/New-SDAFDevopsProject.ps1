@@ -473,16 +473,17 @@ else {
 $repo_id = (az repos list --query "[?name=='$ADO_Project'].id | [0]").Replace("""", "")
 $repo_name = (az repos list --query "[?name=='$ADO_Project'].name | [0]").Replace("""", "")
 
-$SUserName = 'Enter your S User'
-$SPassword = 'Enter your S user password'
+$SUserName = 'Enter your S-User'
+$SPassword = 'Enter your S-User password'
 
-$provideSUser = Read-Host "Do you want to provide the S user details y/n?"
+$provideSUser = Read-Host "Do you want to provide the S-User details y/n?"
 if ($provideSUser -eq 'y') {
-  $SUserName = Read-Host "Enter your S User ID"
-  $SPassword = Read-Host "Enter your S user password"
+  $SUserName = Read-Host "Enter your S-User ID"
+  $SPassword = Read-Host "Enter your S-User password"
 }
 
 
+#--------------------------------------+---------------------------------------8
 Write-Host "Creating the variable group SDAF-General" -ForegroundColor Green
 
 $general_group_id = (az pipelines variable-group list --query "[?name=='SDAF-General'].id | [0]" --only-show-errors)
@@ -492,7 +493,10 @@ if ($general_group_id.Length -eq 0) {
   az pipelines variable-group variable update --group-id $general_group_id --name "S-Password" --value $SPassword --secret true --output none --only-show-errors
 
 }
+#--------------------------------------+---------------------------------------8
 
+
+#--------------------------------------+---------------------------------------8
 #region Create pipelines
 Write-Host "Creating the pipelines in repo: " $repo_name "(" $repo_id ")" -foregroundColor Green
 
@@ -675,9 +679,9 @@ $bodyText.pipelines += @{
   id         = $pipeline_id
   authorized = $true
 }
-
-
 #endregion
+#--------------------------------------+---------------------------------------8
+
 
 Add-Content -Path $fname -Value ""
 Add-Content -Path $fname -Value "### Variable Groups"
@@ -692,6 +696,7 @@ Add-Content -Path $fname -Value ("Web Application: " + $ApplicationName)
 
 
 
+#--------------------------------------+---------------------------------------8
 #region App registration
 Write-Host "Creating the App registration in Azure Active Directory" -ForegroundColor Green
 
@@ -715,17 +720,22 @@ if ($found_appRegistration.Length -ne 0) {
 }
 else {
   Write-Host "Creating an App Registration for" $ApplicationName -ForegroundColor Green
+  
+  pwd
+
   Add-Content -Path manifest.json -Value '[{"resourceAppId":"00000003-0000-0000-c000-000000000000","resourceAccess":[{"id":"e1fe6dd8-ba31-4d61-89e7-88639da4683d","type":"Scope"}]}]'
 
   $APP_REGISTRATION_ID = (az ad app create --display-name $ApplicationName --enable-id-token-issuance true --sign-in-audience AzureADMyOrg --required-resource-access .\manifest.json --query "appId").Replace('"', "")
 
-  Remove-Item manifest.json
+  #Remove-Item manifest.json
 
   $WEB_APP_CLIENT_SECRET = (az ad app credential reset --id $APP_REGISTRATION_ID --append --query "password" --out tsv --only-show-errors)
 }
-
 #endregion
+#--------------------------------------+---------------------------------------8
 
+
+#--------------------------------------+---------------------------------------8
 #region Control plane Service Principal
 $spn_name = $ControlPlanePrefix + " Deployment credential"
 if ($Env:SDAF_MGMT_SPN_NAME.Length -ne 0) {
