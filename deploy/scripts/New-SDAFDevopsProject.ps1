@@ -720,15 +720,9 @@ if ($found_appRegistration.Length -ne 0) {
 }
 else {
   Write-Host "Creating an App Registration for" $ApplicationName -ForegroundColor Green
-  
-  pwd
-
   Add-Content -Path manifest.json -Value '[{"resourceAppId":"00000003-0000-0000-c000-000000000000","resourceAccess":[{"id":"e1fe6dd8-ba31-4d61-89e7-88639da4683d","type":"Scope"}]}]'
-
   $APP_REGISTRATION_ID = (az ad app create --display-name $ApplicationName --enable-id-token-issuance true --sign-in-audience AzureADMyOrg --required-resource-access manifest.json --query "appId").Replace('"', "")
-
-  #Remove-Item manifest.json
-
+  Remove-Item manifest.json
   $WEB_APP_CLIENT_SECRET = (az ad app credential reset --id $APP_REGISTRATION_ID --append --query "password" --out tsv --only-show-errors)
 }
 #endregion
@@ -797,13 +791,35 @@ az role assignment create --assignee $CP_ARM_CLIENT_ID --role "User Access Admin
 $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
 if ($Control_plane_groupID.Length -eq 0) {
   Write-Host "Creating the variable group" $ControlPlanePrefix -ForegroundColor Green
-  az pipelines variable-group create --name $ControlPlanePrefix --variables Agent='Azure Pipelines' APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID CP_ARM_CLIENT_ID=$CP_ARM_CLIENT_ID CP_ARM_OBJECT_ID=$CP_ARM_OBJECT_ID CP_ARM_CLIENT_SECRET='Enter your SPN password here' CP_ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID CP_ARM_TENANT_ID=$CP_ARM_TENANT_ID WEB_APP_CLIENT_SECRET=$WEB_APP_CLIENT_SECRET PAT='Enter your personal access token here' POOL=$Pool_Name AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id SYSTEM_PIPELINE_ID=$system_pipeline_id SDAF_GENERAL_GROUP_ID=$general_group_id SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id TF_LOG=OFF --output none --authorize true
+  az pipelines variable-group create  --name $ControlPlanePrefix `
+                                      --variables `
+                                        Agent='Azure Pipelines' `
+                                        APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID `
+                                        CP_ARM_CLIENT_ID=$CP_ARM_CLIENT_ID `
+                                        CP_ARM_OBJECT_ID=$CP_ARM_OBJECT_ID `
+                                        CP_ARM_CLIENT_SECRET='Enter your SPN password here' `
+                                        CP_ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID `
+                                        CP_ARM_TENANT_ID=$CP_ARM_TENANT_ID `
+                                        WEB_APP_CLIENT_SECRET=$WEB_APP_CLIENT_SECRET `
+                                        PAT='Enter your personal access token here' `
+                                        POOL=$Pool_Name `
+                                        AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' `
+                                        WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id `
+                                        SYSTEM_PIPELINE_ID=$system_pipeline_id `
+                                        SDAF_GENERAL_GROUP_ID=$general_group_id `
+                                        SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id `
+                                        TF_LOG=OFF `
+                                        --output none `
+                                        --authorize true
   $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
 }
 
 if ($CP_ARM_CLIENT_SECRET -ne "Please update") {
+  Write-Host "CP_ARM_CLIENT_SECRET: " $CP_ARM_CLIENT_SECRET
   az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_SECRET" --value $CP_ARM_CLIENT_SECRET --secret true --output none --only-show-errors
+  Write-Host "CP_ARM_CLIENT_ID: " $CP_ARM_CLIENT_ID
   az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_CLIENT_ID" --value $CP_ARM_CLIENT_ID --output none --only-show-errors
+  Write-Host "CP_ARM_OBJECT_ID: " $CP_ARM_OBJECT_ID
   az pipelines variable-group variable update --group-id $Control_plane_groupID --name "CP_ARM_OBJECT_ID" --value $CP_ARM_OBJECT_ID --output none --only-show-errors
 
 }
@@ -829,6 +845,7 @@ else {
   az devops service-endpoint update --id $epId --enable-for-all true --output none --only-show-errors
 }
 
+Write-Host "WEB_APP_CLIENT_SECRET: " $WEB_APP_CLIENT_SECRET
 az pipelines variable-group variable update --group-id $Control_plane_groupID --name "WEB_APP_CLIENT_SECRET" --value $WEB_APP_CLIENT_SECRET --secret true --output none --only-show-errors
 
 
