@@ -355,7 +355,7 @@ stages:
 # | LAMA: Install SAP Hostagent                                                |
 # |                                                                            |
 # +------------------------------------4------+-------------------------------*/
-          - ${{ if eq(parameters.scs_installation, true) }}:
+          - ${{ if eq(parameters.lama_hostagent_install, true) }}:
               - template:                     templates\run-ansible.yaml
                 parameters:
                   displayName:                SAP Hostagent for LAMA Installation
