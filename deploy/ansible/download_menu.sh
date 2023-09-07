@@ -25,7 +25,7 @@ cmd_dir="$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")"
 #           playbook_00_transition_start_for_sap_install.yaml                             \
 #           playbook_01_os_base_config.yaml                                               \
 #           playbook_02_os_sap_specific_config.yaml                                       \
-#           playbook_03_bom_processing.yaml                                               \
+#           playbook_03_00_bom_processing.yaml                                            \
 #           playbook_04_00_00_hana_db_install.yaml                                        \
 #           playbook_05_00_00_sap_scs_install.yaml                                        \
 #           playbook_05_01_sap_dbload.yaml                                                \

@@ -1,0 +1,108 @@
+---
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# | Prepare                                                                    |
+# |                                                                            |
+# +------------------------------------4------+-------------------------------*/
+
+- hosts:                                localhost
+  name:                                 Get Storage account details from KeyVault
+  gather_facts:                         true
+  vars_files:
+    - vars/ansible-input-api.yaml       # API Input template with defaults
+  tasks:
+
+    - name:                             Create Progress folder
+      ansible.builtin.file:
+        path:                           "{{ _workspace_directory }}/.progress"
+        state:                          directory
+        mode:                           0755
+
+    - name:                            "Hostagent Installation Playbook: - Create Hostagent progress folder"
+      ansible.builtin.file:
+        path:                          "{{ _workspace_directory }}/.progress/hostagent"
+        state:                         directory
+        mode:                          0755
+
+    # - name:                             Remove hostagent-install-done flag
+    #   ansible.builtin.file:
+    #     path:                           "{{ _workspace_directory }}/.progress/hostagent-install-done"
+    #     state:                          absent
+
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# | LAMA: Install SAP Hostagent                                                |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
+
+- hosts:                                "{{ sap_sid | upper }}_SCS :
+                                         {{ sap_sid | upper }}_DB  :
+                                         {{ sap_sid | upper }}_ERS :
+                                         {{ sap_sid | upper }}_PAS :
+                                         {{ sap_sid | upper }}_APP :
+                                         {{ sap_sid | upper }}_WEB"
+
+  name:                                 SAP Hostagent Install
+  remote_user:                          "{{ orchestration_ansible_user }}"
+  gather_facts:                         true
+  vars_files:
+                                        - vars/ansible-input-api.yaml           # API Input template with defaults
+
+  tasks:
+# -------------------------------------+---------------------------------------8
+#
+# Build the list of tasks to be executed in order here.
+#
+# +------------------------------------4--------------------------------------*/
+    - name:                                     Perform SAP Hostagent Install
+      # when:
+      #                                           - "'scs' in supported_tiers"
+      block:
+
+        # - name:                                 Set facts
+        #   ansible.builtin.set_fact:
+        #     tier:                               preparation
+        #     sapbits_location_base_path:         "{{ hostvars.localhost.sapbits_location_base_path }}"
+        #     sapbits_sas_token:                  "{{ hostvars.localhost.sapbits_sas_token }}"
+        #     sa_enabled:                         true
+
+        - name:                                 hostagent-install role for Linux
+          become:                               true
+          when:                                 ansible_os_family != "Windows"
+          block:
+            - name:                             Include the hostagent-install role
+              ansible.builtin.include_role:
+                name:                           "roles-sap/hostagent-install"
+              vars:
+                tier:                           bom_download
+                always_upload_jinja_templates:  false
+                primary_instance_name:          ansible_play_hosts[0]
+                sa_enabled:                     true
+              tags:
+                                                - hostagent-install
+
+        - name:                                 hostagent-install role for Windows
+          when:                                 ansible_os_family == "Windows"
+          block:
+            - name:                             Include the hostagent-install role
+              ansible.builtin.include_role:
+                name:                           "roles-sap/windows/hostagent-install"
+              vars:
+                tier:                           bom_download
+                always_upload_jinja_templates:  false
+                primary_instance_name:          ansible_play_hosts[0]
+              tags:
+                                                - hostagent-install
+
+        - name:                                 Create hostagent-install flag
+          delegate_to:                          localhost
+          become:                               false
+          ansible.builtin.file:
+            path:                               "{{ _workspace_directory }}/.progress/hostagent-install"
+            state:                              touch
+            mode:                               0755
+
+...
+# /*---------------------------------------------------------------------------8
+# |                                   END                                      |
+# +------------------------------------4--------------------------------------*/
