@@ -17,11 +17,11 @@
 #     msg:
 #       - "SAP Hostagent Install"
 
-- name:                                 "SAP Hostaget Install: -  Create temp directory"
-  ansible.builtin.file:
-    path:                               "{{ tmp_directory }}/saphostagent"
-    state:                              directory
-    mode:                               0755
+# - name:                                 "SAP Hostaget Install: -  Create temp directory"
+#   ansible.builtin.file:
+#     path:                               "{{ tmp_directory }}/saphostagent"
+#     state:                              directory
+#     mode:                               0755
 
 
 
@@ -48,7 +48,7 @@
 
 - name:                                 "SAP Hostaget Install: -  Remove temp directory"
   ansible.builtin.file:
-    path:                               "{{ tmp_directory }}/saphostagent"
+    path:                               "{{ target_media_location_windows }}/SAPHOSTAGENT"
     state:                              absent
 
 ...
