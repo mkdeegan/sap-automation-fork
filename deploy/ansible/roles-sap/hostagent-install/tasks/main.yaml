@@ -11,9 +11,9 @@
 #   Extract to Temp Dir by BOM
 #   Execute saphostexec from Temp Dir
 
-- name:                                 Test
-  ansible.builtin.debug:
-    var:                                target_media_location
+# - name:                                 Test
+#   ansible.builtin.debug:
+#     var:                                target_media_location
 #     msg:
 #       - "SAP Hostagent Install"
 
@@ -60,10 +60,11 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
-- name:                                 "SAP Hostaget Install: -  Remove temp directory"
-  ansible.builtin.file:
-    path:                               "{{ target_media_location }}/SAPHOSTAGENT"
-    state:                              absent
+# Run on one host
+# - name:                                 "SAP Hostaget Install: -  Remove temp directory"
+#   ansible.builtin.file:
+#     path:                               "{{ target_media_location }}/SAPHOSTAGENT"
+#     state:                              absent
 
 ...
 # /*---------------------------------------------------------------------------8
