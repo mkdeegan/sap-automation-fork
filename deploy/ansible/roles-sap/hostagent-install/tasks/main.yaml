@@ -7,8 +7,8 @@
 
 
 # Steps
-#   Create Temp Dir
-#   Extract to Temp Dir
+#   Temp Dir created by BOM
+#   Extract to Temp Dir by BOM
 #   Execute saphostexec from Temp Dir
 
 # - name:                                 Test
@@ -26,6 +26,17 @@
 
 
 
+- name:                                 "SAP Hostaget Install: SAP Hostaget Install on {{ ansible_hostname }}"
+  ansible.builtin.shell: |
+                                        ./saphostexec -install
+  args:
+    chdir:                              "{{ target_media_location }}/SAPHOSTAGENT"
+    # creates:                            "/etc/sap_deployment_automation/{{ sid_to_be_deployed.sid | upper }}/sap_deployment_scs.txt"
+  environment:
+    # SAPSYSTEMNAME:                      "{{ sid_to_be_deployed.sid | upper }}"
+    TMPDIR:                             "{{ tmp_directory }}/saphostagent"
+  register:                             saphostagent_installation
+  failed_when:                          saphostagent_installation.rc > 0
 
 
 
