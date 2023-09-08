@@ -5,10 +5,31 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
-- name:                                 SAP Hostagent Install
+
+# Steps
+#   Create Temp Dir
+#   Extract to Temp Dir
+#   Execute saphostexec from Temp Dir
+
+- name:                                 Test
   ansible.builtin.debug:
-    msg:
-      - "SAP Hostagent Install"
+    var:                                tmp_directory
+
+- name:                                 "SAP Hostaget Install: -  Create directories"
+  ansible.builtin.file:
+    path:                               "{{ item.path }}"
+    state:                              directory
+    mode:                               "{{ item.mode }}"
+  loop:
+    - { mode: '0755', path: '/usr/sap/install/tmp/saphostagent' }
+    # - { mode: '0755', path: '{{ tmp_directory }}/{{ sid_to_be_deployed.sid | upper }}' }
+    # - { mode: '0755', path: '/etc/sap_deployment_automation/{{ sap_sid | upper }}' }
+
+
+# - name:                                 SAP Hostagent Install
+#   ansible.builtin.debug:
+#     msg:
+#       - "SAP Hostagent Install"
 
 ...
 # /*---------------------------------------------------------------------------8

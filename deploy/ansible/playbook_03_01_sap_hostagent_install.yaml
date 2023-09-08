@@ -53,6 +53,69 @@
 #
 # Build the list of tasks to be executed in order here.
 #
+# https://help.sap.com/doc/saphelp_nw73ehp1/7.31.19/en-us/8b/92b1cf6d5f4a7eac40700295ea687f/content.htm?no_cache=true
+# SAPHOSTAGENT
+#   User  - sapadm  
+#   Group - sapsys
+#   Upgrade
+#   Stop/Start System Service
+#   create config.d
+#   migrate logfiles
+#   unpack SAR files
+#   files:
+#     ./usr/sap/hostctrl
+#     ./usr/sap/hostctrl/exe
+#     ./usr/sap/hostctrl/exe/SAPCAR
+#     ./usr/sap/hostctrl/exe/SHADBMETRICSDEF.SAR
+#     ./usr/sap/hostctrl/exe/convertoscolfilter
+#     ./usr/sap/hostctrl/exe/host_profile
+#     ./usr/sap/hostctrl/exe/hostagent.mf
+#     ./usr/sap/hostctrl/exe/hostagent_acknowledgements.txt
+#     ./usr/sap/hostctrl/exe/hostexecstart
+#     ./usr/sap/hostctrl/exe/http.monitor
+#     ./usr/sap/hostctrl/exe/installsapinit.sh
+#     ./usr/sap/hostctrl/exe/ldappasswd
+#     ./usr/sap/hostctrl/exe/ldapreg
+#     ./usr/sap/hostctrl/exe/libSQLDBCHDB.so
+#     ./usr/sap/hostctrl/exe/librfccm.so
+#     ./usr/sap/hostctrl/exe/libsapacosprep.so
+#     ./usr/sap/hostctrl/exe/libsapcrypto.so
+#     ./usr/sap/hostctrl/exe/libsapdbadactrl.so
+#     ./usr/sap/hostctrl/exe/libsapdbadapwrt.so
+#     ./usr/sap/hostctrl/exe/libsapdbadasql.so
+#     ./usr/sap/hostctrl/exe/libsapdbdb6ctrl.so
+#     ./usr/sap/hostctrl/exe/libsapdbhdbctrl.so
+#     ./usr/sap/hostctrl/exe/libsapdbhdbsql.so
+#     ./usr/sap/hostctrl/exe/libsapdboractrl.so
+#     ./usr/sap/hostctrl/exe/libsapdbsiqctrl.so
+#     ./usr/sap/hostctrl/exe/libsapdbsybctrl.so
+#     ./usr/sap/hostctrl/exe/libslcryptokernel.so
+#     ./usr/sap/hostctrl/exe/libslcryptokernel.so.sha256
+#     ./usr/sap/hostctrl/exe/lssap
+#     ./usr/sap/hostctrl/exe/sapacosprep
+#     ./usr/sap/hostctrl/exe/sapcimb
+#     ./usr/sap/hostctrl/exe/sapcimc
+#     ./usr/sap/hostctrl/exe/sapcontrol
+#     ./usr/sap/hostctrl/exe/sapcpp47.so
+#     ./usr/sap/hostctrl/exe/sapdbctrl
+#     ./usr/sap/hostctrl/exe/sapdsigner
+#     ./usr/sap/hostctrl/exe/sapgenpse
+#     ./usr/sap/hostctrl/exe/saphostctrl
+#     ./usr/sap/hostctrl/exe/saphostexec
+#     ./usr/sap/hostctrl/exe/saphostv
+#     ./usr/sap/hostctrl/exe/sapinit
+#     ./usr/sap/hostctrl/exe/saposcol
+#     ./usr/sap/hostctrl/exe/sapstartsrv
+#     ./usr/sap/hostctrl/exe/sapuxuserchk
+#     ./usr/sap/hostctrl/exe/sapuxusergetrtinfo
+#     ./usr/sap/hostctrl/exe/sldreg
+#     ./usr/sap/hostctrl/exe/xml71d.so
+#     ./usr/sap/hostctrl/work
+#     ./usr/sap/tmp
+#
+#
+# SAPACEXT
+#
 # +------------------------------------4--------------------------------------*/
     - name:                                     Perform SAP Hostagent Install
       # when:
@@ -81,18 +144,18 @@
               tags:
                                                 - hostagent-install
 
-        - name:                                 hostagent-install role for Windows
-          when:                                 ansible_os_family == "Windows"
-          block:
-            - name:                             Include the hostagent-install role
-              ansible.builtin.include_role:
-                name:                           "roles-sap/windows/hostagent-install"
-              vars:
-                tier:                           bom_download
-                always_upload_jinja_templates:  false
-                primary_instance_name:          ansible_play_hosts[0]
-              tags:
-                                                - hostagent-install
+        # - name:                                 hostagent-install role for Windows
+        #   when:                                 ansible_os_family == "Windows"
+        #   block:
+        #     - name:                             Include the hostagent-install role
+        #       ansible.builtin.include_role:
+        #         name:                           "roles-sap/windows/hostagent-install"
+        #       vars:
+        #         tier:                           bom_download
+        #         always_upload_jinja_templates:  false
+        #         primary_instance_name:          ansible_play_hosts[0]
+        #       tags:
+        #                                         - hostagent-install
 
         - name:                                 Create hostagent-install flag
           delegate_to:                          localhost
