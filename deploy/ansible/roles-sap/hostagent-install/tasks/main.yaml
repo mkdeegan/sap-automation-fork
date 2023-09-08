@@ -14,6 +14,8 @@
 # - name:                                 Test
 #   ansible.builtin.debug:
 #     var:                                tmp_directory
+#     msg:
+#       - "SAP Hostagent Install"
 
 - name:                                 "SAP Hostaget Install: -  Create temp directory"
   ansible.builtin.file:
@@ -22,17 +24,32 @@
     mode:                               0755
 
 
-# - name:                                 SAP Hostagent Install
-#   ansible.builtin.debug:
-#     msg:
-#       - "SAP Hostagent Install"
 
 
 
-# - name:                                 "SAP Hostaget Install: -  Remove temp directory"
-#   ansible.builtin.file:
-#     path:                               "{{ tmp_directory }}/saphostagent"
-#     state:                              absent
+
+
+
+
+
+
+
+
+
+
+
+
+
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |                                 Clean-up                                   |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
+
+- name:                                 "SAP Hostaget Install: -  Remove temp directory"
+  ansible.builtin.file:
+    path:                               "{{ tmp_directory }}/saphostagent"
+    state:                              absent
 
 ...
 # /*---------------------------------------------------------------------------8
