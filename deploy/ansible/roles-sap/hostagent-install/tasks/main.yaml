@@ -62,7 +62,7 @@
 
 - name:                                 "SAP Hostaget Install: -  Remove temp directory"
   ansible.builtin.file:
-    path:                               "{{ target_media_location_windows }}/SAPHOSTAGENT"
+    path:                               "{{ target_media_location }}/SAPHOSTAGENT"
     state:                              absent
 
 ...
