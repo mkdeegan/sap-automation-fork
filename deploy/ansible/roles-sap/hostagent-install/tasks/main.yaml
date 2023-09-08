@@ -11,9 +11,9 @@
 #   Extract to Temp Dir by BOM
 #   Execute saphostexec from Temp Dir
 
-# - name:                                 Test
-#   ansible.builtin.debug:
-#     var:                                tmp_directory
+- name:                                 Test
+  ansible.builtin.debug:
+    var:                                target_media_location
 #     msg:
 #       - "SAP Hostagent Install"
 
@@ -39,6 +39,9 @@
   failed_when:                          saphostagent_installation.rc > 0
 
 
+- name:                                 Test
+  ansible.builtin.debug:
+    var:                                saphostagent_installation
 
 
 
