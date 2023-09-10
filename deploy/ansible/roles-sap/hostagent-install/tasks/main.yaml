@@ -107,7 +107,7 @@
                                                       -m {{ target_media_location }}/SAPACEXT.SAR \
                                                       pf=host_profile
   args:
-    chdir:                              "/usr/sap/hostagent/exe"
+    chdir:                              "/usr/sap/hostctrl/exe"
     creates:                            "/etc/sap_deployment_automation/sapacext.txt"
   environment:
     TMPDIR:                             "{{ tmp_directory }}/sapacext"
