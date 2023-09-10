@@ -103,8 +103,8 @@
 
 - name:                                 "SAP AC Extensions: Install"
   ansible.builtin.shell: |
-                                        ./sapacosprep -a InstallAcExt                             \
-                                                      -m {{ target_media_location }}/SAPACEXT.SAR \
+                                        ./sapacosprep -a InstallAcExt                                       \
+                                                      -m {{ target_media_location }}/downloads/SAPACEXT.SAR \
                                                       pf=host_profile
   args:
     chdir:                              "/usr/sap/hostctrl/exe"
