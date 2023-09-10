@@ -4,84 +4,7 @@
 # |                           SAP Hostagent Install                            |
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
-
-# Solution
-
-# For information about installing SAPACEXT.SAR, see the SAP Adaptive Computing Extensions Installation Guide on SAP Help Portal 
-# at https://help.sap.com/viewer/product/SAP_ADAPTIVE_EXTENSIONS/1.0.0.1/en-US
-
-# Upgrade the SAP Host Agent as described
-# https://help.sap.com/viewer/9f03f1852ce94582af41bb49e0a667a7/104/en-US/1be599b387e14710b4846ff4de32a3b6.html and
-# https://launchpad.support.sap.com/#/notes/2219592 - SAP note 2219592 - Upgrade Strategy of SAP Host Agent
-
-# Download the latest version available for your platform of SAPACEXT.SAR from SAP Software Download Center from the following 
-# path: https://launchpad.support.sap.com/#/softwarecenter  -> Support Packages and Patches -> By Catagory-> 
-# SAP Technology Components -> SAP ADAPTIVE EXTENSIONS
-
-# If your operating system is supported by the 721_EXT kernel, choose "SAP ADAPTIVE EXTENSION 1.0 EXT" otherwise 
-# "SAP ADAPTIVE EXTENSION 1.0"
-# If support for cloud storage operations on Amazon web services or Microsoft Azure or Google Cloud Platform is needed, always 
-# choose "SAP ADAPTIVE EXTENSION 1.0 EXT"
-
-# For Linux or UNIX Systems install the SAPACEXT.SAR package
-
-# > sapacosprep -a InstallAcExt -m <path to the SAR package> pf=<host_profile>
-
-# If you want to extract the SAPACEXT package on a filer, e.g. for the auto update functionality of SAP Host Agent, use the SAPCAR 
-# executable to unpack the SAPACEXT.SAR archive. 
-# Do NOT extract it into the SAP Host Agent executable as it would overwrite the SIGNATURE.SMF manifest of the SAP Host Agent.
-
-# > SAPCAR -xvf SAPACEXT.SAR -L /usr/sap/hostctrl/exe/[lib]sapcrypto.<lib-extension> -manifest SIGNATURE.SMF
-# > cp *.<shared-library extension, e.g. so> /usr/sap/hostctrl/exe/
-# > cp operations.d/*.conf /usr/sap/hostctrl/exe/operations.d/
-# > cp SIGNATURE.SMF /usr/sap/hostctrl/exe/SAPACEXT.SMF
-# > chown root:sapsys sapacext
-# > chmod 750 sapacext
-# > cp sapacext /usr/sap/hostctrl/exe/
-
-# To prepare the installation of the LaMa HADR hook on SAP HANA and on the repository hosts execute the following command 
-# afterwards:
-
-# > /usr/sap/hostctrl/exe/sapacext -a UpdateHADR -m SAPACEXT.SAR
-
-# Ensure that the sapacext executable belongs to root:sapsys or - in case of a Windows Operating System - to an administrator user 
-# and that it is not writable by other users.
-# Ensure that the files under operations.d belong to the root user and are only writeable by the root user.
-
-# It is strongly recommended that you regularly upgrade SAP Host Agent to the latest version available.
-# It is strongly recommended that you regularly upgrade SAP Adaptive Computing Extensions to the latest version available.
-
-# In case you experience unexpected behavior when managing your landscape:
-
-# Upgrade SAP Host Agent to the latest version available
-# Upgrade SAP Adaptive Computing Extensions to the latest version available
-# Upgrade SAP Landscape Management to the latest version available
-# Retry
-# To install, upgrade, or downgrade SAP Adaptive Extensions using the enterprise edition of SAP Landscape Management, see 
-# Managing SAP Adaptive Extensions Installations on SAP Help Portal.
-
-
-
-# Steps
-#   Temp Dir created by BOM
-#   Extract to Temp Dir by BOM
-#   Execute saphostexec from Temp Dir
-
-# - name:                                 Test
-#   ansible.builtin.debug:
-#     var:                                target_media_location
-#     msg:
-#       - "SAP Hostagent Install"
-
-# - name:                                 "SAP Hostaget Install: -  Create temp directory"
-#   ansible.builtin.file:
-#     path:                               "{{ tmp_directory }}/saphostagent"
-#     state:                              directory
-#     mode:                               0755
-
-
-
-
+# https://help.sap.com/doc/saphelp_nw73ehp1/7.31.19/en-us/8b/92b1cf6d5f4a7eac40700295ea687f/content.htm?no_cache=true
 - name:                                 "SAP Hostaget: Install"
   ansible.builtin.shell: |
                                         ./saphostexec -install
@@ -98,9 +21,10 @@
   ansible.builtin.debug:
     var:                                saphostagent_installation
 
-
-
-
+# /*---------------------------------------------------------------------------8
+# | SAP AC Extensions Install                                                  |
+# | 1759181 - Installation of SAP Adaptive Computing Extensions SAPACEXT.SAR   |
+# +------------------------------------4--------------------------------------*/
 - name:                                 "SAP AC Extensions: Install"
   ansible.builtin.shell: |
                                         ./sapacosprep -a InstallAcExt                                       \
@@ -118,14 +42,6 @@
 - name:                                 "SAP AC Extensions: Install Results"
   ansible.builtin.debug:
     var:                                sapacext_installation
-
-
-
-
-
-
-
-
 
 # /*---------------------------------------------------------------------------8
 # |                                                                            |
