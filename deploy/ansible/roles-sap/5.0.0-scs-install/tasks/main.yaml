@@ -162,7 +162,7 @@
         state:                         directory
         mode:                          0755
 
-    - name:                            "SCS Install: - comment out required message server prots in /etc/services"
+    - name:                            "SCS Install: - comment out required message server ports in /etc/services"
       ansible.builtin.replace:
         path:                          /etc/services
         regexp:                        '^([a-z\-]+\s+36{{ scs_instance_number }}/.*)$'
