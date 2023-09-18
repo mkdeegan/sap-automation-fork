@@ -96,7 +96,22 @@
 # -------------------------------------+---------------------------------------8
 
 # -------------------------------------+---------------------------------------8
-# Step: 03-03
+# Step: 03-03a
+# Description:
+#
+    - name:                                 "Dynamic processing - Show Update BOM Parameters"
+      ansible.builtin.debug:
+        msg: |-
+                                            sap_platform_map_lookup: {{ sap_platform_map[bom_media_entry.name] 
+                                                                        | selectattr('platform', '==', bom_media_entry.platform) 
+                                                                        | first }}
+
+        verbosity:                          1
+# Step: 03-03a - END
+# -------------------------------------+---------------------------------------8
+
+# -------------------------------------+---------------------------------------8
+# Step: 03-03b
 # Description:
 #
     - name:                                 "Dynamic processing - Update BOM"  # noqa jinja[spacing]
@@ -129,7 +144,7 @@
                                             "
       loop:                                 "{{ sap_search_results.entry | flatten(levels = 1) }}"
       when:                                 sap_platform_map_lookup.number == platformNumber_list[1]
-# Step: 03-03 - END
+# Step: 03-03b - END
 # -------------------------------------+---------------------------------------8
 
 # -------------------------------------+---------------------------------------8
