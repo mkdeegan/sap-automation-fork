@@ -107,10 +107,12 @@
                                                                          | first }}
 
         verbosity:                          1
+        
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
         var:                                sap_asset_search
         verbosity:                          1
+
     # - name:                                 "Dynamic processing - Show Update BOM Parameters"
     #   ansible.builtin.debug:
     #     msg: |-
