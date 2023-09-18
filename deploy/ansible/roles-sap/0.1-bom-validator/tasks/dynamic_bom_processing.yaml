@@ -105,12 +105,19 @@
                                             sap_platform_map_lookup:  {{ sap_platform_map[bom_media_entry.name] 
                                                                          | selectattr('platform', '==', bom_media_entry.platform) 
                                                                          | first }}
-                                            sap_search_results:       {{ sap_asset_search.stdout
-                                                                         | regex_search(
-                                                                           '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
-                                                                           '\\g<first_part>',
-                                                                           '\\g<second_part>'
-                                                                            ) }}
+
+        verbosity:                          1
+    - name:                                 "Dynamic processing - Show Update BOM Parameters"
+      ansible.builtin.debug:
+        msg: |-
+                                            sap_search_results:       {{ sap_asset_search.stdout }}
+
+                                            # sap_search_results:       {{ sap_asset_search.stdout
+                                            #                              | regex_search(
+                                            #                                '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
+                                            #                                '\\g<first_part>',
+                                            #                                '\\g<second_part>'
+                                            #                                 ) }}
 
         verbosity:                          1
 # Step: 03-03a - END
