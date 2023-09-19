@@ -146,23 +146,6 @@
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
 
-    - name:                                 "Dynamic processing - Show Update BOM Parameters string"
-      ansible.builtin.debug:
-        msg: |-
-                                            sap_search_results:       {{ sap_asset_search.stdout
-                                                                          | ansible.builtin.regex_search(
-                                                                                                          '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
-                                                                                                          '\g<first_part>',
-                                                                                                          '\g<second_part>',
-                                                                                                          multiline=true
-                                                                                                        )
-                                                                          | join 
-                                                                          | string 
-                                                                          | type_debug
-                                                                      }}
-
-# sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
-        verbosity:                          1
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
         msg: |-
@@ -174,8 +157,7 @@
                                                                                                           multiline=true
                                                                                                         )
                                                                           | join 
-                                                                          | string
-                                                                          | parse_xml(role_path + '/templates/sap_search.tmpl')
+                                                                          | ansible.netcommon.parse_xml(role_path + '/templates/sap_search.tmpl')
                                                                       }}
 
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
