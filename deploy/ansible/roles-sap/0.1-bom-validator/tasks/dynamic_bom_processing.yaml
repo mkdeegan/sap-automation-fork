@@ -97,6 +97,19 @@
 
 # -------------------------------------+---------------------------------------8
 # Step: 03-03a
+# Description:  Show Ansible Galaxy Collection List
+#
+    - name:                                 Get Ansible Galaxy Collection List
+      ansible.builtin.shell:                "ansible-galaxy collection list"
+      register:                             ansible_galaxy_list
+    - name:                                 Show Ansible Galaxy Collection List
+      ansible.builtin.debug:
+        var:                                ansible_galaxy_list.stdout_lines
+# Step: 03-03a - END
+# -------------------------------------+---------------------------------------8
+
+# -------------------------------------+---------------------------------------8
+# Step: 03-03b
 # Description:
 #
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
@@ -146,12 +159,9 @@
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
 
-    - name:                                 Get Ansible Galaxy Collection List
-      ansible.builtin.shell:                "ansible-galaxy collection list"
-      register:                             ansible_galaxy_list
-    - name:                                 Show Ansible Galaxy Collection List
+    - name:                                 Show role_path
       ansible.builtin.debug:
-        var:                                ansible_galaxy_list.stdout_lines
+        var:                                role_path
 
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
@@ -169,11 +179,11 @@
 
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
-# Step: 03-03a - END
+# Step: 03-03b - END
 # -------------------------------------+---------------------------------------8
 
 # -------------------------------------+---------------------------------------8
-# Step: 03-03b
+# Step: 03-03c
 # Description:
 #
     - name:                                 "Dynamic processing - Update BOM"  # noqa jinja[spacing]
@@ -206,7 +216,7 @@
                                             "
       loop:                                 "{{ sap_search_results.entry | flatten(levels = 1) }}"
       when:                                 sap_platform_map_lookup.number == platformNumber_list[1]
-# Step: 03-03b - END
+# Step: 03-03c - END
 # -------------------------------------+---------------------------------------8
 
 # -------------------------------------+---------------------------------------8
