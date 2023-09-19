@@ -139,7 +139,7 @@
                                                                                                           '\g<second_part>',
                                                                                                           multiline=true
                                                                                                         )
-                                                                          | join
+                                                                          | join | string
                                                                           | parse_xml(role_path + '/templates/sap_search.tmpl')
                                                                       }}
 
