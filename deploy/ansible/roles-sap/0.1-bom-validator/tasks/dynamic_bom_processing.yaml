@@ -129,7 +129,7 @@
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
 
-    - name:                                 "Dynamic processing - Show Update BOM Parameters"
+    - name:                                 "Dynamic processing - Show Update BOM Parameters type"
       ansible.builtin.debug:
         msg: |-
                                             sap_search_results:       {{ sap_asset_search.stdout
@@ -146,7 +146,7 @@
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
 
-    - name:                                 "Dynamic processing - Show Update BOM Parameters"
+    - name:                                 "Dynamic processing - Show Update BOM Parameters string"
       ansible.builtin.debug:
         msg: |-
                                             sap_search_results:       {{ sap_asset_search.stdout
