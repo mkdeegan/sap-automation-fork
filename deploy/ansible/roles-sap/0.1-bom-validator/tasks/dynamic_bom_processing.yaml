@@ -151,7 +151,7 @@
       register:                             ansible_galaxy_list
     - name:                                 Show Ansible Galaxy Collection List
       ansible.builtin.debug:
-        var:                                ansible_galaxy_list.stdout
+        var:                                ansible_galaxy_list.stdout_lines
 
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
