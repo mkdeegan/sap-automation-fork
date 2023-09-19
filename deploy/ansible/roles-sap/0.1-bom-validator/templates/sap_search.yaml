@@ -1,43 +1,54 @@
 ---
-vars:
-  entry:
-    Id:                       "{{ item.Id }}"
-    # Title:                    "{{ item.Title }}"
-    # Description:              "{{ item.Description }}"
-    # Infotype:                 "{{ item.Infotype }}"
-    # Fastkey:                  "{{ item.Fastkey }}"
-    # SubtreeEvent:             "{{ item.SubtreeEvent }}"
-    # DownloadDirectLink:       "{{ item.DownloadDirectLink }}"
-    # ApplicationLink:          "{{ item.ApplicationLink }}"
-    # PackApplicationLink:      "{{ item.PackApplicationLink }}"
-    # InfoObjectLink:           "{{ item.InfoObjectLink }}"
-    # ContentInfoLink:          "{{ item.ContentInfoLink }}"
-    # SideEffectsLink:          "{{ item.SideEffectsLink }}"
-    # DependenciesLink:         "{{ item.DependenciesLink }}"
-    # SearchResultDescr:        "{{ item.SearchResultDescr }}"
-
 keys:
   entry:
     value:                    "{{ entry }}"
-    # top:                      'entry/
-    #                              content/
-    #                                properties'
-    top:                      '{http://www.w3.org/2005/Atom}entry/{http://www.w3.org/2005/Atom}content/{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata}properties'
+    top:                      ''
     items:
-      Id:                     '{http://schemas.microsoft.com/ado/2007/08/dataservices}Id'
-      # Title:                  '{http://schemas.microsoft.com/ado/2007/08/dataservices}Title'
-      # Description:            '{http://schemas.microsoft.com/ado/2007/08/dataservices}Description'
-      # Infotype:               '{http://schemas.microsoft.com/ado/2007/08/dataservices}Infotype'
-      # Fastkey:                '{http://schemas.microsoft.com/ado/2007/08/dataservices}Fastkey'
-      # SubtreeEvent:           '{http://schemas.microsoft.com/ado/2007/08/dataservices}SubtreeEvent'
-      # DownloadDirectLink:     '{http://schemas.microsoft.com/ado/2007/08/dataservices}DownloadDirectLink'
-      # ApplicationLink:        '{http://schemas.microsoft.com/ado/2007/08/dataservices}ApplicationLink'
-      # PackApplicationLink:    '{http://schemas.microsoft.com/ado/2007/08/dataservices}PackApplicationLink'
-      # InfoObjectLink:         '{http://schemas.microsoft.com/ado/2007/08/dataservices}InfoObjectLink'
-      # ContentInfoLink:        '{http://schemas.microsoft.com/ado/2007/08/dataservices}ContentInfoLink'
-      # SideEffectsLink:        '{http://schemas.microsoft.com/ado/2007/08/dataservices}SideEffectsLink'
-      # DependenciesLink:       '{http://schemas.microsoft.com/ado/2007/08/dataservices}DependenciesLink'
-      # SearchResultDescr:      '{http://schemas.microsoft.com/ado/2007/08/dataservices}SearchResultDescr'
+      Title:                  'title'
+
+vars:
+  entry:
+    Title:                    "{{ item.Title }}"
+
+# vars:
+#   entry:
+#     Id:                       "{{ item.Id }}"
+#     # Title:                    "{{ item.Title }}"
+#     # Description:              "{{ item.Description }}"
+#     # Infotype:                 "{{ item.Infotype }}"
+#     # Fastkey:                  "{{ item.Fastkey }}"
+#     # SubtreeEvent:             "{{ item.SubtreeEvent }}"
+#     # DownloadDirectLink:       "{{ item.DownloadDirectLink }}"
+#     # ApplicationLink:          "{{ item.ApplicationLink }}"
+#     # PackApplicationLink:      "{{ item.PackApplicationLink }}"
+#     # InfoObjectLink:           "{{ item.InfoObjectLink }}"
+#     # ContentInfoLink:          "{{ item.ContentInfoLink }}"
+#     # SideEffectsLink:          "{{ item.SideEffectsLink }}"
+#     # DependenciesLink:         "{{ item.DependenciesLink }}"
+#     # SearchResultDescr:        "{{ item.SearchResultDescr }}"
+
+# keys:
+#   entry:
+#     value:                    "{{ entry }}"
+#     # top:                      'entry/
+#     #                              content/
+#     #                                properties'
+#     top:                      '{http://www.w3.org/2005/Atom}entry/{http://www.w3.org/2005/Atom}content/{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata}properties'
+#     items:
+#       Id:                     '{http://schemas.microsoft.com/ado/2007/08/dataservices}Id'
+#       # Title:                  '{http://schemas.microsoft.com/ado/2007/08/dataservices}Title'
+#       # Description:            '{http://schemas.microsoft.com/ado/2007/08/dataservices}Description'
+#       # Infotype:               '{http://schemas.microsoft.com/ado/2007/08/dataservices}Infotype'
+#       # Fastkey:                '{http://schemas.microsoft.com/ado/2007/08/dataservices}Fastkey'
+#       # SubtreeEvent:           '{http://schemas.microsoft.com/ado/2007/08/dataservices}SubtreeEvent'
+#       # DownloadDirectLink:     '{http://schemas.microsoft.com/ado/2007/08/dataservices}DownloadDirectLink'
+#       # ApplicationLink:        '{http://schemas.microsoft.com/ado/2007/08/dataservices}ApplicationLink'
+#       # PackApplicationLink:    '{http://schemas.microsoft.com/ado/2007/08/dataservices}PackApplicationLink'
+#       # InfoObjectLink:         '{http://schemas.microsoft.com/ado/2007/08/dataservices}InfoObjectLink'
+#       # ContentInfoLink:        '{http://schemas.microsoft.com/ado/2007/08/dataservices}ContentInfoLink'
+#       # SideEffectsLink:        '{http://schemas.microsoft.com/ado/2007/08/dataservices}SideEffectsLink'
+#       # DependenciesLink:       '{http://schemas.microsoft.com/ado/2007/08/dataservices}DependenciesLink'
+#       # SearchResultDescr:      '{http://schemas.microsoft.com/ado/2007/08/dataservices}SearchResultDescr'
 
 
 
