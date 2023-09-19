@@ -174,7 +174,7 @@
                                                                                                           multiline=true
                                                                                                         )
                                                                           | join 
-                                                                          | ansible.netcommon.parse_xml(role_path + '/templates/sap_search.yamlx')
+                                                                          | ansible.netcommon.parse_xml(tmpl=role_path + '/templates/sap_search.yamlx')
                                                                       }}
 
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
