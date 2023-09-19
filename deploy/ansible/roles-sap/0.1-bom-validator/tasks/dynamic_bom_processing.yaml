@@ -146,8 +146,12 @@
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
 
-    - name:                                Task Disable Transparent Hugepages & Configure Processor C-States 1
-      ansible.builtin.shell:               "ansible-galaxy collection list"
+    - name:                                 Get Ansible Galaxy Collection List
+      ansible.builtin.shell:                "ansible-galaxy collection list"
+      register:                             ansible_galaxy_list
+    - name:                                 Show Ansible Galaxy Collection List
+      ansible.builtin.debug:
+        var:                                ansible_galaxy_list.stdout
 
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
