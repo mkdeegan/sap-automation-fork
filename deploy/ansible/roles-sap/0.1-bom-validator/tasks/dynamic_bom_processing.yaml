@@ -174,13 +174,16 @@
                                                                                 '\\g<second_part>',
                                                                                 multiline=true
                                                                               )
-                                                | join 
+                                                | join
+                                                | ansible.netcommon.parse_xml('sap_search.yaml')
                                             }}"
 
 # sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
         verbosity:                          1
 # Step: 03-03b - END
 # -------------------------------------+---------------------------------------8
+
+    - fail:
 
 # -------------------------------------+---------------------------------------8
 # Step: 03-03c
