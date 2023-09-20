@@ -114,12 +114,12 @@
 #
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
-        msg: |-
-                                            sap_platform_map_lookup:  {{ sap_platform_map[bom_media_entry.name] 
-                                                                         | selectattr('platform', '==', bom_media_entry.platform) 
-                                                                         | first }}
-
+        var:                                sap_platform_map_lookup
         verbosity:                          1
+      vars: 
+        sap_platform_map_lookup:            "{{ sap_platform_map[bom_media_entry.name] 
+                                                | selectattr('platform', '==', bom_media_entry.platform) 
+                                                | first }}"
 
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
@@ -128,44 +128,8 @@
 
     - name:                                 "Dynamic processing - Show Update BOM Parameters"
       ansible.builtin.debug:
-        msg: |-
-                                            sap_search_results:       {{ sap_asset_search.stdout
-                                                                          | ansible.builtin.regex_search(
-                                                                                                          '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
-                                                                                                          '\g<first_part>',
-                                                                                                          '\g<second_part>',
-                                                                                                          multiline=true
-                                                                                                        )
-                                                                          | join
-                                                                      }}
-
-# sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
-        verbosity:                          1
-
-    - name:                                 "Dynamic processing - Show Update BOM Parameters type"
-      ansible.builtin.debug:
-        msg: |-
-                                            sap_search_results:       {{ sap_asset_search.stdout
-                                                                          | ansible.builtin.regex_search(
-                                                                                                          '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
-                                                                                                          '\g<first_part>',
-                                                                                                          '\g<second_part>',
-                                                                                                          multiline=true
-                                                                                                        )
-                                                                          | join
-                                                                          | type_debug
-                                                                      }}
-
-# sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
-        verbosity:                          1
-
-    - name:                                 Show role_path
-      ansible.builtin.debug:
-        var:                                role_path
-
-    - name:                                 "Dynamic processing - Show Update BOM Parameters"
-      ansible.builtin.debug:
         var:                                sap_search_results
+        verbosity:                          1
       vars:
         sap_search_results:                 "{{ sap_asset_search.stdout
                                                 | ansible.builtin.regex_search(
@@ -177,9 +141,6 @@
                                                 | join
                                                 | ansible.netcommon.parse_xml(role_path + '/templates/sap_search.yaml')
                                             }}"
-
-# sap_search_results:       {{ sap_asset_search.stdout | regex_search('(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)','\\g<first_part>','\\g<second_part>')}}
-        verbosity:                          1
 # Step: 03-03b - END
 # -------------------------------------+---------------------------------------8
 
@@ -198,15 +159,15 @@
                                                 | first
                                             }}"
         sap_search_results:                 "{{ sap_asset_search.stdout
-                                                | regex_search(
-                                                                '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
-                                                                '\\g<first_part>',
-                                                                '\\g<second_part>'
-                                                              )
+                                                | ansible.builtin.regex_search(
+                                                                                '(?:.*(?P<first_part><feed.*))(?P<second_part>.*?feed>)',
+                                                                                '\\g<first_part>',
+                                                                                '\\g<second_part>'
+                                                                              )
                                                 | join
-                                                | parse_xml(role_path + '/templates/sap_search.tmpl')
+                                                | parse_xml(role_path + '/templates/sap_search.yaml')
                                             }}"
-        platformNumber_list:                "{{ item.Title | regex_search('(?P<prefix>^.*)[-](?P<hwid>.*)[.](?P<suffix>.*$)', '\\g<prefix>', '\\g<hwid>', '\\g<suffix>')}}"
+        platformNumber_list:                "{{ item.Title | ansible.builtin.regex_search('(?P<prefix>^.*)[-](?P<hwid>.*)[.](?P<suffix>.*$)', '\\g<prefix>', '\\g<hwid>', '\\g<suffix>')}}"
                                             # setting the checksum value to true is used durring download to update field with correct checksum.
         bom_update:                         "
                                             {#-  -#}
