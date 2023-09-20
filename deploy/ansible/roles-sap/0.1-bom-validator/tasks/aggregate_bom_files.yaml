@@ -11,7 +11,7 @@
 - name:                                 "{{ task_prefix }}: - Directory block"
   vars:
     destination:                        "{{ download_directory }}/bom/{{ new_bom_name }}"
-    sub_path:                           "{{ object_stats.stat.path | regex_search('(?:.*/' + this_bom_name + '/)(?P<relative_path>.*)', '\\g<relative_path>') | join }}"
+    sub_path:                           "{{ object_stats.stat.path | ansible.builtin.regex_search('(?:.*/' + this_bom_name + '/)(?P<relative_path>.*)', '\\g<relative_path>') | join }}"
   when: object_stats.stat.mimetype  == "inode/directory"
   block:
     # Informational
@@ -37,7 +37,7 @@
 - name:                                 "{{ task_prefix }}: - Original BOM block"
   vars:
     destination:                        "{{ download_directory }}/bom/{{ new_bom_name }}"
-    sub_path:                           "{{ object_stats.stat.path | regex_search('(?:.*/' + this_bom_name + '/)(?P<relative_path>.*)', '\\g<relative_path>') | join }}"
+    sub_path:                           "{{ object_stats.stat.path | ansible.builtin.regex_search('(?:.*/' + this_bom_name + '/)(?P<relative_path>.*)', '\\g<relative_path>') | join }}"
     dir_path:                           "{{ sub_path | dirname }}"
     file_name:                          "{{ sub_path | basename }}"
     new_file_name:                      "{{ sub_path | basename }}.original"
@@ -70,7 +70,7 @@
 - name:                                 "{{ task_prefix }}: - Original BOM block"
   vars:
     destination:                        "{{ download_directory }}/bom/{{ new_bom_name }}"
-    sub_path:                           "{{ object_stats.stat.path | regex_search('(?:.*/' + this_bom_name + '/)(?P<relative_path>.*)', '\\g<relative_path>') | join }}"
+    sub_path:                           "{{ object_stats.stat.path | ansible.builtin.regex_search('(?:.*/' + this_bom_name + '/)(?P<relative_path>.*)', '\\g<relative_path>') | join }}"
     dir_path:                           "{{ sub_path | dirname }}"
     file_name:                          "{{ sub_path | basename }}"
     new_file_name:                      "{{ sub_path | basename | regex_replace(this_bom_name, new_bom_name) }}"

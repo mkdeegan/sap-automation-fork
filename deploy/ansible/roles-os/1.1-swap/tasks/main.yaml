@@ -32,7 +32,7 @@
 
 - name:                                "Trim Swap space"
   ansible.builtin.set_fact:
-    swap_value:                        "{{ swap_space.stdout_lines[0] | regex_search('([0-9]+)') }}"
+    swap_value:                        "{{ swap_space.stdout_lines[0] | ansible.builtin.regex_search('([0-9]+)') }}"
 
 - name:                                "Swap space in Integer"
   ansible.builtin.set_fact:
@@ -91,7 +91,7 @@
 
 # - name:                             "Trim Swap space"
 #   set_fact:
-#     swap_value:                     "{{ swap_space.stdout_lines[0] | regex_search('([0-9]+)') }}"
+#     swap_value:                     "{{ swap_space.stdout_lines[0] | ansible.builtin.regex_search('([0-9]+)') }}"
 
 # - name:                             "Swap space in Integer"
 #   set_fact:

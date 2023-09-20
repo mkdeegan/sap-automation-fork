@@ -186,8 +186,8 @@
   when:
     - item.extract is not undefined
     - item.extract
-    - ( item.filename is undefined and (item.archive | regex_search('[^.]+(?=\\.*$)') | upper=="SAR") ) or
-      ( item.filename is defined   and (item.filename | regex_search('[^.]+(?=\\.*$)') | upper=="SAR") )
+    - ( item.filename is undefined and (item.archive | ansible.builtin.regex_search('[^.]+(?=\\.*$)') | upper=="SAR") ) or
+      ( item.filename is defined   and (item.filename | ansible.builtin.regex_search('[^.]+(?=\\.*$)') | upper=="SAR") )
 
 
 #   06) Extract files - UNRAR
@@ -201,10 +201,10 @@
   when:
     - item.extract is not undefined
     - item.extract
-    - ( item.filename is undefined and (item.archive |regex_search('[^.]+(?=\\.*$)')|upper=="RAR") ) or
-      ( item.filename is defined   and (item.filename|regex_search('[^.]+(?=\\.*$)')|upper=="RAR") ) or
-      ( item.filename is undefined and (item.archive |regex_search('[^.]+(?=\\.*$)')|upper=="EXE") ) or
-      ( item.filename is defined   and (item.filename|regex_search('[^.]+(?=\\.*$)')|upper=="EXE") )
+    - ( item.filename is undefined and (item.archive |ansible.builtin.regex_search('[^.]+(?=\\.*$)')|upper=="RAR") ) or
+      ( item.filename is defined   and (item.filename|ansible.builtin.regex_search('[^.]+(?=\\.*$)')|upper=="RAR") ) or
+      ( item.filename is undefined and (item.archive |ansible.builtin.regex_search('[^.]+(?=\\.*$)')|upper=="EXE") ) or
+      ( item.filename is defined   and (item.filename|ansible.builtin.regex_search('[^.]+(?=\\.*$)')|upper=="EXE") )
 
 
 #   07) Extract files - UNZIP
@@ -220,8 +220,8 @@
   when:
     - item.extract is not undefined
     - item.extract
-    - ( item.filename is undefined and (item.archive | regex_search('[^.]+(?=\\.*$)') | upper=="ZIP") ) or
-      ( item.filename is defined   and (item.filename | regex_search('[^.]+(?=\\.*$)') | upper=="ZIP") )
+    - ( item.filename is undefined and (item.archive | ansible.builtin.regex_search('[^.]+(?=\\.*$)') | upper=="ZIP") ) or
+      ( item.filename is defined   and (item.filename | ansible.builtin.regex_search('[^.]+(?=\\.*$)') | upper=="ZIP") )
 
 #   07) Extract files - EXE
 # - name:                                "3.3 BoM Processing: - Extract File, UNRAR"
@@ -235,8 +235,8 @@
 #   when:
 #     - item.extract is not undefined
 #     - item.extract
-#     - ( item.filename is undefined and (item.archive |regex_search('[^.]+(?=\\.*$)')|upper=="EXE") ) or
-#       ( item.filename is defined   and (item.filename|regex_search('[^.]+(?=\\.*$)')|upper=="EXE") )
+#     - ( item.filename is undefined and (item.archive |ansible.builtin.regex_search('[^.]+(?=\\.*$)')|upper=="EXE") ) or
+#       ( item.filename is defined   and (item.filename|ansible.builtin.regex_search('[^.]+(?=\\.*$)')|upper=="EXE") )
 
 
 # -------------------------------------+---------------------------------------8
