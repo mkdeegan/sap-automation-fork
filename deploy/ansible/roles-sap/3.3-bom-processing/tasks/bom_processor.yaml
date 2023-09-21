@@ -133,7 +133,7 @@
     validate_certs:                    true
   register:                            result
   until:                               result is succeeded
-  retries:                             2
+  retries:                             5
   loop:                                "{{ bom.materials.media | flatten(levels=1) }}"
   when:
     - item.download is undefined or item.download
@@ -157,7 +157,7 @@
     validate_certs:                    true
   register:                            result
   until:                               result is succeeded
-  retries:                             2
+  retries:                             5
   delay:                               5
   loop:                                "{{ bom.materials.media | flatten(levels=1) }}"
   when:
