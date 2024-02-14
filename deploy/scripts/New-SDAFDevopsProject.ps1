@@ -65,7 +65,7 @@ else {
 Write-Host ""
 Write-Host ""
 
-if (Test-Path .${pathSeparator}start.md) { Write-Host "Removing start.md" ; Remove-Item .${pathSeparator}start.md }
+if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
 
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
   $Title = "Select the authentication method to use"
