@@ -745,7 +745,7 @@ else {
   Write-Host "Creating an App Registration for" $ApplicationName -ForegroundColor Green
   Add-Content -Path manifest.json -Value '[{"resourceAppId":"00000003-0000-0000-c000-000000000000","resourceAccess":[{"id":"e1fe6dd8-ba31-4d61-89e7-88639da4683d","type":"Scope"}]}]'
 
-  $APP_REGISTRATION_ID = (az ad app create --display-name $ApplicationName --enable-id-token-issuance true --sign-in-audience AzureADMyOrg --required-resource-access .${pathSeparator}manifest.json --query "appId").Replace('"', "")
+  $APP_REGISTRATION_ID = (az ad app create --display-name $ApplicationName --enable-id-token-issuance true --sign-in-audience AzureADMyOrg --required-resource-access ".${pathSeparator}manifest.json" --query "appId").Replace('"', "")
 
 # MKD > 20240214
 #  Remove-Item manifest.json
@@ -1008,14 +1008,14 @@ if (!$AlreadySet -or $ResetPAT ) {
     Write-Host "Creating agent pool" $Pool_Name -ForegroundColor Green
 
     Set-Content -Path pool.json -Value (ConvertTo-Json @{name = $Pool_Name; autoProvision = $true })
-    az devops invoke --area distributedtask --resource pools --http-method POST --api-version "7.1-preview" --in-file .${pathSeparator}pool.json --query-parameters authorizePipelines=true --query id --output none --only-show-errors
+    az devops invoke --area distributedtask --resource pools --http-method POST --api-version "7.1-preview" --in-file ".${pathSeparator}pool.json" --query-parameters authorizePipelines=true --query id --output none --only-show-errors
     $POOL_ID = (az pipelines pool list --query "[?name=='$Pool_Name'].id | [0]" --output tsv)
     Write-Host "Agent pool" $Pool_Name "created"
     $queue_id = (az pipelines queue list --query "[?name=='$Pool_Name'].id | [0]" --output tsv)
 
   }
 
-  if (Test-Path .${pathSeparator}pool.json) { Remove-Item .${pathSeparator}pool.json }
+  if (Test-Path ".${pathSeparator}pool.json") { Write-Host "Removing pool.json" ; Remove-Item ".${pathSeparator}pool.json" }
 
   # Create header with PAT
   $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes((":{0}" -f $PAT)))
@@ -1096,12 +1096,12 @@ if ($WIKI_NAME_FOUND.Length -gt 0) {
   Write-Host "Wiki SDAF already exists"
   $eTag = (az devops wiki page show --path 'Next steps' --wiki SDAF --query eTag )
   if ($eTag -ne $null) {
-    $page_id = (az devops wiki page update --path 'Next steps' --wiki SDAF --file-path .${pathSeparator}start.md --only-show-errors --version $eTag --query page.id)
+    $page_id = (az devops wiki page update --path 'Next steps' --wiki SDAF --file-path ".${pathSeparator}start.md" --only-show-errors --version $eTag --query page.id)
   }
 }
 else {
   az devops wiki create --name SDAF --output none --only-show-errors
-  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path .${pathSeparator}start.md --output none --only-show-errors
+  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path ".${pathSeparator}start.md" --output none --only-show-errors
 }
 
 $page_id = (az devops wiki page show --path 'Next steps' --wiki SDAF --query page.id )
@@ -1110,4 +1110,4 @@ $wiki_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/
 Write-Host "URL: " $wiki_url
 Start-Process $wiki_url
 
-if (Test-Path .${pathSeparator}start.md) { Write-Host "Removing start.md" ; Remove-Item .${pathSeparator}start.md }
+if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
