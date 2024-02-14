@@ -14,6 +14,13 @@ function Show-Menu($data) {
 
 }
 
+function _logger($_level, $_text) {
+  # param (
+  #   OptionalParameters
+  # )
+  if ($verbosity -le $_level) { Write-Output $_text }
+}
+
 #region Initialize
 # Initialize variables from Environment variables
 
@@ -34,7 +41,8 @@ if (-not $env:SDAF_verbosity)  { $verbosity = 5       } else { $verbosity = $Env
 
 $versionLabel = "v3.11.0.0"
 
-Write-Host "verbosity: " $verbosity
+
+_logger(4, "verbosity: $verbosity")
 exit
 
 az logout
