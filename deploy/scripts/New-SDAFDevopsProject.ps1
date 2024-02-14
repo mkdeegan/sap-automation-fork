@@ -1,5 +1,6 @@
 Write-Host "<Experimental>..............." -ForegroundColor Cyan
-
+# Deploy an app in Azure Government with Azure Pipelines
+# https://learn.microsoft.com/en-us/azure/azure-government/connect-with-azure-pipelines
 
 function Show-Menu($data) {
   Write-Host "================ $Title ================"
@@ -18,7 +19,8 @@ function Show-Menu($data) {
 
 $ADO_Organization              = $Env:SDAF_ADO_ORGANIZATION
 $ADO_Project                   = $Env:SDAF_ADO_PROJECT
-$ARM_TENANT_ID                 = $Env:ARM_TENANT_ID
+$ARM_TENANT_ID_DEVOPS          = $Env:ARM_TENANT_ID
+$ARM_TENANT_ID_DEPLOY          = $Env:ARM_TENANT_ID_GOV
 $Control_plane_code            = $Env:SDAF_CONTROL_PLANE_CODE
 $Control_plane_subscriptionID  = $Env:SDAF_ControlPlaneSubscriptionID
 $ControlPlaneSubscriptionName  = $Env:SDAF_ControlPlaneSubscriptionName
@@ -26,12 +28,14 @@ $Workload_zone_code            = $Env:SDAF_WORKLOAD_ZONE_CODE
 $Workload_zone_subscriptionID  = $Env:SDAF_WorkloadZoneSubscriptionID
 $Workload_zoneSubscriptionName = $Env:SDAF_WorkloadZoneSubscriptionName
 
-if ($IsWindows) { $pathSeparator = "\" } else { $pathSeparator = "/" }
+if ($IsWindows)                { $pathSeparator = "\" } else { $pathSeparator = "/"             }
+if (-not $env:SDAF_verbosity)  { $verbosity = 5       } else { $verbosity = $Env:SDAF_verbosity }
 #endregion
 
 $versionLabel = "v3.11.0.0"
 
-
+Write-Host "verbosity: " $verbosity
+exit
 
 az logout
 
