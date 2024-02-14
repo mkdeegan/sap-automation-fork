@@ -750,7 +750,9 @@ else {
 
   $APP_REGISTRATION_ID = (az ad app create --display-name $ApplicationName --enable-id-token-issuance true --sign-in-audience AzureADMyOrg --required-resource-access .\manifest.json --query "appId").Replace('"', "")
 
-  Remove-Item manifest.json
+# MKD > 20240214
+#  Remove-Item manifest.json
+# MKD < 20240214
 
   $WEB_APP_CLIENT_SECRET = (az ad app credential reset --id $APP_REGISTRATION_ID --append --query "password" --out tsv --only-show-errors)
 }
