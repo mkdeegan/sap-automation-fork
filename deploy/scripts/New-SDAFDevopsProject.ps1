@@ -1,4 +1,4 @@
-# Write-Host "<Experimental>..............." -ForegroundColor Cyan
+Write-Host "<Experimental>..............." -ForegroundColor Cyan
 
 
 function Show-Menu($data) {
@@ -30,6 +30,19 @@ if ($IsWindows) { $pathSeparator = "\" } else { $pathSeparator = "/" }
 #endregion
 
 $versionLabel = "v3.11.0.0"
+
+#-----------------------------
+# Is the Azure CLI installed?
+#
+$_ErrorActionPreference = $ErrorActionPreference 
+$ErrorActionPreference  = 'SilentlyContinue'
+az --version
+if (!$?) {
+  Write-Host "Azure CLI not installed...`n  Exiting..." -ForegroundColor red
+  exit
+}
+$ErrorActionPreference = $_ErrorActionPreference 
+#-----------------------------
 
 az logout
 
