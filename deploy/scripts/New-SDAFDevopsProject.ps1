@@ -44,10 +44,13 @@ if (!$?) {
 $ErrorActionPreference = $_ErrorActionPreference 
 #-----------------------------
 
+Write-Host "Azure CLI - logging out...`n" -ForegroundColor yellow
 az logout
 
+Write-Host "Azure CLI - clearing account...`n" -ForegroundColor yellow
 az account clear
 
+Write-Host "Azure CLI - logging in...`n" -ForegroundColor yellow
 if ($ARM_TENANT_ID.Length -eq 0) {
   az login --output none --only-show-errors
 }
