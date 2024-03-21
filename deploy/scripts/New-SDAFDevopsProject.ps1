@@ -1141,13 +1141,13 @@ if (!$AlreadySet -or $ResetPAT ) {
 }
 
 Write-Host ""
-Write-Host "The browser will now open, Select the'" $ADO_PROJECT "Build Service' user and ensure that it has 'Allow' in the Contribute section."
+Write-Host "The browser will now open, Select the'" $ADO_PROJECT "Build Service' user and ensure that the Contribute section is set to 'Allow'."
 
 $permissions_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_settings/repositories?_a=permissions"
 Write-Host "URL: " $permissions_url
 
 Start-Process $permissions_url
-Read-Host -Prompt "Once you have verified the permission, Press any key to continue"
+Read-Host -Prompt "Once you have verified the permission, to continue, press [Enter]"
 
 $pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $sample_pipeline_id
 
