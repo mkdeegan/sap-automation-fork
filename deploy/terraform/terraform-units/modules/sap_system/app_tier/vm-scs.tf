@@ -128,7 +128,7 @@ resource "azurerm_linux_virtual_machine" "scs" {
 
   //If no ppg defined do not put the scs servers in a proximity placement group
   proximity_placement_group_id         = var.application_tier.scs_use_ppg ? (
-                                           local.scs_zonal_deployment ? var.ppg[count.index % max(local.scs_zone_count, 1)] : var.ppg[0]) : (
+                                           local.scs_zonal_deployment ? var.ppg[count.index % max(length(var.ppg), 1)] : var.ppg[0]) : (
                                            null
                                          )
 
@@ -313,7 +313,7 @@ resource "azurerm_windows_virtual_machine" "scs" {
 
   //If no ppg defined do not put the scs servers in a proximity placement group
   proximity_placement_group_id         = var.application_tier.scs_use_ppg ? (
-                                           local.scs_zonal_deployment ? var.ppg[count.index % max(local.scs_zone_count, 1)] : var.ppg[0]) : (
+                                           local.scs_zonal_deployment ? var.ppg[count.index % max(length(var.ppg), 1)] : var.ppg[0]) : (
                                            null
                                          )
 
@@ -574,12 +574,12 @@ resource "azurerm_managed_disk" "cluster" {
   location                              = var.resource_group[0].location
   resource_group_name                   = var.resource_group[0].name
   create_option                         = "Empty"
-  storage_account_type                  = "Premium_LRS"
-  disk_size_gb                          = var.scs_cluster_disk_size
+  storage_account_type                  = var.application_tier.scs_cluster_disk_type
+  disk_size_gb                          = var.application_tier.scs_cluster_disk_size
   disk_encryption_set_id                = try(var.options.disk_encryption_set_id, null)
   max_shares                            = local.scs_server_count
 
-  zone                                  = !local.use_scs_avset ? (
+  zone                                  = (var.application_tier.scs_cluster_disk_type == "Premium_LRS") && !local.use_scs_avset ? (
                                             upper(var.application_tier.scs_os.os_type) == "LINUX" ? (
                                               azurerm_linux_virtual_machine.scs[local.scs_data_disks[count.index].vm_index].zone) : (
                                               azurerm_windows_virtual_machine.scs[local.scs_data_disks[count.index].vm_index].zone
@@ -623,7 +623,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "cluster" {
                                             )
                                           )
   caching                               = "None"
-  lun                                   = var.scs_cluster_disk_lun
+  lun                                   = var.application_tier.scs_cluster_disk_lun
 }
 
 #########################################################################################

@@ -213,7 +213,21 @@ namespace AutomationForm.Models
     public bool? use_simple_mount { get; set; } = false;
 
     public string database_cluster_type { get; set; } = "AFA";
+
     public string scs_cluster_type { get; set; } = "AFA";
+
+
+    public int? scs_cluster_disk_lun { get; set; } = 5;
+
+    public int? scs_cluster_disk_size { get; set; } = 128;
+
+    public string scs_cluster_disk_type { get; set; } = "Premium_ZRS";
+
+    public int? database_cluster_disk_lun { get; set; } = 8;
+
+    public int? database_cluster_disk_size { get; set; } = 128;
+
+    public string database_cluster_disk_type { get; set; } = "Premium_ZRS";
 
     /*---------------------------------------------------------------------------8
     |                                                                            |
@@ -221,7 +235,7 @@ namespace AutomationForm.Models
     |                                                                            |
     +------------------------------------4--------------------------------------*/
 
-    
+
     public string[] proximityplacementgroup_names { get; set; }
 
     [PpgIdValidator]
@@ -285,7 +299,7 @@ namespace AutomationForm.Models
     [IpAddressValidator]
     public string[] database_vm_db_nic_ips { get; set; }
 
-    
+
     [IpAddressValidator]
     public string[] database_vm_db_nic_secondary_ips { get; set; }
 
@@ -492,7 +506,7 @@ namespace AutomationForm.Models
 
     public int? ANF_HANA_data_volume_throughput { get; set; }
 
-    public int? ANF_hana_data_volume_count { get; set; } = 1;
+    public int? ANF_HANA_data_volume_count { get; set; } = 1;
 
     /*---------------------------------------------------------------------------8
     |                                                                            |
@@ -509,7 +523,7 @@ namespace AutomationForm.Models
 
     public int? ANF_HANA_log_volume_throughput { get; set; }
 
-    public int? ANF_hana_log_volume_count { get; set; } = 1;
+    public int? ANF_HANA_log_volume_count { get; set; } = 1;
 
     /*---------------------------------------------------------------------------8
     |                                                                            |

@@ -111,12 +111,6 @@ variable "app_proximityplacementgroup_arm_ids"  {
                                                 }
 
 
-variable "use_service_endpoint"                 {
-                                                  description = "Boolean value indicating if service endpoints should be used for the deployment"
-                                                  default     = false
-                                                  type        = bool
-                                                }
-
 variable "use_private_endpoint"                 {
                                                   description = "Boolean value indicating if private endpoint should be used for the deployment"
                                                   default     = false
@@ -385,6 +379,12 @@ variable "database_cluster_disk_size"           {
                                                   description = "The size of the shared disk for the Database cluster"
                                                   default     = 128
                                                 }
+
+variable "database_cluster_disk_type"           {
+                                                  description = "The storage_account_type of the shared disk for the Database cluster"
+                                                  default     = "Premium_ZRS"
+                                                }
+
 
 variable "database_platform"                    {
                                                   description = "Database platform, supported values are HANA, DB2, ORACLE, ORACLE-ASM, ASE, SQLSERVER or NONE (in this case no database tier is deployed)"
@@ -715,6 +715,11 @@ variable "scs_cluster_disk_size"                {
                                                   default     = 128
                                                 }
 
+variable "scs_cluster_disk_type"                {
+                                                  description = "The storage_account_type of the shared disk for the SAP Central Services cluster"
+                                                  default     = "Premium_ZRS"
+                                                }
+
 #########################################################################################
 #                                                                                       #
 #  Application Server variables                                                         #
@@ -955,6 +960,11 @@ variable "Agent_IP"                             {
                                                   type        = string
                                                   default     = ""
                                                 }
+variable "add_Agent_IP"                         {
+                                                  description = "Boolean value indicating if the Agent IP should be added to the storage and key vault firewalls"
+                                                  default     = true
+                                                  type        = bool
+                                                }
 
 variable "shared_home"                          {
                                                   description = "If defined provides shared-home support"
@@ -1003,11 +1013,6 @@ variable "management_dns_resourcegroup_name"    {
                                                   type        = string
                                                 }
 
-variable "create_storage_dns_a_records"         {
-                                                  description = "Boolean value indicating if dns a records should be created for the storage accounts"
-                                                  default     = false
-                                                  type        = bool
-                                                }
 
 variable "dns_zone_names"                       {
                                                   description = "Private DNS zone names"
@@ -1059,11 +1064,6 @@ variable "sapmnt_private_endpoint_id"           {
                                                   default     = ""
                                                 }
 
-variable "Use_AFS_for_Installation"             {
-                                                  description = "If true, will use AFS for installation media."
-                                                  default     = false
-                                                }
-
 #########################################################################################
 #                                                                                       #
 #  ANF settings                                                                         #
@@ -1108,7 +1108,7 @@ variable "ANF_HANA_data_volume_throughput"      {
                                                   default     = 128
                                                 }
 
-variable "ANF_hana_data_volume_count"          {
+variable "ANF_HANA_data_volume_count"          {
                                                   description = "If defined provides the number of data volumes"
                                                   default     = 1
                                                 }
@@ -1140,7 +1140,7 @@ variable "ANF_HANA_log_volume_throughput"       {
                                                   default     = 128
                                                 }
 
-variable "ANF_hana_log_volume_count"            {
+variable "ANF_HANA_log_volume_count"            {
                                                   description = "If defined provides the number of data volumes"
                                                   default     = 1
                                                 }

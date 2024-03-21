@@ -82,6 +82,10 @@ locals {
                                            deploy_v1_monitoring_extension  = var.deploy_v1_monitoring_extension
                                            dual_nics                       = var.database_dual_nics || try(var.databases[0].dual_nics, false)
                                            high_availability               = var.database_high_availability || try(var.databases[0].high_availability, false)
+                                           database_cluster_disk_lun       = var.database_cluster_disk_lun
+                                           database_cluster_disk_size      = var.database_cluster_disk_size
+                                           database_cluster_disk_type      = var.database_cluster_disk_type
+
                                            platform                        = var.database_platform
                                            use_ANF                         = var.database_HANA_use_ANF_scaleout_scenario || try(var.databases[0].use_ANF, false)
                                            use_avset                       = var.database_server_count == 0 || var.use_scalesets_for_deployment || length(var.database_vm_zones) > 0 || var.database_platform == "NONE" ? (
@@ -174,10 +178,10 @@ locals {
                                                                             0
                                                                           )
                                         app_sku                         = var.application_server_sku
-                                        app_use_ppg                     = var.application_server_count > 0 ? var.use_scalesets_for_deployment ? (
+                                        app_use_ppg                     = var.application_server_count == 0 || var.use_scalesets_for_deployment || !local.enable_app_tier_deployment ? (
                                                                             false) : (
                                                                             var.application_server_use_ppg
-                                                                          ) : false
+                                                                          )
                                         app_use_avset                   = var.application_server_count == 0 || var.use_scalesets_for_deployment || !local.enable_app_tier_deployment ? (
                                                                             false) : (
                                                                             var.application_server_use_avset
@@ -206,6 +210,10 @@ locals {
                                                                             false) : (
                                                                             var.scs_server_use_avset
                                                                           )
+                                        scs_cluster_disk_lun            = var.scs_cluster_disk_lun
+                                        scs_cluster_disk_size           = var.scs_cluster_disk_size
+                                        scs_cluster_disk_type           = var.scs_cluster_disk_type
+
                                         webdispatcher_count             = local.enable_app_tier_deployment ? (
                                                                             max(var.webdispatcher_server_count, try(var.application_tier.webdispatcher_count, 0))
                                                                             ) : (
@@ -650,14 +658,14 @@ locals {
                                             use_existing_data_volume           = var.ANF_HANA_data_use_existing_volume
                                             data_volume_name                   = var.ANF_HANA_data_volume_name
                                             data_volume_throughput             = var.ANF_HANA_data_volume_throughput
-                                            data_volume_count                  = var.ANF_hana_data_volume_count
+                                            data_volume_count                  = var.ANF_HANA_data_volume_count
 
                                             use_for_log                        = var.ANF_HANA_log
                                             log_volume_size                    = var.ANF_HANA_log_volume_size
                                             use_existing_log_volume            = var.ANF_HANA_log_use_existing
                                             log_volume_name                    = var.ANF_HANA_log_volume_name
                                             log_volume_throughput              = var.ANF_HANA_log_volume_throughput
-                                            log_volume_count                   = var.ANF_hana_log_volume_count
+                                            log_volume_count                   = var.ANF_HANA_log_volume_count
 
                                             use_for_shared                     = var.ANF_HANA_shared
                                             shared_volume_size                 = var.ANF_HANA_shared_volume_size
