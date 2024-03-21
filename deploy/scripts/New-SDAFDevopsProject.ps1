@@ -490,7 +490,7 @@ else {
   Write-Host "The browser will now open, please create a new Github connection, record the name of the connection."
   Write-Host "URL: " $gh_connection_url
   Start-Process $gh_connection_url
-  Read-Host "Please press enter when you have created the connection"
+  Read-Host "When you have created the connection, press [Enter] "
 
   $ghConn = (az devops service-endpoint list --query "[?type=='github'].name | [0]" --out tsv)
 
