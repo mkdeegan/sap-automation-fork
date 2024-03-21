@@ -16,14 +16,14 @@ function Show-Menu($data) {
 #region Initialize
 # Initialize variables from Environment variables
 
-$ADO_Organization = $Env:SDAF_ADO_ORGANIZATION
-$ADO_Project = $Env:SDAF_ADO_PROJECT
-$ARM_TENANT_ID = $Env:ARM_TENANT_ID
-$Control_plane_code = $Env:SDAF_CONTROL_PLANE_CODE
-$Control_plane_subscriptionID = $Env:SDAF_ControlPlaneSubscriptionID
-$ControlPlaneSubscriptionName = $Env:SDAF_ControlPlaneSubscriptionName
-$Workload_zone_code = $Env:SDAF_WORKLOAD_ZONE_CODE
-$Workload_zone_subscriptionID = $Env:SDAF_WorkloadZoneSubscriptionID
+$ADO_Organization              = $Env:SDAF_ADO_ORGANIZATION
+$ADO_Project                   = $Env:SDAF_ADO_PROJECT
+$ARM_TENANT_ID                 = $Env:ARM_TENANT_ID
+$Control_plane_code            = $Env:SDAF_CONTROL_PLANE_CODE
+$Control_plane_subscriptionID  = $Env:SDAF_ControlPlaneSubscriptionID
+$ControlPlaneSubscriptionName  = $Env:SDAF_ControlPlaneSubscriptionName
+$Workload_zone_code            = $Env:SDAF_WORKLOAD_ZONE_CODE
+$Workload_zone_subscriptionID  = $Env:SDAF_WorkloadZoneSubscriptionID
 $Workload_zoneSubscriptionName = $Env:SDAF_WorkloadZoneSubscriptionName
 
 if ($IsWindows) { $pathSeparator = "\" } else { $pathSeparator = "/" }
@@ -41,9 +41,35 @@ if (!$?) {
   Write-Host "Azure CLI not installed...`n  Exiting..." -ForegroundColor red
   exit
 }
-$ErrorActionPreference = $_ErrorActionPreference 
+$ErrorActionPreference = $_ErrorActionPreference
 #-----------------------------
 
+#-----------------------------
+# Is the azure-devops extension installed?
+#
+$_ErrorActionPreference = $ErrorActionPreference 
+$ErrorActionPreference  = 'SilentlyContinue'
+
+Write-Host "Checking for azure-devops extension..." -ForegroundColor Yellow
+$_rc = (az extension list --query "[?name=='azure-devops']")
+# $_rc.GetType()
+# Write-Host "_rc        = " $_rc
+# Write-Host "_rc.Length = " $_rc.Length
+# Write-Host "_rc.Count  = " $_rc.Count
+if ($_rc.Length -le 2) {
+  Write-Host "azure-devops extension not installed...`n  Installing..." -ForegroundColor Red
+  az extension add --name azure-devops
+}
+else {
+  Write-Host "  azure-devops extension present...`n" -ForegroundColor Green
+}
+$ErrorActionPreference = $_ErrorActionPreference
+#-----------------------------
+
+# az config set extension.use_dynamic_install=yes_without_prompt
+
+
+Write-Host "`n"
 Write-Host "Azure CLI - logging out...`n" -ForegroundColor yellow
 az logout
 
@@ -61,6 +87,7 @@ else {
 # Check if access to the Azure DevOps organization is available and prompt for PAT if needed
 # Exact permissions required, to be validated, and included in the Read-Host text.
 
+Write-Host "Azure CLI - check for devops PAT...`n" -ForegroundColor yellow
 if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
   Write-Host "Using the provided Personal Access Token (PAT) to authenticate to the Azure DevOps organization $ADO_Organization" -ForegroundColor Yellow
   try {
@@ -70,6 +97,9 @@ if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
     $_
   }
 
+}
+else {
+  Write-Host "          - ... PAT not set`n" -ForegroundColor yellow
 }
 
 $checkPAT = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
