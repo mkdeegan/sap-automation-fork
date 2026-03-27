@@ -147,7 +147,7 @@ else {
  | AZ CLI extensions                                                           |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Install AZ CLI extensions
 Write-Host  "Section: AZ CLI extensions ..." `
             -ForegroundColor DarkCyan
@@ -163,7 +163,7 @@ az extension add --name azure-devops                           --only-show-error
  | Select Service Principal or Managed Identity                                |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Select Service Principal or Managed Identity
 Write-Host  "Section: Authentication method ...`n" `
             -ForegroundColor DarkCyan
@@ -193,7 +193,7 @@ Write-Host  "Using authentication method: $authenticationMethod" `
  |                                                                             |
  |-----------------------------------------------------------------------------|
   Validate parameters
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Validate parameters
 Write-Host  "Section: Parameter Validation ..." `
             -ForegroundColor DarkCyan
@@ -337,7 +337,7 @@ Add-Content -Path $wikiFileName -Value "Azure DevOps organization: $ADO_Organiza
   the Post Build Cleanup extension, which is used to clean up the Terraform state
   after the deployment, but there are also some others that are needed for
   specific tasks in the pipelines.
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region DevOps Install extension 
 Write-Host  "Section: Installing the DevOps extensions ..." `
             -ForegroundColor DarkCyan
@@ -357,7 +357,7 @@ if ($extension_name.Length -eq 0) {
  | Create DevOps project                                                       |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Create DevOps project
 Write-Host  "Section: Create DevOps Project ..." `
             -ForegroundColor DarkCyan
@@ -609,7 +609,7 @@ else {
  | Creating the variable group SDAF-General                                    |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Creating the variable group SDAF-General
 Write-Host  "Section: Create Variable Group SDAF-General ..." `
             -ForegroundColor DarkCyan
@@ -640,7 +640,7 @@ $groups.Add($general_group_id)
  | Create pipelines                                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Create pipelines
 Write-Host  "Section: Pipelines ..." `
             -ForegroundColor DarkCyan
@@ -826,7 +826,7 @@ Add-Content -Path $wikiFileName -Value $log
  |                                                                             |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Repositories
 Write-Host  "Section: Repositories ..." `
             -ForegroundColor DarkCyan
@@ -1009,7 +1009,7 @@ Add-Content -Path $wikiFileName -Value ("Web Application: " + $ApplicationName)
  | Choose MSI                                                                  |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Choose MSI
 Write-Host  "Section: Choose Managed Identity ..." `
             -ForegroundColor DarkCyan
@@ -1055,7 +1055,7 @@ if ($authenticationMethod -eq "Managed Identity") {
  | App Registration                                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region App registration
 Write-Host  "App registration section..." `
             -ForegroundColor DarkCyan
@@ -1130,7 +1130,7 @@ if ($WebApp) {
  | When authenticationMethod is SPN                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region When authenticationMethod is SPN
 Write-Host  "Section: SPN ..." `
             -ForegroundColor DarkCyan
@@ -1298,7 +1298,7 @@ $groups.Add($Control_plane_groupID)
  | Create Agent Pool                                                           |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Create Agent Pool
 Write-Host  "Section: Agent Pool ..." `
             -ForegroundColor DarkCyan
@@ -1332,7 +1332,7 @@ if (Test-Path ".${pathSeparator}pool.json") { Write-Host "Removing pool.json" ; 
  | Create Personal Access Token (PAT)                                          |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region PAT
 Write-Host  "Section: Personal Access Token (PAT) ..." `
             -ForegroundColor DarkCyan
@@ -1400,7 +1400,7 @@ Remove-Item -Path "user.json"
  | Set Entitlements                                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Set Entitlements
 Write-Host  "Section: Set Entitlements ..." `
             -ForegroundColor DarkCyan
@@ -1444,7 +1444,7 @@ az devops invoke --area MemberEntitlementManagement --resource ServicePrincipalE
  | Set permissions for Agent Pool                                              |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Set permissions for Agent Pool
 Write-Host  "Section: Set permissions for Agent Pool ..." `
             -ForegroundColor DarkCyan
@@ -1472,7 +1472,7 @@ if ($PAT.Length -gt 0) {
  | Set permissions for Build Service                                           |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Set permissions for Build Service
 Write-Host  "Section: Set permissions for Build Service ..." `
             -ForegroundColor DarkCyan
@@ -1499,7 +1499,7 @@ else {
  | Write Wiki                                                                  |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Write Wiki
 Write-Host  "Section: Write Wiki ..." `
             -ForegroundColor DarkCyan
@@ -1545,7 +1545,7 @@ if (Test-Path ".${pathSeparator}$wikiFileName") { Write-Host "Removing $wikiFile
  | Build Service permissions                                                   |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Build Service permissions
 Write-Host  "Section: Set permissions for Build Service ..." `
             -ForegroundColor DarkCyan
