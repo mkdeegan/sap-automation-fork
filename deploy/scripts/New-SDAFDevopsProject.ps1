@@ -107,7 +107,7 @@ if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing $wikiFi
  |  Exact permissions required, to be validated, and included in the Read-Host text.
  |-------------------------------------+---------------------------------------#>
 #region PAT Authentication to Azure DevOps organization
-Write-Host  "Checking PAT Authentication..." `
+Write-Host  "Section: Authentication to Azure DevOps organization ..." `
             -ForegroundColor DarkCyan
 
 $PAT = 'Enter your personal access token here'
@@ -118,12 +118,14 @@ if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
   $CreatePAT  = $false
 }
 
-$checkPAT = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
+$checkPAT                   = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
 if ($checkPAT.Length -eq 0) {
   $env:AZURE_DEVOPS_EXT_PAT = Read-Host "Please enter your Personal Access Token (PAT) with full access to the Azure DevOps organization $ADO_Organization"
   $verifyPAT                = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
   if ($verifyPAT.Length -eq 0) {
-    Read-Host -Prompt "Failed to authenticate to the Azure DevOps organization, press <any key> to exit"
+    Write-Host        "Failed to authenticate to the Azure DevOps organization $ADO_Organization" `
+                      -ForegroundColor Red
+    Read-Host -Prompt "press <any key> to exit"
     exit
   }
   else {
@@ -142,12 +144,12 @@ else {
 
 <#-----------------------------------------------------------------------------|
  |                                                                             |
- | Install AZ CLI extensions                                                   |
+ | AZ CLI extensions                                                           |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Install AZ CLI extensions
-Write-Host  "Checking AZ CLI extensions..." `
+Write-Host  "Section: AZ CLI extensions ..." `
             -ForegroundColor DarkCyan
 
 az config set extension.use_dynamic_install=yes_without_prompt --only-show-errors
@@ -163,7 +165,7 @@ az extension add --name azure-devops                           --only-show-error
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Select Service Principal or Managed Identity
-Write-Host  "Checking Authentication method...`n" `
+Write-Host  "Section: Authentication method ...`n" `
             -ForegroundColor DarkCyan
 
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
