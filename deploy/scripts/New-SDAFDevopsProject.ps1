@@ -1,8 +1,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+$versionLabel = "v3.14.5.0"
+
 # Write-Host "<Experimental>..............." -ForegroundColor Cyan
 
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Functions                                                                   |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+#region Functions
 function Show-Menu($data) {
   Write-Host "================ $Title ================"
   $i = 1
@@ -14,53 +23,53 @@ function Show-Menu($data) {
   Write-Host "q: Select 'q' for Exit"
 
 }
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
+
+
+
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Initialize variables                                                        |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 #region Initialize
-# Initialize variables from Environment variables
-
-$ADO_Organization = $Env:SDAF_ADO_ORGANIZATION
-$ADO_Project = $Env:SDAF_ADO_PROJECT
-$ARM_TENANT_ID = $Env:ARM_TENANT_ID
-$Control_plane_code = $Env:SDAF_CONTROL_PLANE_CODE
+$ADO_Organization             = $Env:SDAF_ADO_ORGANIZATION
+$ADO_Project                  = $Env:SDAF_ADO_PROJECT
+$ARM_TENANT_ID                = $Env:ARM_TENANT_ID
+$Control_plane_code           = $Env:SDAF_CONTROL_PLANE_CODE
 $Control_plane_subscriptionID = $Env:SDAF_ControlPlaneSubscriptionID
 $ControlPlaneSubscriptionName = $Env:SDAF_ControlPlaneSubscriptionName
+$wikiFileName                 = "start.md"
 
 if ( $null -ne $Env:CreateConnections) {
-  $CreateConnection = [System.Convert]::ToBoolean($Env:CreateConnections)
-}
-else {
-  $CreateConnection = $true
-}
+         $CreateConnection = [System.Convert]::ToBoolean($Env:CreateConnections)
+} else { $CreateConnection = $true }
 
 if ( $null -ne $Env:SDAF_BRANCH ) {
-  $branch = $Env:SDAF_BRANCH
-}
-else {
-  $branch = "main"
-}
+         $branch = $Env:SDAF_BRANCH
+} else { $branch = "main" }
 
 if ( $null -ne $Env:ImportFromGitHub) {
-  $ImportFromGitHub = [System.Convert]::ToBoolean($Env:ImportFromGitHub)
+         $ImportFromGitHub = [System.Convert]::ToBoolean($Env:ImportFromGitHub)
 }
 
 if ( $null -ne $Env:CreatePAT) {
-  $CreatePAT = [System.Convert]::ToBoolean($Env:CreatePAT)
-}
-else {
-  $CreatePAT = $true
-}
-
-
+         $CreatePAT = [System.Convert]::ToBoolean($Env:CreatePAT)
+} else { $CreatePAT = $true }
 
 if ($IsWindows) { $pathSeparator = "\" } else { $pathSeparator = "/" }
+# if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
+if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}${wikiFileName}" }
+<#-------------------------------------+---------------------------------------#>
 #endregion
 
-$versionLabel = "v3.14.5.0"
+
 
 # az logout
-
 # az account clear
-
 # if ($ARM_TENANT_ID.Length -eq 0) {
 #   az login --output none --only-show-errors --scope https://graph.microsoft.com//.default
 # }
@@ -68,36 +77,70 @@ $versionLabel = "v3.14.5.0"
 #   az login --output none --tenant $ARM_TENANT_ID --only-show-errors --scope https://graph.microsoft.com//.default
 # }
 
-# Check if access to the Azure DevOps organization is available and prompt for PAT if needed
-# Exact permissions required, to be validated, and included in the Read-Host text.
+
+
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | PAT Authentication to Azure DevOps organization                             |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+  Check if access to the Azure DevOps organization is available,
+    prompt for PAT if needed.
+
+  Exact permissions required, to be validated, and included in the Read-Host text.
+---------------------------------------+---------------------------------------#>
+#region PAT Authentication to Azure DevOps organization
 $PAT = 'Enter your personal access token here'
 if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
-  Write-Host "Using the provided Personal Access Token (PAT) to authenticate to the Azure DevOps organization $ADO_Organization" -ForegroundColor Yellow
-  $PAT = $Env:AZURE_DEVOPS_EXT_PAT
-  $CreatePAT = $false
+  Write-Host  "Using the provided Personal Access Token (PAT) to authenticate to the Azure DevOps organization $ADO_Organization" `
+              -ForegroundColor Yellow
+  $PAT        = $Env:AZURE_DEVOPS_EXT_PAT
+  $CreatePAT  = $false
 }
 
 $checkPAT = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
 if ($checkPAT.Length -eq 0) {
   $env:AZURE_DEVOPS_EXT_PAT = Read-Host "Please enter your Personal Access Token (PAT) with full access to the Azure DevOps organization $ADO_Organization"
-  $verifyPAT = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
+  $verifyPAT                = (az devops user list --organization $ADO_Organization --only-show-errors --top 1)
   if ($verifyPAT.Length -eq 0) {
     Read-Host -Prompt "Failed to authenticate to the Azure DevOps organization, press <any key> to exit"
     exit
   }
   else {
-    Write-Host "Successfully authenticated to the Azure DevOps organization $ADO_Organization" -ForegroundColor Green
+    Write-Host  "Successfully authenticated to the Azure DevOps organization $ADO_Organization" `
+                -ForegroundColor Green
   }
 }
 else {
-  Write-Host "Successfully authenticated to the Azure DevOps organization $ADO_Organization" -ForegroundColor Green
+  Write-Host  "Successfully authenticated to the Azure DevOps organization $ADO_Organization" `
+              -ForegroundColor Green
 }
+Write-Host  "`n" -ForegroundColor Green                                                              # 2 new lines
+<#-----------------------------------------------------------------------------#>
+#endregion
 
-Write-Host ""
-Write-Host ""
 
-if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
 
+#region Install AZ CLI extensions
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Install AZ CLI extensions                                                   |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+az config set extension.use_dynamic_install=yes_without_prompt --only-show-errors
+az extension add --name azure-devops                           --only-show-errors
+<#-------------------------------------+---------------------------------------#>
+#endregion
+
+
+#region Select Service Principal or Managed Identity
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Select Service Principal or Managed Identity                                |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
   $Title = "Select the authentication method to use"
   $data = @('Service Principal', 'Managed Identity')
@@ -110,14 +153,21 @@ else {
   $authenticationMethod = $Env:SDAF_AuthenticationMethod
 }
 
-Write-Host "Using authentication method: $authenticationMethod" -ForegroundColor Yellow
+Write-Host  "Using authentication method: $authenticationMethod" `
+            -ForegroundColor Yellow
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
-az config set extension.use_dynamic_install=yes_without_prompt --only-show-errors
 
-az extension add --name azure-devops --only-show-errors
 
 #region Validate parameters
-
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ |                                                                             |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+  Validate parameters
+---------------------------------------+---------------------------------------#>
 if ($Control_plane_subscriptionID.Length -eq 0) {
   Write-Host "$Env:ControlPlaneSubscriptionID is not set!" -ForegroundColor Red
   $Title = "Choose the subscription for the Control Plane"
@@ -167,9 +217,10 @@ if ($Env:SDAF_POOL_NAME.Length -eq 0) {
 else {
   $Pool_Name = $Env:SDAF_POOL_NAME
 }
-
+#-------------------------------------------------------------------------------
 $WebApp = $true
-if ($Env:SDAF_WEBAPP -eq "true") {
+# if ($Env:SDAF_WEBAPP -eq "true") {
+if ($Env:SDAF_WEBAPP) {
   $ApplicationName = $ControlPlanePrefix + "-configuration-app"
 
   if ($Env:SDAF_APP_NAME.Length -ne 0) {
@@ -179,7 +230,7 @@ if ($Env:SDAF_WEBAPP -eq "true") {
 else {
   $WebApp = $false
 }
-
+#-------------------------------------------------------------------------------
 if ($Env:SDAF_AGENT_POOL_NAME.Length -ne 0) {
   $Pool_Name = $Env:SDAF_AGENT_POOL_NAME
 }
@@ -189,44 +240,84 @@ else {
     $Pool_Name = Read-Host "Enter the name of the agent pool"
   }
 }
+#-------------------------------------------------------------------------------
+$SUserName = 'Enter your S User ID'
+$SPassword = 'Enter your S user password'
 
+if ($Env:SUserName.Length -ne 0) { $SUserName = $Env:SUserName }
+if ($Env:SPassword.Length -ne 0) { $SPassword = $Env:SPassword }
+
+if ($Env:SUserName.Length -eq 0 -and $Env:SPassword.Length -eq 0) {
+  $provideSUser = Read-Host "Do you want to provide the S user details y/n?"
+  if ($provideSUser -eq 'y') {
+    $SUserName = Read-Host "Enter your S User ID"
+    $SPassword = Read-Host "Enter your S user password"
+  }
+}
+#-------------------------------------------------------------------------------
+
+
+$import_code             = $false
 $pipeline_permission_url = ""
-
-$import_code = $false
-
-$APP_REGISTRATION_ID = ""
-$WEB_APP_CLIENT_SECRET = "Enter your App registration secret here"
-
+$APP_REGISTRATION_ID     = ""
+$WEB_APP_CLIENT_SECRET   = "Enter your App registration secret here"
+<#-------------------------------------+---------------------------------------#>
 #endregion
 
-$fname = "start.md"
 
-Add-Content -Path $fname -Value "# Welcome to the SDAF Wiki"
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value "## Deployment details"
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value "Azure DevOps organization: $ADO_Organization"
+#region Wiki Content
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Wiki Content                                                                |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+Add-Content -Path $wikiFileName -Value "# Welcome to the SDAF Wiki"
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value "## Deployment details"
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value "Azure DevOps organization: $ADO_Organization"
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
-#region Install extension
 
+#region DevOps Install extension 
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Install DevOps extension                                                    |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+  Install the Azure DevOps extensions required for the pipelines. The main one is
+  the Post Build Cleanup extension, which is used to clean up the Terraform state
+  after the deployment, but there are also some others that are needed for
+  specific tasks in the pipelines.
+---------------------------------------+---------------------------------------#>
 Write-Host "Installing the DevOps extensions" -ForegroundColor Green
 $extension_name = (az devops extension list --organization $ADO_Organization --query "[?extensionName=='Post Build Cleanup'].extensionName | [0]")
 
 if ($extension_name.Length -eq 0) {
   az devops extension install --organization $ADO_Organization --extension PostBuildCleanup --publisher-id mspremier --output none
 }
-
+<#-------------------------------------+---------------------------------------#>
 #endregion
 
+
+
 #region Create DevOps project
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Create DevOps project                                                       |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 $Project_ID = (az devops project list --organization $ADO_ORGANIZATION --query "[value[]] | [0] | [? name=='$ADO_PROJECT'].id | [0]" --out tsv)
 
 if ($Project_ID.Length -eq 0) {
   Write-Host "Creating the project: " $ADO_PROJECT -ForegroundColor Green
   $Project_ID = (az devops project create --name $ADO_PROJECT --description 'SDAF Automation Project' --organization $ADO_ORGANIZATION --visibility private --source-control git --query id --output tsv)
 
-  Add-Content -Path $fname -Value ""
-  Add-Content -Path $fname -Value "Using Azure DevOps Project: $ADO_PROJECT"
+  Add-Content -Path $wikiFileName -Value ""
+  Add-Content -Path $wikiFileName -Value "Using Azure DevOps Project: $ADO_PROJECT"
 
   az devops configure --defaults organization=$ADO_ORGANIZATION project="$ADO_PROJECT"
 
@@ -242,8 +333,8 @@ if ($Project_ID.Length -eq 0) {
 
 else {
 
-  Add-Content -Path $fname -Value ""
-  Add-Content -Path $fname -Value "DevOps Project: $ADO_PROJECT"
+  Add-Content -Path $wikiFileName -Value ""
+  Add-Content -Path $wikiFileName -Value "DevOps Project: $ADO_PROJECT"
 
   Write-Host "Using an existing project"
 
@@ -260,8 +351,8 @@ else {
   if ($repo_size -eq 0) {
     Write-Host "Importing the repository from GitHub" -ForegroundColor Green
 
-    Add-Content -Path $fname -Value ""
-    Add-Content -Path $fname -Value "Terraform and Ansible code repository stored in the DevOps project (sap-automation)"
+    Add-Content -Path $wikiFileName -Value ""
+    Add-Content -Path $wikiFileName -Value "Terraform and Ansible code repository stored in the DevOps project (sap-automation)"
 
     az repos import create --git-url https://github.com/Azure/SAP-automation-bootstrap --repository $repo_id   --output tsv
     if ($LastExitCode -eq 1) {
@@ -306,8 +397,8 @@ else {
 
 
 if ($confirmation -ne 'y') {
-  Add-Content -Path $fname -Value ""
-  Add-Content -Path $fname -Value "Using the code from the sap-automation repository"
+  Add-Content -Path $wikiFileName -Value ""
+  Add-Content -Path $wikiFileName -Value "Using the code from the sap-automation repository"
 
   $import_code = $true
   $repo_name = "sap-automation"
@@ -333,9 +424,7 @@ if ($confirmation -ne 'y') {
 
 
     $templatename = "resources.yml"
-    if (Test-Path $templatename) {
-      Remove-Item $templatename
-    }
+    if (Test-Path $templatename) { Remove-Item $templatename }
 
     Add-Content -Path $templatename ""
     Add-Content -Path $templatename "parameters:"
@@ -385,7 +474,11 @@ if ($confirmation -ne 'y') {
       --api-version "6.0" --output none
 
     Remove-Item $templatename
+
+
     $templatename = "resources_including_samples.yml"
+    if (Test-Path $templatename) { Remove-Item $templatename }
+
     Add-Content -Path $templatename ""
     Add-Content -Path $templatename "parameters:"
     Add-Content -Path $templatename "  - name: stages"
@@ -447,39 +540,30 @@ if ($confirmation -ne 'y') {
   $pipeline_permission_url = "$ADO_ORGANIZATION/$projectID/_apis/pipelines/pipelinePermissions/repository/$projectID.$code_repo_id$queryString"
 }
 else {
-  Add-Content -Path $fname -Value ""
-  Add-Content -Path $fname -Value "Using the code directly from GitHub"
+  Add-Content -Path $wikiFileName -Value ""
+  Add-Content -Path $wikiFileName -Value "Using the code directly from GitHub"
 
   $resources_url = $ADO_ORGANIZATION + "/_git/" + [uri]::EscapeDataString($ADO_Project) + "?path=/pipelines/resources.yml"
 
   $log = ("Please update [resources.yml](" + $resources_url + ") to point to Github instead of Azure DevOps.")
 
 }
-
+<#-------------------------------------+---------------------------------------#>
 #endregion
 
-$repo_id = (az repos list --query "[?name=='$ADO_Project'].id | [0]"  --out tsv)
+
+
+#region Creating the variable group SDAF-General
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Creating the variable group SDAF-General                                    |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+$repo_id   = (az repos list --query "[?name=='$ADO_Project'].id   | [0]"  --out tsv)
 $repo_name = (az repos list --query "[?name=='$ADO_Project'].name | [0]"  --out tsv)
 
-$SUserName = 'Enter your S User'
-$SPassword = 'Enter your S user password'
-
-if ($Env:SUserName.Length -ne 0) {
-  $SUserName = $Env:SUserName
-}
-if ($Env:SPassword.Length -ne 0) {
-  $SPassword = $Env:SPassword
-}
-
-if ($Env:SUserName.Length -eq 0 -and $Env:SPassword.Length -eq 0) {
-
-  $provideSUser = Read-Host "Do you want to provide the S user details y/n?"
-  if ($provideSUser -eq 'y') {
-    $SUserName = Read-Host "Enter your S User ID"
-    $SPassword = Read-Host "Enter your S user password"
-  }
-}
-$groups = New-Object System.Collections.Generic.List[System.Object]
+$groups    = New-Object System.Collections.Generic.List[System.Object]
 $pipelines = New-Object System.Collections.Generic.List[System.Object]
 
 Write-Host "Creating the variable group SDAF-General" -ForegroundColor Green
@@ -492,13 +576,23 @@ if ($general_group_id.Length -eq 0) {
 }
 
 $groups.Add($general_group_id)
+<#-------------------------------------+---------------------------------------#>
+#endregion
+
+
 
 #region Create pipelines
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Create pipelines                                                            |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 Write-Host "Creating the pipelines in repo: " $repo_name "(" $repo_id ")" -foregroundColor Green
 
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value "### Pipelines"
-Add-Content -Path $fname -Value ""
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value "### Pipelines"
+Add-Content -Path $wikiFileName -Value ""
 
 $pipeline_name = 'Create Control Plane configuration'
 $sample_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -508,7 +602,8 @@ if ($sample_pipeline_id.Length -eq 0) {
 }
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $sample_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'Deploy Control plane'
 $control_plane_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -521,7 +616,8 @@ $pipelines.Add($control_plane_pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $control_plane_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'SAP Workload Zone deployment'
 $wz_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -534,7 +630,8 @@ $pipelines.Add($wz_pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $wz_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'SAP SID Infrastructure deployment'
 $system_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -546,7 +643,8 @@ $pipelines.Add($system_pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $system_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'SAP Software acquisition'
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -558,7 +656,8 @@ $pipelines.Add($pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'Configuration and SAP installation'
 $installation_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -570,7 +669,8 @@ $pipelines.Add($installation_pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $installation_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'Remove System or Workload Zone'
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -582,7 +682,8 @@ $pipelines.Add($pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'Remove deployments via ARM'
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -594,7 +695,8 @@ $pipelines.Add($pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 $pipeline_name = 'Remove control plane'
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -606,7 +708,8 @@ $pipelines.Add($pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
 
 if ($import_code) {
   $pipeline_name = 'Update repository'
@@ -617,9 +720,10 @@ if ($import_code) {
   $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
   $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
   $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-  Add-Content -Path $fname -Value $log
+  Add-Content -Path $wikiFileName -Value $log
   $pipelines.Add($pipeline_id)
 }
+#-------------------------------------------------------------------------------
 
 
 $pipeline_name = 'Update Pipelines'
@@ -632,8 +736,20 @@ $pipelines.Add($pipeline_id)
 
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
-Add-Content -Path $fname -Value $log
+Add-Content -Path $wikiFileName -Value $log
+#-------------------------------------------------------------------------------
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
+
+
+#region Repositories
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ |                                                                             |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 if ($true -eq $CreateConnection ) {
   $gh_connection_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_settings/adminservices"
   Write-Host ""
@@ -647,9 +763,7 @@ if ($true -eq $CreateConnection ) {
   $objectId = (az devops invoke --area git --resource refs --route-parameters project=$ADO_Project repositoryId=$repo_id --query-parameters filter=heads/main --query value[0] | ConvertFrom-Json).objectId
 
   $templatename = "resources.yml"
-  if (Test-Path $templatename) {
-    Remove-Item $templatename
-  }
+  if (Test-Path $templatename) { Remove-Item $templatename }
 
   Add-Content -Path $templatename ""
   Add-Content -Path $templatename "parameters:"
@@ -782,19 +896,40 @@ else {
   Write-Host "Please create a 'GitHub' service connection before running any pipeline."
 }
 
+<#-------------------------------------+---------------------------------------#>
 #endregion
 
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value "### Variable Groups"
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value "SDAF-General"
-Add-Content -Path $fname -Value $ControlPlanePrefix
-Add-Content -Path $fname -Value $WorkloadZonePrefix
 
-Add-Content -Path $fname -Value "### Credentials"
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value ("Web Application: " + $ApplicationName)
 
+#region Wiki Content
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Wiki Content                                                                |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value "### Variable Groups"
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value "SDAF-General"
+Add-Content -Path $wikiFileName -Value $ControlPlanePrefix
+Add-Content -Path $wikiFileName -Value $WorkloadZonePrefix
+
+Add-Content -Path $wikiFileName -Value "### Credentials"
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value ("Web Application: " + $ApplicationName)
+<#-------------------------------------+---------------------------------------#>
+#endregion
+
+
+
+#region Choose MSI
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Choose MSI                                                                  |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 $MSI_objectId = $null
 if ($authenticationMethod -eq "Managed Identity") {
 
@@ -802,7 +937,6 @@ if ($authenticationMethod -eq "Managed Identity") {
     $MSI_objectId = $Env:MSI_OBJECT_ID
   }
   else {
-
     $Title = "Choose the subscription that contains the Managed Identity"
     $subscriptions = $(az account list --query "[].{Name:name}" -o table | Sort-Object)
     Show-Menu($subscriptions[2..($subscriptions.Length - 1)])
@@ -827,8 +961,18 @@ if ($authenticationMethod -eq "Managed Identity") {
 
   }
 }
+<#-------------------------------------+---------------------------------------#>
+#endregion
+
+
 
 #region App registration
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ |                                                                             |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 if ($WebApp) {
   Write-Host "Creating the App registration in Azure Active Directory" -ForegroundColor Green
 
@@ -889,16 +1033,25 @@ if ($WebApp) {
   }
 
 }
-
+<#-------------------------------------+---------------------------------------#>
 #endregion
+
+
+
+#region When authenticationMethod is SPN
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | When authenticationMethod is SPN                                            |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 if ($authenticationMethod -eq "Service Principal") {
-  #region Control plane Service Principal
   $spn_name = $ControlPlanePrefix + " Deployment credential"
   if ($Env:SDAF_MGMT_SPN_NAME.Length -ne 0) {
     $spn_name = $Env:SDAF_MGMT_SPN_NAME
   }
 
-  Add-Content -Path $fname -Value ("Control Plane Service Principal: " + $spn_name)
+  Add-Content -Path $wikiFileName -Value ("Control Plane Service Principal: " + $spn_name)
 
   $scopes = "/subscriptions/" + $Control_plane_subscriptionID
 
@@ -939,20 +1092,14 @@ if ($authenticationMethod -eq "Service Principal") {
     $ARM_CLIENT_ID = $ExistingData.appId
     $ARM_TENANT_ID = $ExistingData.appOwnerOrganizationId
     $ARM_OBJECT_ID = $ExistingData.Id
-
   }
 
-  az role assignment create --assignee $ARM_CLIENT_ID --role "Contributor" --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
-
-  az role assignment create --assignee $ARM_CLIENT_ID --role "User Access Administrator" --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
-
-  az role assignment create --assignee $ARM_CLIENT_ID --role "Storage Blob Data Contributor" --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
-
+  az role assignment create --assignee $ARM_CLIENT_ID --role "Contributor"                    --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
+  az role assignment create --assignee $ARM_CLIENT_ID --role "User Access Administrator"      --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
+  az role assignment create --assignee $ARM_CLIENT_ID --role "Storage Blob Data Contributor"  --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
   az role assignment create --assignee $ARM_CLIENT_ID --role "Storage Table Data Contributor" --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
-
-  az role assignment create --assignee $ARM_CLIENT_ID --role "App Configuration Data Owner" --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
-
-  az role assignment create --assignee $ARM_CLIENT_ID --role "Private DNS Zone Contributor" --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
+  az role assignment create --assignee $ARM_CLIENT_ID --role "App Configuration Data Owner"   --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
+  az role assignment create --assignee $ARM_CLIENT_ID --role "Private DNS Zone Contributor"   --subscription $Control_plane_subscriptionID --scope /subscriptions/$Control_plane_subscriptionID --output none
 
   $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
   if ($Control_plane_groupID.Length -eq 0) {
@@ -1022,10 +1169,18 @@ else {
 }
 
 $groups.Add($Control_plane_groupID)
-
-
+<#-------------------------------------+---------------------------------------#>
 #endregion
 
+
+
+#region Create Agent Pool
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Create Agent Pool                                                           |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 $POOL_ID = 0
 $POOL_NAME_FOUND = (az pipelines pool list --query "[?name=='$Pool_Name'].name | [0]")
 if ($POOL_NAME_FOUND.Length -gt 0) {
@@ -1044,9 +1199,19 @@ else {
   $queue_id = (az pipelines queue list --query "[?name=='$Pool_Name'].id | [0]" --output tsv)
 
 }
-
 if (Test-Path ".${pathSeparator}pool.json") { Write-Host "Removing pool.json" ; Remove-Item ".${pathSeparator}pool.json" }
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
+
+
+#region PAT
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Create Personal Access Token (PAT)                                          |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 if ($CreatePAT) {
   # Get pat_url directly from the $ADO_Organization, avoiding double slashes.
   $pat_url = ($ADO_Organization.TrimEnd('/') + "/_usersSettings/tokens").Replace("""", "")
@@ -1100,7 +1265,18 @@ if ($PAT.Length -gt 0) {
   }
 }
 Remove-Item -Path "user.json"
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
+
+
+#region Set Entitlements
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Set Entitlements                                                            |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 $postBody = [PSCustomObject]@{
   accessLevel         = @{
     accountLicenseType = "stakeholder"
@@ -1130,7 +1306,18 @@ $postBody = [PSCustomObject]@{
 Set-Content -Path "user.json" -Value ($postBody | ConvertTo-Json -Depth 6)
 
 az devops invoke --area MemberEntitlementManagement --resource ServicePrincipalEntitlements  --in-file user.json --api-version "7.1-preview" --http-method POST
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
+
+
+#region Set permissions for Agent Pool
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Set permissions for Agent Pool                                              |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 # Read-Host -Prompt "Press any key to continue"
 if ($PAT.Length -gt 0) {
   $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes((":{0}" -f $PAT)))
@@ -1144,7 +1331,18 @@ if ($PAT.Length -gt 0) {
     $response = Invoke-RestMethod -Method PATCH -Uri $pipeline_permission_url -Headers @{Authorization = "Basic $base64AuthInfo" } -Body $body -ContentType "application/json"
   }
 }
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
+
+
+#region Set permissions for Build Service
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Set permissions for Build Service                                           |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
 if ($true -eq $CreateConnection) {
   Write-Host ""
   Write-Host "The browser will now open, Select the '"$ADO_PROJECT "Build Service' user and ensure that it has 'Allow' in the Contribute section."
@@ -1158,17 +1356,26 @@ if ($true -eq $CreateConnection) {
 else {
   Write-Host "Please ensure that the '"$ADO_PROJECT "Build Service' user has 'Allow' in the Contribute section in the repository before running any pipelines"
 }
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
-$pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $sample_pipeline_id
 
+#region Write Wiki
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Write Wiki                                                                  |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+$pipeline_url               = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $sample_pipeline_id
 $control_plane_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $control_plane_pipeline_id
 
-Add-Content -Path $fname -Value "## Next steps"
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value ( "Use the [Create Control Plane Configuration Sample](" + $pipeline_url + ") to create the control plane configuration in the region you select." )
-Add-Content -Path $fname -Value ""
-Add-Content -Path $fname -Value ( "Once it is complete use the [Deploy Control Plane Pipeline ](" + $control_plane_pipeline_url + ") to create the control plane configuration in the region you select.")
-Add-Content -Path $fname -Value ""
+Add-Content -Path $wikiFileName -Value "## Next steps"
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value ( "Use the [Create Control Plane Configuration Sample](" + $pipeline_url + ") to create the control plane configuration in the region you select." )
+Add-Content -Path $wikiFileName -Value ""
+Add-Content -Path $wikiFileName -Value ( "Once it is complete use the [Deploy Control Plane Pipeline ](" + $control_plane_pipeline_url + ") to create the control plane configuration in the region you select.")
+Add-Content -Path $wikiFileName -Value ""
 
 $WIKI_NAME_FOUND = (az devops wiki list --query "[?name=='SDAF'].name | [0]")
 if ($WIKI_NAME_FOUND.Length -gt 0) {
@@ -1191,25 +1398,35 @@ if ($true -eq $CreateConnection) {
   Start-Process $wiki_url
 }
 if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
-Write-Host "Adding the Build Service user to the Build Administrators group for thge Project" -ForegroundColor Green
-$SecurityServiceGroupId = $(az devops security group list --scope organization --query "graphGroups | [?displayName=='Security Service Group'].descriptor | [0]" --output tsv)
-$ProjectBuildAdminGroupId = $(az devops security group list --project $ADO_Project --query "graphGroups | [?displayName=='Build Administrators'].descriptor | [0]" --output tsv)
-$GroupItems = $(az devops security group membership list --id $SecurityServiceGroupId --output table )
+
+
+#region Build Service permissions
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ |                                                                             |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+---------------------------------------+---------------------------------------#>
+Write-Host  "Adding the Build Service user to the Build Administrators group for the Project" `
+            -ForegroundColor Green
+$SecurityServiceGroupId   = $(az devops security group list --scope organization   --query "graphGroups | [?displayName=='Security Service Group'].descriptor | [0]" --output tsv)
+$ProjectBuildAdminGroupId = $(az devops security group list --project $ADO_Project --query "graphGroups | [?displayName=='Build Administrators'].descriptor   | [0]" --output tsv)
+$GroupItems               = $(az devops security group membership list --id $SecurityServiceGroupId --output table )
 
 $Service_Name = $ADO_Project + " Build Service"
-$Descriptor = ""
-$Name = ""
-$Parts = $GroupItems[1].Split(' ')
-$RealItems = $GroupItems[2..($GroupItems.Length - 2)]
+$Descriptor   = ""
+$Name         = ""
+$Parts        = $GroupItems[1].Split(' ')
+$RealItems    = $GroupItems[2..($GroupItems.Length - 2)]
 foreach ($Item in $RealItems) {
   $Name = $Item.Substring(0, $Parts[0].Length).Trim()
   if ($Name.StartsWith($Service_Name)) {
     $Descriptor = $Item.Substring($Parts[0].Length + $Parts[1].Length + $Parts[2].Length).Trim()
     break
-
   }
-
 }
 
 if ($Descriptor -eq "") {
@@ -1219,6 +1436,8 @@ else {
   Write-Host "Adding the Build Service user to the Build Administrators group" -ForegroundColor Green
   az devops security group membership add --member-id $Descriptor --group-id $ProjectBuildAdminGroupId
 }
+<#-------------------------------------+---------------------------------------#>
+#endregion
 
 
 Write-Host "The script has completed" -ForegroundColor Green
