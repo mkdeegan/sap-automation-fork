@@ -46,12 +46,12 @@ function Show-Menu($data) {
 
 <#-----------------------------------------------------------------------------|
  |                                                                             |
- | Initialize variables                                                        |
+ | Initialization                                                              |
  |                                                                             |
  |-----------------------------------------------------------------------------|
  |-------------------------------------+---------------------------------------#>
 #region Initialize
-Write-Host  "Initializing variables..." `
+Write-Host  "Section: Initialization ..." `
             -ForegroundColor DarkCyan
 
 $ADO_Organization             = $Env:SDAF_ADO_ORGANIZATION
@@ -79,8 +79,7 @@ if ( $null -ne $Env:CreatePAT) {
 } else { $CreatePAT = $true }
 
 if ($IsWindows) { $pathSeparator = "\" } else { $pathSeparator = "/" }
-# if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
-if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}${wikiFileName}" }
+if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing $wikiFileName" ; Remove-Item ".${pathSeparator}${wikiFileName}" }
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
@@ -1489,12 +1488,12 @@ if ($WIKI_NAME_FOUND.Length -gt 0) {
   Write-Host "Wiki SDAF already exists"
   $eTag = (az devops wiki page show --path 'Next steps' --wiki SDAF --query eTag )
   if ($eTag -ne $null) {
-    $page_id = (az devops wiki page update --path 'Next steps' --wiki SDAF --file-path ".${pathSeparator}start.md" --only-show-errors --version $eTag --query page.id)
+    $page_id = (az devops wiki page update --path 'Next steps' --wiki SDAF --file-path ".${pathSeparator}$wikiFileName" --only-show-errors --version $eTag --query page.id)
   }
 }
 else {
   az devops wiki create --name SDAF --output none --only-show-errors
-  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path ".${pathSeparator}start.md" --output none --only-show-errors
+  az devops wiki page create --path 'Next steps' --wiki SDAF --file-path ".${pathSeparator}$wikiFileName" --output none --only-show-errors
 }
 
 $page_id = (az devops wiki page show --path 'Next steps' --wiki SDAF --query page.id )
@@ -1504,7 +1503,7 @@ Write-Host "URL: " $wiki_url
 if ($true -eq $CreateConnection) {
   Start-Process $wiki_url
 }
-if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Remove-Item ".${pathSeparator}start.md" }
+if (Test-Path ".${pathSeparator}$wikiFileName") { Write-Host "Removing $wikiFileName" ; Remove-Item ".${pathSeparator}$wikiFileName" }
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
