@@ -195,7 +195,7 @@ Write-Host  "Using authentication method: $authenticationMethod" `
   Validate parameters
 ---------------------------------------+---------------------------------------#>
 #region Validate parameters
-Write-Host  "Parameter Validation..." `
+Write-Host  "Section: Parameter Validation ..." `
             -ForegroundColor DarkCyan
 
 # Ensure the Control plane subscription ID is set
@@ -339,7 +339,7 @@ Add-Content -Path $wikiFileName -Value "Azure DevOps organization: $ADO_Organiza
   specific tasks in the pipelines.
 ---------------------------------------+---------------------------------------#>
 #region DevOps Install extension 
-Write-Host  "Installing the DevOps extensions..." `
+Write-Host  "Section: Installing the DevOps extensions ..." `
             -ForegroundColor DarkCyan
 
 $extension_name = (az devops extension list --organization $ADO_Organization --query "[?extensionName=='Post Build Cleanup'].extensionName | [0]")
@@ -359,7 +359,7 @@ if ($extension_name.Length -eq 0) {
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Create DevOps project
-Write-Host  "Create DevOps Project..." `
+Write-Host  "Section: Create DevOps Project ..." `
             -ForegroundColor DarkCyan
 
 $Project_ID = (az devops project list --organization $ADO_ORGANIZATION --query "[value[]] | [0] | [? name=='$ADO_PROJECT'].id | [0]" --out tsv)
@@ -611,7 +611,7 @@ else {
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Creating the variable group SDAF-General
-Write-Host  "Create Variable Group SDAF-General..." `
+Write-Host  "Section: Create Variable Group SDAF-General ..." `
             -ForegroundColor DarkCyan
 
 $repo_id   = (az repos list --query "[?name=='$ADO_Project'].id   | [0]"  --out tsv)
@@ -642,7 +642,7 @@ $groups.Add($general_group_id)
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Create pipelines
-Write-Host  "Create Pipelines..." `
+Write-Host  "Section: Pipelines ..." `
             -ForegroundColor DarkCyan
 
 Write-Host "Creating the pipelines in repo: $repo_name ($repo_id)" -foregroundColor Green
@@ -828,7 +828,7 @@ Add-Content -Path $wikiFileName -Value $log
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Repositories
-Write-Host  "Create repositories..." `
+Write-Host  "Section: Repositories ..." `
             -ForegroundColor DarkCyan
 
 if ($true -eq $CreateConnection ) {
@@ -1011,7 +1011,7 @@ Add-Content -Path $wikiFileName -Value ("Web Application: " + $ApplicationName)
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Choose MSI
-Write-Host  "Choose Managed Identity..." `
+Write-Host  "Section: Choose Managed Identity ..." `
             -ForegroundColor DarkCyan
 
 $MSI_objectId = $null
@@ -1132,7 +1132,7 @@ if ($WebApp) {
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region When authenticationMethod is SPN
-Write-Host  "SPN section..." `
+Write-Host  "Section: SPN ..." `
             -ForegroundColor DarkCyan
 
 if ($authenticationMethod -eq "Service Principal") {
@@ -1247,15 +1247,44 @@ else {
   if ($Control_plane_groupID.Length -eq 0) {
     Write-Host "Creating the variable group" $ControlPlanePrefix -ForegroundColor Green
     if ($WebApp) {
-      az pipelines variable-group create --name $ControlPlanePrefix --variables AGENT='Azure Pipelines' PAT=$PAT APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID APP_REGISTRATION_OBJECTID=$APP_REGISTRATION_OBJECTID APP_TENANT_ID=$ARM_TENANT_ID ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID POOL=$Pool_Name AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id SYSTEM_PIPELINE_ID=$system_pipeline_id SDAF_GENERAL_GROUP_ID=$general_group_id SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id TF_LOG=OFF USE_MSI=true CONTROL_PLANE_NAME=$Control_plane_code --output none --authorize true
+      az pipelines variable-group create --name $ControlPlanePrefix                                              `
+                                         --variables WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id                    `
+                                                                        AGENT='Azure Pipelines'                  `
+                                                                          PAT=$PAT                               `
+                                                      APP_REGISTRATION_APP_ID=$APP_REGISTRATION_ID               `
+                                                    APP_REGISTRATION_OBJECTID=$APP_REGISTRATION_OBJECTID         `
+                                                                APP_TENANT_ID=$ARM_TENANT_ID                     `
+                                                          ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID      `
+                                                                         POOL=$Pool_Name                         `
+                                                        AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' `
+                                                           SYSTEM_PIPELINE_ID=$system_pipeline_id                `
+                                                        SDAF_GENERAL_GROUP_ID=$general_group_id                  `
+                                                      SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id          `
+                                                                       TF_LOG=OFF                                `
+                                                                      USE_MSI=true                               `
+                                                           CONTROL_PLANE_NAME=$Control_plane_code                `
+                                         --output none                                                           `
+                                         --authorize true
     }
     else {
-      az pipelines variable-group create --name $ControlPlanePrefix --variables AGENT='Azure Pipelines'  PAT=$PAT ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID POOL=$Pool_Name AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id SYSTEM_PIPELINE_ID=$system_pipeline_id SDAF_GENERAL_GROUP_ID=$general_group_id SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id TF_LOG=OFF USE_MSI=true CONTROL_PLANE_NAME=$Control_plane_code --output none --authorize true
+      az pipelines variable-group create --name $ControlPlanePrefix                                              `
+                                         --variables WORKLOADZONE_PIPELINE_ID=$wz_pipeline_id                    `
+                                                                        AGENT='Azure Pipelines'                  `
+                                                                          PAT=$PAT                               `
+                                                                         POOL=$Pool_Name                         `
+                                                                       TF_LOG=OFF                                `
+                                                                      USE_MSI=true                               `
+                                                           CONTROL_PLANE_NAME=$Control_plane_code                `
+                                                           SYSTEM_PIPELINE_ID=$system_pipeline_id                `
+                                                          ARM_SUBSCRIPTION_ID=$Control_plane_subscriptionID      `
+                                                        SDAF_GENERAL_GROUP_ID=$general_group_id                  `
+                                                        AZURE_CONNECTION_NAME='Control_Plane_Service_Connection' `
+                                                      SAP_INSTALL_PIPELINE_ID=$installation_pipeline_id          `
+                                          --output none                                                          `
+                                          --authorize true
     }
-
     $Control_plane_groupID = (az pipelines variable-group list --query "[?name=='$ControlPlanePrefix'].id | [0]" --only-show-errors)
   }
-
 }
 
 $groups.Add($Control_plane_groupID)
