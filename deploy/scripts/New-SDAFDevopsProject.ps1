@@ -134,7 +134,6 @@ else {
   Write-Host  "Successfully authenticated to the Azure DevOps organization $ADO_Organization" `
               -ForegroundColor Green
 }
-Write-Host  "`n"                                                                                    # 2 new lines
 <#-----------------------------------------------------------------------------#>
 #endregion
 
@@ -163,7 +162,7 @@ az extension add --name azure-devops                           --only-show-error
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
 #region Select Service Principal or Managed Identity
-Write-Host  "Checking Authentication method..." `
+Write-Host  "Checking Authentication method...`n" `
             -ForegroundColor DarkCyan
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
   $Title = "Select the authentication method to use"
