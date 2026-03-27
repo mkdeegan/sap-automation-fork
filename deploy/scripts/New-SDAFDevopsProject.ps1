@@ -425,6 +425,22 @@ else {
 
   az repos update --repository $repo_id --default-branch $branch   --output none
 }
+<#-------------------------------------+---------------------------------------#>
+#endregion
+
+
+
+<#-----------------------------------------------------------------------------|
+ |                                                                             |
+ | Repositories                                                                |
+ |                                                                             |
+ |-----------------------------------------------------------------------------|
+ |-------------------------------------+---------------------------------------#>
+#region Repositories
+Write-Host  "Section: Repositories ..." `
+            -ForegroundColor DarkCyan
+
+
 
 if ( Test-Path "temprepo") {
   Write-Host "Removing temprepo" -ForegroundColor Green
@@ -823,12 +839,12 @@ Add-Content -Path $wikiFileName -Value $log
 
 <#-----------------------------------------------------------------------------|
  |                                                                             |
- |                                                                             |
+ | Github Connection and resources.yml                                         |
  |                                                                             |
  |-----------------------------------------------------------------------------|
  |-------------------------------------+---------------------------------------#>
-#region Repositories
-Write-Host  "Section: Repositories ..." `
+#region Github Connection
+Write-Host  "Section: GitHub Connection ..." `
             -ForegroundColor DarkCyan
 
 if ($true -eq $CreateConnection ) {
@@ -1379,17 +1395,17 @@ if ($PAT.Length -gt 0) {
     }
   }
 
-  $bodyText = [PSCustomObject]@{
-    allPipelines = @{
-      authorized = $false
-    }
-    pipelines    = @([ordered]@{
-        id         = 000
-        authorized = $true
-      })
-  }
+  # $bodyText = [PSCustomObject]@{
+  #   allPipelines = @{
+  #     authorized = $false
+  #   }
+  #   pipelines    = @([ordered]@{
+  #       id         = 000
+  #       authorized = $true
+  #     })
+  # }
+
 }
-Remove-Item -Path "user.json"
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
@@ -1428,12 +1444,17 @@ $postBody = [PSCustomObject]@{
     originId    = $MSI_objectId
     subjectKind = "servicePrincipal"
   }
-
 }
 
 Set-Content -Path "user.json" -Value ($postBody | ConvertTo-Json -Depth 6)
 
-az devops invoke --area MemberEntitlementManagement --resource ServicePrincipalEntitlements  --in-file user.json --api-version "7.1-preview" --http-method POST
+$response = az devops invoke  --area        MemberEntitlementManagement  `
+                              --resource    ServicePrincipalEntitlements `
+                              --in-file     user.json                    `
+                              --api-version "7.1-preview"                `
+                              --http-method POST
+
+if (Test-Path ".${pathSeparator}user.json") { Write-Host "Removing user.json" ; Remove-Item ".${pathSeparator}user.json" }
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
@@ -1452,6 +1473,16 @@ Write-Host  "Section: Set permissions for Agent Pool ..." `
 # Read-Host -Prompt "Press any key to continue"
 if ($PAT.Length -gt 0) {
   $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes((":{0}" -f $PAT)))
+
+  $bodyText = [PSCustomObject]@{
+    allPipelines = @{
+      authorized = $false
+    }
+    pipelines    = @([ordered]@{
+        id         = 000
+        authorized = $true
+      })
+  }
 
   $pipeline_permission_url = $ADO_ORGANIZATION + "/" + $Project_ID + "/_apis/pipelines/pipelinePermissions/queue/" + $queue_id.ToString() + "?api-version=5.1-preview.1"
   Write-Host "Setting permissions for agent pool:" $Pool_Name "(" $queue_id ")" -ForegroundColor Yellow
@@ -1492,6 +1523,7 @@ else {
 }
 <#-------------------------------------+---------------------------------------#>
 #endregion
+
 
 
 <#-----------------------------------------------------------------------------|
@@ -1550,7 +1582,6 @@ if (Test-Path ".${pathSeparator}$wikiFileName") { Write-Host "Removing $wikiFile
 Write-Host  "Section: Set permissions for Build Service ..." `
             -ForegroundColor DarkCyan
 
-
 Write-Host  "Adding the Build Service user to the Build Administrators group for the Project" `
             -ForegroundColor Green
 $SecurityServiceGroupId   = $(az devops security group list --scope organization   --query "graphGroups | [?displayName=='Security Service Group'].descriptor | [0]" --output tsv)
@@ -1575,7 +1606,8 @@ if ($Descriptor -eq "") {
 }
 else {
   Write-Host "Adding the Build Service user to the Build Administrators group" -ForegroundColor Green
-  az devops security group membership add --member-id $Descriptor --group-id $ProjectBuildAdminGroupId
+  $response = az devops security group membership add --member-id $Descriptor `
+                                                      --group-id $ProjectBuildAdminGroupId
 }
 <#-------------------------------------+---------------------------------------#>
 #endregion
