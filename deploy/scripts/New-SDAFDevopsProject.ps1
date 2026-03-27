@@ -26,7 +26,22 @@ function Show-Menu($data) {
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
-
+# Colors: Black
+#         DarkBlue
+#         DarkGreen
+#         DarkCyan
+#         DarkRed
+#         DarkMagenta
+#         DarkYellow
+#         Gray
+#         DarkGray
+#         Blue
+#         Green
+#         Cyan
+#         Red
+#         Magenta
+#         Yellow
+#         White
 
 
 <#-----------------------------------------------------------------------------|
@@ -37,7 +52,7 @@ function Show-Menu($data) {
  |-------------------------------------+---------------------------------------#>
 #region Initialize
 Write-Host  "Initializing variables..." `
-            -ForegroundColor Gray
+            -ForegroundColor DarkCyan
 $ADO_Organization             = $Env:SDAF_ADO_ORGANIZATION
 $ADO_Project                  = $Env:SDAF_ADO_PROJECT
 $ARM_TENANT_ID                = $Env:ARM_TENANT_ID
@@ -93,7 +108,7 @@ if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing start.m
  |-------------------------------------+---------------------------------------#>
 #region PAT Authentication to Azure DevOps organization
 Write-Host  "Checking PAT Authentication..." `
-            -ForegroundColor Gray
+            -ForegroundColor DarkCyan
 $PAT = 'Enter your personal access token here'
 if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
   Write-Host  "Using the provided Personal Access Token (PAT) to authenticate to the Azure DevOps organization $ADO_Organization" `
@@ -133,7 +148,7 @@ Write-Host  "`n"                                                                
 ---------------------------------------+---------------------------------------#>
 #region Install AZ CLI extensions
 Write-Host  "Checking AZ CLI extensions..." `
-            -ForegroundColor Gray
+            -ForegroundColor DarkCyan
 
 az config set extension.use_dynamic_install=yes_without_prompt --only-show-errors
 az extension add --name azure-devops                           --only-show-errors
@@ -149,7 +164,7 @@ az extension add --name azure-devops                           --only-show-error
 ---------------------------------------+---------------------------------------#>
 #region Select Service Principal or Managed Identity
 Write-Host  "Checking Authentication method..." `
-            -ForegroundColor Gray
+            -ForegroundColor DarkCyan
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
   $Title = "Select the authentication method to use"
   $data = @('Service Principal', 'Managed Identity')
