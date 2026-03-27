@@ -10,7 +10,7 @@ $versionLabel = "v3.14.5.0"
  | Functions                                                                   |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Functions
 function Show-Menu($data) {
   Write-Host "================ $Title ================"
@@ -34,8 +34,10 @@ function Show-Menu($data) {
  | Initialize variables                                                        |
  |                                                                             |
  |-----------------------------------------------------------------------------|
----------------------------------------+---------------------------------------#>
+ |-------------------------------------+---------------------------------------#>
 #region Initialize
+Write-Host  "Initializing variables..." `
+            -ForegroundColor Gray
 $ADO_Organization             = $Env:SDAF_ADO_ORGANIZATION
 $ADO_Project                  = $Env:SDAF_ADO_PROJECT
 $ARM_TENANT_ID                = $Env:ARM_TENANT_ID
@@ -84,12 +86,14 @@ if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing start.m
  | PAT Authentication to Azure DevOps organization                             |
  |                                                                             |
  |-----------------------------------------------------------------------------|
-  Check if access to the Azure DevOps organization is available,
-    prompt for PAT if needed.
-
-  Exact permissions required, to be validated, and included in the Read-Host text.
----------------------------------------+---------------------------------------#>
+ |  Check if access to the Azure DevOps organization is available,
+ |    prompt for PAT if needed.
+ |
+ |  Exact permissions required, to be validated, and included in the Read-Host text.
+ |-------------------------------------+---------------------------------------#>
 #region PAT Authentication to Azure DevOps organization
+Write-Host  "Checking PAT Authentication..." `
+            -ForegroundColor Gray
 $PAT = 'Enter your personal access token here'
 if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
   Write-Host  "Using the provided Personal Access Token (PAT) to authenticate to the Azure DevOps organization $ADO_Organization" `
@@ -115,32 +119,37 @@ else {
   Write-Host  "Successfully authenticated to the Azure DevOps organization $ADO_Organization" `
               -ForegroundColor Green
 }
-Write-Host  "`n" -ForegroundColor Green                                                              # 2 new lines
+Write-Host  "`n"                                                                                    # 2 new lines
 <#-----------------------------------------------------------------------------#>
 #endregion
 
 
 
-#region Install AZ CLI extensions
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Install AZ CLI extensions                                                   |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Install AZ CLI extensions
+Write-Host  "Checking AZ CLI extensions..." `
+            -ForegroundColor Gray
+
 az config set extension.use_dynamic_install=yes_without_prompt --only-show-errors
 az extension add --name azure-devops                           --only-show-errors
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
 
-#region Select Service Principal or Managed Identity
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Select Service Principal or Managed Identity                                |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Select Service Principal or Managed Identity
+Write-Host  "Checking Authentication method..." `
+            -ForegroundColor Gray
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
   $Title = "Select the authentication method to use"
   $data = @('Service Principal', 'Managed Identity')
