@@ -26,22 +26,22 @@ function Show-Menu($data) {
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
-# Colors: Black
+# Colors: White
+#         Black
+#         Blue
 #         DarkBlue
+#         Green
 #         DarkGreen
+#         Cyan
 #         DarkCyan
+#         Red
 #         DarkRed
+#         Magenta
 #         DarkMagenta
+#         Yellow
 #         DarkYellow
 #         Gray
 #         DarkGray
-#         Blue
-#         Green
-#         Cyan
-#         Red
-#         Magenta
-#         Yellow
-#         White
 
 
 <#-----------------------------------------------------------------------------|
