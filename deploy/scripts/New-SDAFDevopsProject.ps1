@@ -186,7 +186,6 @@ Write-Host  "Using authentication method: $authenticationMethod" `
 
 
 
-#region Validate parameters
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  |                                                                             |
@@ -194,6 +193,7 @@ Write-Host  "Using authentication method: $authenticationMethod" `
  |-----------------------------------------------------------------------------|
   Validate parameters
 ---------------------------------------+---------------------------------------#>
+#region Validate parameters
 Write-Host  "Parameter Validation..." `
             -ForegroundColor DarkCyan
 
@@ -327,7 +327,6 @@ Add-Content -Path $wikiFileName -Value "Azure DevOps organization: $ADO_Organiza
 #endregion
 
 
-#region DevOps Install extension 
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Install DevOps extension                                                    |
@@ -338,7 +337,10 @@ Add-Content -Path $wikiFileName -Value "Azure DevOps organization: $ADO_Organiza
   after the deployment, but there are also some others that are needed for
   specific tasks in the pipelines.
 ---------------------------------------+---------------------------------------#>
-Write-Host "Installing the DevOps extensions" -ForegroundColor Green
+#region DevOps Install extension 
+Write-Host  "Installing the DevOps extensions..." `
+            -ForegroundColor DarkCyan
+
 $extension_name = (az devops extension list --organization $ADO_Organization --query "[?extensionName=='Post Build Cleanup'].extensionName | [0]")
 
 if ($extension_name.Length -eq 0) {
@@ -349,13 +351,16 @@ if ($extension_name.Length -eq 0) {
 
 
 
-#region Create DevOps project
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Create DevOps project                                                       |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Create DevOps project
+Write-Host  "Create DevOps Project..." `
+            -ForegroundColor DarkCyan
+
 $Project_ID = (az devops project list --organization $ADO_ORGANIZATION --query "[value[]] | [0] | [? name=='$ADO_PROJECT'].id | [0]" --out tsv)
 
 if ($Project_ID.Length -eq 0) {
@@ -376,7 +381,6 @@ if ($Project_ID.Length -eq 0) {
   az repos update --repository $repo_id --default-branch $branch   --output none
 
 }
-
 else {
 
   Add-Content -Path $wikiFileName -Value ""
@@ -423,10 +427,10 @@ else {
 
 if ( Test-Path "temprepo") {
   Write-Host "Removing temprepo" -ForegroundColor Green
-  Remove-Item -Path (Join-Path -PAth Get-Location -ChildPath "temprepo") -Recurse -Force
+  Remove-Item -Path (Join-Path -Path Get-Location -ChildPath "temprepo") -Recurse -Force
 }
 
-$tempPath = New-Item -Path (Join-Path -PAth Get-Location -ChildPath "temprepo") -ItemType Directory -Force | Out-Null
+$tempPath = New-Item -Path (Join-Path -Path Get-Location -ChildPath "temprepo") -ItemType Directory -Force | Out-Null
 git clone $repo_url $tempPath
 
 if ( $null -ne $Env:ImportFromGitHub) {
@@ -599,13 +603,16 @@ else {
 
 
 
-#region Creating the variable group SDAF-General
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Creating the variable group SDAF-General                                    |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Creating the variable group SDAF-General
+Write-Host  "Create Variable Group SDAF-General..." `
+            -ForegroundColor DarkCyan
+
 $repo_id   = (az repos list --query "[?name=='$ADO_Project'].id   | [0]"  --out tsv)
 $repo_name = (az repos list --query "[?name=='$ADO_Project'].name | [0]"  --out tsv)
 
@@ -627,20 +634,26 @@ $groups.Add($general_group_id)
 
 
 
-#region Create pipelines
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Create pipelines                                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
-Write-Host "Creating the pipelines in repo: " $repo_name "(" $repo_id ")" -foregroundColor Green
+#region Create pipelines
+Write-Host  "Create Pipelines..." `
+            -ForegroundColor DarkCyan
+
+Write-Host "Creating the pipelines in repo: $repo_name ($repo_id)" -foregroundColor Green
 
 Add-Content -Path $wikiFileName -Value ""
 Add-Content -Path $wikiFileName -Value "### Pipelines"
 Add-Content -Path $wikiFileName -Value ""
 
+# Pipeline: Create Control Plane configuration
+#-------------------------------------------------------------------------------
 $pipeline_name = 'Create Control Plane configuration'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $sample_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($sample_pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Create sample configuration' --skip-run --yaml-path "/pipelines/22-sample-deployer-configuration.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -649,9 +662,11 @@ if ($sample_pipeline_id.Length -eq 0) {
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $sample_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: Deploy Control plane
+#-------------------------------------------------------------------------------
 $pipeline_name = 'Deploy Control plane'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $control_plane_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($control_plane_pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Deploys the control plane' --skip-run --yaml-path "/pipelines/01-deploy-control-plane.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -663,9 +678,11 @@ $pipelines.Add($control_plane_pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $control_plane_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: SAP Workload Zone deployment
+#-------------------------------------------------------------------------------
 $pipeline_name = 'SAP Workload Zone deployment'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $wz_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($wz_pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Deploys the workload zone' --skip-run --yaml-path "/pipelines/02-sap-workload-zone.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -677,9 +694,11 @@ $pipelines.Add($wz_pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $wz_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: SAP SID Infrastructure deployment
+#-------------------------------------------------------------------------------
 $pipeline_name = 'SAP SID Infrastructure deployment'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $system_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($system_pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Deploys the infrastructure required for a SAP SID deployment' --skip-run --yaml-path "/pipelines/03-sap-system-deployment.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -690,9 +709,11 @@ $pipelines.Add($system_pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $system_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: SAP Software acquisition
+#-------------------------------------------------------------------------------
 $pipeline_name = 'SAP Software acquisition'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Downloads the software from SAP' --skip-run --yaml-path "/pipelines/04-sap-software-download.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -703,9 +724,11 @@ $pipelines.Add($pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: Configuration and SAP installation
+#-------------------------------------------------------------------------------
 $pipeline_name = 'Configuration and SAP installation'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $installation_pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($installation_pipeline_id.Length -eq 0) {
   $installation_pipeline_id = (az pipelines create --name $pipeline_name --branch main --description 'Configures the Operating System and installs the SAP application' --skip-run --yaml-path "/pipelines/05-DB-and-SAP-installation.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors)
@@ -716,9 +739,11 @@ $pipelines.Add($installation_pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $installation_pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: Remove System or Workload Zone
+#-------------------------------------------------------------------------------
 $pipeline_name = 'Remove System or Workload Zone'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Removes either the SAP system or the workload zone' --skip-run --yaml-path "/pipelines/10-remover-terraform.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -729,9 +754,11 @@ $pipelines.Add($pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: Remove deployments via ARM
+#-------------------------------------------------------------------------------
 $pipeline_name = 'Remove deployments via ARM'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Removes the resource groups via ARM. Use this only as last resort' --skip-run --yaml-path "/pipelines/11-remover-arm-fallback.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -742,9 +769,11 @@ $pipelines.Add($pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: Remove control plane
+#-------------------------------------------------------------------------------
 $pipeline_name = 'Remove control plane'
+Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($pipeline_id.Length -eq 0) {
   az pipelines create --name $pipeline_name --branch main --description 'Removes the control plane' --skip-run --yaml-path "/pipelines/12-remove-control-plane.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -755,10 +784,12 @@ $pipelines.Add($pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 
+# Pipeline: Update repository
+#-------------------------------------------------------------------------------
 if ($import_code) {
   $pipeline_name = 'Update repository'
+  Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
   $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
   if ($pipeline_id.Length -eq 0) {
     az pipelines create --name $pipeline_name --branch main --description 'Updates the codebase' --skip-run --yaml-path "/pipelines/20-update-repositories.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
@@ -769,12 +800,13 @@ if ($import_code) {
   Add-Content -Path $wikiFileName -Value $log
   $pipelines.Add($pipeline_id)
 }
+
+# Pipeline: Update Pipelines
 #-------------------------------------------------------------------------------
-
-
 $pipeline_name = 'Update Pipelines'
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
 if ($pipeline_id.Length -eq 0) {
+  Write-Host "Creating pipeline: $pipeline_name" -ForegroundColor Green
   az pipelines create --name $pipeline_name --branch main --description 'Updates the pipelines' --skip-run --yaml-path "/pipelines/21-update-pipelines.yml" --repository $repo_id --repository-type tfsgit --output none --only-show-errors
 }
 $pipeline_id = (az pipelines list --query "[?name=='$pipeline_name'].id | [0]")
@@ -783,19 +815,21 @@ $pipelines.Add($pipeline_id)
 $this_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $pipeline_id
 $log = ("[" + $pipeline_name + "](" + $this_pipeline_url + ")")
 Add-Content -Path $wikiFileName -Value $log
-#-------------------------------------------------------------------------------
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
 
 
-#region Repositories
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  |                                                                             |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Repositories
+Write-Host  "Create repositories..." `
+            -ForegroundColor DarkCyan
+
 if ($true -eq $CreateConnection ) {
   $gh_connection_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_settings/adminservices"
   Write-Host ""
@@ -969,13 +1003,16 @@ Add-Content -Path $wikiFileName -Value ("Web Application: " + $ApplicationName)
 
 
 
-#region Choose MSI
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Choose MSI                                                                  |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Choose MSI
+Write-Host  "Choose Managed Identity..." `
+            -ForegroundColor DarkCyan
+
 $MSI_objectId = $null
 if ($authenticationMethod -eq "Managed Identity") {
 
@@ -1012,13 +1049,16 @@ if ($authenticationMethod -eq "Managed Identity") {
 
 
 
-#region App registration
 <#-----------------------------------------------------------------------------|
  |                                                                             |
- |                                                                             |
+ | App Registration                                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region App registration
+Write-Host  "App registration section..." `
+            -ForegroundColor DarkCyan
+
 if ($WebApp) {
   Write-Host "Creating the App registration in Azure Active Directory" -ForegroundColor Green
 
@@ -1084,13 +1124,16 @@ if ($WebApp) {
 
 
 
-#region When authenticationMethod is SPN
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | When authenticationMethod is SPN                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region When authenticationMethod is SPN
+Write-Host  "SPN section..." `
+            -ForegroundColor DarkCyan
+
 if ($authenticationMethod -eq "Service Principal") {
   $spn_name = $ControlPlanePrefix + " Deployment credential"
   if ($Env:SDAF_MGMT_SPN_NAME.Length -ne 0) {
@@ -1220,13 +1263,16 @@ $groups.Add($Control_plane_groupID)
 
 
 
-#region Create Agent Pool
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Create Agent Pool                                                           |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Create Agent Pool
+Write-Host  "Section: Agent Pool ..." `
+            -ForegroundColor DarkCyan
+
 $POOL_ID = 0
 $POOL_NAME_FOUND = (az pipelines pool list --query "[?name=='$Pool_Name'].name | [0]")
 if ($POOL_NAME_FOUND.Length -gt 0) {
@@ -1251,13 +1297,16 @@ if (Test-Path ".${pathSeparator}pool.json") { Write-Host "Removing pool.json" ; 
 
 
 
-#region PAT
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Create Personal Access Token (PAT)                                          |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region PAT
+Write-Host  "Section: Personal Access Token (PAT) ..." `
+            -ForegroundColor DarkCyan
+
 if ($CreatePAT) {
   # Get pat_url directly from the $ADO_Organization, avoiding double slashes.
   $pat_url = ($ADO_Organization.TrimEnd('/') + "/_usersSettings/tokens").Replace("""", "")
@@ -1316,13 +1365,16 @@ Remove-Item -Path "user.json"
 
 
 
-#region Set Entitlements
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Set Entitlements                                                            |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Set Entitlements
+Write-Host  "Section: Set Entitlements ..." `
+            -ForegroundColor DarkCyan
+
 $postBody = [PSCustomObject]@{
   accessLevel         = @{
     accountLicenseType = "stakeholder"
@@ -1357,13 +1409,16 @@ az devops invoke --area MemberEntitlementManagement --resource ServicePrincipalE
 
 
 
-#region Set permissions for Agent Pool
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Set permissions for Agent Pool                                              |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Set permissions for Agent Pool
+Write-Host  "Section: Set permissions for Agent Pool ..." `
+            -ForegroundColor DarkCyan
+
 # Read-Host -Prompt "Press any key to continue"
 if ($PAT.Length -gt 0) {
   $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes((":{0}" -f $PAT)))
@@ -1382,13 +1437,16 @@ if ($PAT.Length -gt 0) {
 
 
 
-#region Set permissions for Build Service
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Set permissions for Build Service                                           |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Set permissions for Build Service
+Write-Host  "Section: Set permissions for Build Service ..." `
+            -ForegroundColor DarkCyan
+
 if ($true -eq $CreateConnection) {
   Write-Host ""
   Write-Host "The browser will now open, Select the '"$ADO_PROJECT "Build Service' user and ensure that it has 'Allow' in the Contribute section."
@@ -1406,13 +1464,16 @@ else {
 #endregion
 
 
-#region Write Wiki
 <#-----------------------------------------------------------------------------|
  |                                                                             |
  | Write Wiki                                                                  |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Write Wiki
+Write-Host  "Section: Write Wiki ..." `
+            -ForegroundColor DarkCyan
+
 $pipeline_url               = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $sample_pipeline_id
 $control_plane_pipeline_url = $ADO_ORGANIZATION + "/" + [uri]::EscapeDataString($ADO_Project) + "/_build?definitionId=" + $control_plane_pipeline_id
 
@@ -1449,13 +1510,17 @@ if (Test-Path ".${pathSeparator}start.md") { Write-Host "Removing start.md" ; Re
 
 
 
-#region Build Service permissions
 <#-----------------------------------------------------------------------------|
  |                                                                             |
- |                                                                             |
+ | Build Service permissions                                                   |
  |                                                                             |
  |-----------------------------------------------------------------------------|
 ---------------------------------------+---------------------------------------#>
+#region Build Service permissions
+Write-Host  "Section: Set permissions for Build Service ..." `
+            -ForegroundColor DarkCyan
+
+
 Write-Host  "Adding the Build Service user to the Build Administrators group for the Project" `
             -ForegroundColor Green
 $SecurityServiceGroupId   = $(az devops security group list --scope organization   --query "graphGroups | [?displayName=='Security Service Group'].descriptor | [0]" --output tsv)
@@ -1484,6 +1549,7 @@ else {
 }
 <#-------------------------------------+---------------------------------------#>
 #endregion
+
 
 
 Write-Host "The script has completed" -ForegroundColor Green
