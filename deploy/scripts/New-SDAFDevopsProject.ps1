@@ -53,6 +53,7 @@ function Show-Menu($data) {
 #region Initialize
 Write-Host  "Initializing variables..." `
             -ForegroundColor DarkCyan
+
 $ADO_Organization             = $Env:SDAF_ADO_ORGANIZATION
 $ADO_Project                  = $Env:SDAF_ADO_PROJECT
 $ARM_TENANT_ID                = $Env:ARM_TENANT_ID
@@ -109,6 +110,7 @@ if (Test-Path ".${pathSeparator}${wikiFileName}") { Write-Host "Removing start.m
 #region PAT Authentication to Azure DevOps organization
 Write-Host  "Checking PAT Authentication..." `
             -ForegroundColor DarkCyan
+
 $PAT = 'Enter your personal access token here'
 if ($Env:AZURE_DEVOPS_EXT_PAT.Length -gt 0) {
   Write-Host  "Using the provided Personal Access Token (PAT) to authenticate to the Azure DevOps organization $ADO_Organization" `
@@ -164,6 +166,7 @@ az extension add --name azure-devops                           --only-show-error
 #region Select Service Principal or Managed Identity
 Write-Host  "Checking Authentication method...`n" `
             -ForegroundColor DarkCyan
+
 if ($Env:SDAF_AuthenticationMethod.Length -eq 0) {
   $Title = "Select the authentication method to use"
   $data = @('Service Principal', 'Managed Identity')
@@ -177,7 +180,7 @@ else {
 }
 
 Write-Host  "Using authentication method: $authenticationMethod" `
-            -ForegroundColor Yellow
+            -ForegroundColor Cyan
 <#-------------------------------------+---------------------------------------#>
 #endregion
 
@@ -191,16 +194,18 @@ Write-Host  "Using authentication method: $authenticationMethod" `
  |-----------------------------------------------------------------------------|
   Validate parameters
 ---------------------------------------+---------------------------------------#>
+Write-Host  "Parameter Validation..." `
+            -ForegroundColor DarkCyan
+
+# Ensure the Control plane subscription ID is set
+#-------------------------------------------------------------------------------
 if ($Control_plane_subscriptionID.Length -eq 0) {
-  Write-Host "$Env:ControlPlaneSubscriptionID is not set!" -ForegroundColor Red
+  Write-Host  "$Env:ControlPlaneSubscriptionID is not set!"
   $Title = "Choose the subscription for the Control Plane"
-  $subscriptions = $(az account list --query "[].{Name:name}" -o table | Sort-Object)
+  $subscriptions                = $(az account list --query "[].{Name:name}" -o table | Sort-Object)
   Show-Menu($subscriptions[2..($subscriptions.Length - 1)])
-
-  $selection = Read-Host $Title
-
-  $selectionOffset = [convert]::ToInt32($selection, 10) + 1
-
+  $selection                    = Read-Host $Title
+  $selectionOffset              = [convert]::ToInt32($selection, 10) + 1
   $ControlPlaneSubscriptionName = $subscriptions[$selectionOffset]
 
   az account set --subscription $ControlPlaneSubscriptionName
@@ -211,35 +216,62 @@ else {
   $ControlPlaneSubscriptionName = (az account show --query name -o tsv)
 }
 
+# Ensure the Control plane subscription name is set
+#-------------------------------------------------------------------------------
 if ($ControlPlaneSubscriptionName.Length -eq 0) {
-  Write-Host "ControlPlaneSubscriptionName is not set"
+  Write-Host  "ControlPlaneSubscriptionName is not set" `
+              -ForegroundColor Red
   exit
 }
 
+# Ensure the ADO organization is set
+#-------------------------------------------------------------------------------
 if ($ADO_Organization.Length -eq 0) {
-  Write-Host "Organization is not set"
+  Write-Host  "Organization is not set"
   $ADO_Organization = Read-Host "Enter your ADO organization URL"
 }
 else {
-  Write-Host "Using Organization: $ADO_Organization" -foregroundColor Yellow
+  Write-Host  "Using Organization: $ADO_Organization" `
+              -foregroundColor Cyan
 }
 
+# Ensure the Control plane code is set
+#-------------------------------------------------------------------------------
 if ($Control_plane_code.Length -eq 0) {
   Write-Host "Control plane code is not set (MGMT, etc)"
   $Control_plane_code = Read-Host "Enter your Control plane code"
 }
 else {
-  Write-Host "Using Control plane code: $Control_plane_code" -foregroundColor Yellow
+  Write-Host  "Using Control plane code: $Control_plane_code" `
+              -foregroundColor Cyan
 }
 
+# Set the Control Plane prefix, which is used for naming the resources in Azure DevOps
+#-------------------------------------------------------------------------------
 $ControlPlanePrefix = "SDAF-" + $Control_plane_code
 
+# Set the name of the agent pool to use in Azure DevOps
+#-------------------------------------------------------------------------------
 if ($Env:SDAF_POOL_NAME.Length -eq 0) {
   $Pool_Name = $ControlPlanePrefix + "-POOL"
 }
 else {
   $Pool_Name = $Env:SDAF_POOL_NAME
 }
+
+if ($Env:SDAF_AGENT_POOL_NAME.Length -ne 0) {
+  $Pool_Name = $Env:SDAF_AGENT_POOL_NAME
+}
+else {
+  $confirmation = Read-Host "Use Agent pool with name '$Pool_Name' y/n?"
+  if ($confirmation -ne 'y') {
+    $Pool_Name = Read-Host "Enter the name of the agent pool"
+  }
+}
+  Write-Host  "Using Pool: $Pool_Name" `
+              -foregroundColor Cyan
+
+# Ensure the Web App setting is configured
 #-------------------------------------------------------------------------------
 $WebApp = $true
 # if ($Env:SDAF_WEBAPP -eq "true") {
@@ -253,16 +285,8 @@ if ($Env:SDAF_WEBAPP) {
 else {
   $WebApp = $false
 }
-#-------------------------------------------------------------------------------
-if ($Env:SDAF_AGENT_POOL_NAME.Length -ne 0) {
-  $Pool_Name = $Env:SDAF_AGENT_POOL_NAME
-}
-else {
-  $confirmation = Read-Host "Use Agent pool with name '$Pool_Name' y/n?"
-  if ($confirmation -ne 'y') {
-    $Pool_Name = Read-Host "Enter the name of the agent pool"
-  }
-}
+
+# Ensure the S user details are set, if desired
 #-------------------------------------------------------------------------------
 $SUserName = 'Enter your S User ID'
 $SPassword = 'Enter your S user password'
@@ -277,9 +301,8 @@ if ($Env:SUserName.Length -eq 0 -and $Env:SPassword.Length -eq 0) {
     $SPassword = Read-Host "Enter your S user password"
   }
 }
+
 #-------------------------------------------------------------------------------
-
-
 $import_code             = $false
 $pipeline_permission_url = ""
 $APP_REGISTRATION_ID     = ""
