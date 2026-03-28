@@ -234,7 +234,7 @@ pkg_mgr_install() {
 # Directories and paths
 #
 
-# Ansible installation directories
+# Ansible installation directories and paths
 ansible_base=/opt/ansible
 ansible_bin="${ansible_base}/bin"
 ansible_venv="${ansible_base}/venv/${ansible_version}"
@@ -249,9 +249,11 @@ branch="${BRANCH:-main}"
 # Azure SAP Automated Deployment directories
 asad_home="${HOME}/Azure_SAP_Automated_Deployment"
 asad_ws="${asad_home}/WORKSPACES"
-asad_repo="https://github.com/${organization}/sap-automation.git"
+
+asad_automation_repo="https://github.com/${organization}/sap-automation.git"
+asad_automation_dir="${asad_home}/$(basename ${asad_automation_repo} .git)"
+
 asad_sample_repo="https://github.com/${organization}/sap-automation-samples.git"
-asad_dir="${asad_home}/$(basename ${asad_repo} .git)"
 asad_sample_dir="${asad_home}/samples"
 
 # Terraform installation directories
@@ -452,9 +454,9 @@ mkdir -p \
 #
 # Clone Azure SAP Automated Deployment code repository
 #
-if [[ ! -d "${asad_dir}" ]]; then
-	git clone "${asad_repo}" "${asad_dir}"
-	cd "${asad_dir}"
+if [[ ! -d "${asad_automation_dir}" ]]; then
+	git clone "${asad_automation_repo}" "${asad_automation_dir}"
+	cd "${asad_automation_dir}"
 	git checkout "${branch}"
 fi
 
@@ -672,11 +674,14 @@ sudo "${ansible_bin}"/activate-global-python-argcomplete
 sudo mkdir -p "${ansible_collections}"
 set +o xtrace
 
-sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install ansible.windows --force --collections-path "${ansible_collections}"
-sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install ansible.posix --force --collections-path "${ansible_collections}"
-sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install ansible.utils --force --collections-path "${ansible_collections}"
-sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install community.windows --force --collections-path "${ansible_collections}"
-sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install microsoft.ad --force --collections-path "${ansible_collections}"
+echo "Installing ansible.windows..."    ; sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install ansible.windows     --force --collections-path "${ansible_collections}"
+echo "Installing ansible.posix..."      ; sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install ansible.posix       --force --collections-path "${ansible_collections}"
+echo "Installing ansible.utils..."      ; sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install ansible.utils       --force --collections-path "${ansible_collections}"
+echo "Installing community.windows..."  ; sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install community.windows   --force --collections-path "${ansible_collections}"
+echo "Installing microsoft.ad..."       ; sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install microsoft.ad        --force --collections-path "${ansible_collections}"
+echo "Installing azure.azcollection..." ; sudo -H "${ansible_venv_bin}/ansible-galaxy" collection install azure.azcollection  --force --collections-path "${ansible_collections}"
+
+echo "Installing azure.azcollection requirements..." ; sudo -H "${ansible_pip3}" install -r "${ansible_collections}/azure/azcollection/requirements.txt"
 
 if [[ "${ansible_version}" == "2.11" ]]; then
 	# ansible galaxy upstream has changed. Some collections are only available for install via old-galaxy.ansible.com
