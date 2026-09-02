@@ -1,0 +1,53 @@
+---
+# -------------------------------------+---------------------------------------8
+# scr_sap_sid_source:                     "X90"
+# scr_sap_sid_dest:                       "X91"
+# scr_kv_name_source:                     "MKDS1EUS2SAP00user54B"
+# scr_kv_name_dest:                       "MKDS1EUS2SAP00user54B"
+# scr_prefix_source:                      "MKDS1-EUS2-SAP00"
+# scr_prefix_dest:                        "MKDS1-EUS2-SAP00"
+# orchestration_ansible_user:             "azureadm"
+
+# Testing
+# keyvault_uri:                           "https://mkds1eus2sap00user54b.vault.azure.net/"
+# private_key_secret_name:                "MKDS1-EUS2-SAP00-sid-sshkey"
+
+
+scr_source_sid:                         "X90"
+scr_source_prefix:                      "MKDSE-SECE-SAP00"
+scr_source_kv_name:                     "mkdsesecesap00user2f8"
+# scr_source_ssh_username:                "azureadm"
+# scr_source_ssh_private_key_file:        "/tmp/ansible_kv_key_{{ inventory_hostname }}"
+  
+scr_dest_sid:                           "X91"
+scr_dest_prefix:                        "MKDSE-SECE-SAP00"
+scr_dest_kv_name:                       "MKDSESECESAP00user2f8"
+# scr_dest_ssh_username:                  "azureadm"
+# scr_dest_ssh_private_key_file:          "/tmp/ansible_kv_key_{{ inventory_hostname }}"
+
+scr_azure_resource_group:               "MKDSD-SECE-SAP_LIBRARY"
+
+
+# --- scr_db_backup (HANA SYSTEMDB credentials) ---
+# HANA DB SID for the <sid>adm OS user on the DB hosts. Often different
+# from the SAP SID (e.g. SAP=X90 but HANA SID = HDB -> OS user hdbadm).
+db_sid:                                 "HDB"
+
+# Per-side KV secret names for the HANA SYSTEMDB SYSTEM password.
+# Source and dest can have different SYSTEM passwords, so we fetch each
+# host's password from its own side's KV (scr_source_kv_name /
+# scr_dest_kv_name) using the secret name configured here.
+db_source_password_secret_name:         "MKDSE-SECE-SAP00-X90-sap-password"
+db_dest_password_secret_name:           "MKDSE-SECE-SAP00-X91-sap-password"
+
+# Absolute directory on every DB host where HANA writes backup files.
+# Passed verbatim into BACKUP DATA ... USING FILE ('<dir>/<prefix>'),
+# which bypasses the configured basepath_databackup so we do NOT have
+# to SET/UNSET global.ini around each run. Requirements:
+#   - Must exist on every DB host.
+#   - Must be writable by <sid>adm (e.g. hdbadm).
+#   - For FOR FULL SYSTEM on scale-out / MDC, must resolve to the same
+#     path on every node (i.e. a shared mount).
+db_backup_dir:                          "/hana/backup"
+db_backup_type:                         ""
+

@@ -1,0 +1,87 @@
+X90_DB:
+  hosts:
+    x90dhdb00l0ba:
+      ansible_host        : 10.111.1.6
+      ansible_user        : azureadm
+      ansible_connection  : ssh
+      connection_type     : key
+      virtual_host        : x90dhdb00l0ba
+      become_user         : root
+      os_type             : linux
+      vm_name             : MKDSE-SECE-SAP00-X90_x90dhdb_z3_00l0ba8
+      resource_group_name : MKDSE-SECE-SAP00-X90
+      subscription_id     : 02993e58-2910-4b39-910c-aeccd207abf7
+      use_nvme_disks      : false
+
+  vars:
+    node_tier             : hana
+    supported_tiers       : [hana]
+
+X90_SCS:
+  hosts:
+    x90scs00lba8:
+      ansible_host        : 10.111.1.76
+      ansible_user        : azureadm
+      ansible_connection  : ssh
+      connection_type     : key
+      virtual_host        : x90scs00lba8
+      become_user         : root
+      os_type             : linux
+      vm_name             : MKDSE-SECE-SAP00-X90_x90scs_z3_00lba8
+      resource_group_name : MKDSE-SECE-SAP00-X90
+      subscription_id     : 02993e58-2910-4b39-910c-aeccd207abf7
+      use_nvme_disks      : false
+      ansible_python_interpreter : /usr/bin/python3
+
+  vars:
+    node_tier             : scs
+    supported_tiers       : [scs]
+
+X90_ERS:
+  hosts:
+  vars:
+    node_tier             : ers
+    supported_tiers       : [ers]
+
+X90_PAS:
+  hosts:
+    x90app00lba8:
+      ansible_host        : 10.111.1.75
+      ansible_user        : azureadm
+      ansible_connection  : ssh
+      connection_type     : key
+      virtual_host        : x90app00lba8
+      become_user         : root
+      os_type             : linux
+      vm_name             : MKDSE-SECE-SAP00-X90_x90app_z3_00lba8
+      resource_group_name : MKDSE-SECE-SAP00-X90
+      subscription_id     : 02993e58-2910-4b39-910c-aeccd207abf7
+      use_nvme_disks      : false
+
+  vars:
+    node_tier             : pas
+    supported_tiers       : [pas]
+
+X90_APP:
+  hosts:
+  vars:
+    node_tier             : app
+    supported_tiers       : [app]
+
+X90_WEB:
+  hosts:
+  vars:
+    node_tier             : web
+    supported_tiers       : [web]
+
+X90_OBSERVER_DB:
+  hosts:
+  vars:
+    node_tier             : observer
+    supported_tiers       : [observer]
+
+X90_ISCSI:
+  hosts:
+  vars:
+    node_tier             : iscsi
+    supported_tiers       : [iscsi]

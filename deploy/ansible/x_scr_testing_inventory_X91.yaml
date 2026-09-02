@@ -1,0 +1,86 @@
+X91_DB:
+  hosts:
+    x91dhdb00l0f2:
+      ansible_host        : 10.111.1.7
+      ansible_user        : azureadm
+      ansible_connection  : ssh
+      connection_type     : key
+      virtual_host        : x91dhdb00l0f2
+      become_user         : root
+      os_type             : linux
+      vm_name             : MKDSE-SECE-SAP00-X91_x91dhdb_z3_00l0f2a
+      resource_group_name : MKDSE-SECE-SAP00-X91
+      subscription_id     : 02993e58-2910-4b39-910c-aeccd207abf7
+      use_nvme_disks      : false
+
+  vars:
+    node_tier             : hana
+    supported_tiers       : [hana]
+
+X91_SCS:
+  hosts:
+    x91scs00lf2a:
+      ansible_host        : 10.111.1.81
+      ansible_user        : azureadm
+      ansible_connection  : ssh
+      connection_type     : key
+      virtual_host        : x91scs00lf2a
+      become_user         : root
+      os_type             : linux
+      vm_name             : MKDSE-SECE-SAP00-X91_x91scs_z3_00lf2a
+      resource_group_name : MKDSE-SECE-SAP00-X91
+      subscription_id     : 02993e58-2910-4b39-910c-aeccd207abf7
+      use_nvme_disks      : false
+
+  vars:
+    node_tier             : scs
+    supported_tiers       : [scs]
+
+X91_ERS:
+  hosts:
+  vars:
+    node_tier             : ers
+    supported_tiers       : [ers]
+
+X91_PAS:
+  hosts:
+    x91app00lf2a:
+      ansible_host        : 10.111.1.80
+      ansible_user        : azureadm
+      ansible_connection  : ssh
+      connection_type     : key
+      virtual_host        : x91app00lf2a
+      become_user         : root
+      os_type             : linux
+      vm_name             : MKDSE-SECE-SAP00-X91_x91app_z3_00lf2a
+      resource_group_name : MKDSE-SECE-SAP00-X91
+      subscription_id     : 02993e58-2910-4b39-910c-aeccd207abf7
+      use_nvme_disks      : false
+
+  vars:
+    node_tier             : pas
+    supported_tiers       : [pas]
+
+X91_APP:
+  hosts:
+  vars:
+    node_tier             : app
+    supported_tiers       : [app]
+
+X91_WEB:
+  hosts:
+  vars:
+    node_tier             : web
+    supported_tiers       : [web]
+
+X91_OBSERVER_DB:
+  hosts:
+  vars:
+    node_tier             : observer
+    supported_tiers       : [observer]
+
+X91_ISCSI:
+  hosts:
+  vars:
+    node_tier             : iscsi
+    supported_tiers       : [iscsi]

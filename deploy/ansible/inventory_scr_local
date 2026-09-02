@@ -1,0 +1,5 @@
+[local]
+localhost ansible_connection=local
+
+[local:vars]
+# need to do this --> scr_azure_spn_client_secret is stored in vault_vars/scr_vault.yaml (ansible-vault encrypted)
